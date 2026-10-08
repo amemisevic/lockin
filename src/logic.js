@@ -149,3 +149,68 @@ export function copyDay(state, fromDate, toDate, newId) {
     repeat: { type: 'none', days: [] }, until: null, skip: [],
   }), state);
 }
+
+// ---- Goals, day status, windows.
+
+export const goalMinutes = (state, date, goalId) =>
+  occurrencesOn(state, date).filter(o => o.tag === goalId).reduce((sum, o) => sum + minutesFor(o), 0);
+export const unsortedMinutes = (state, date) => goalMinutes(state, date, 'unsorted');
+
+export function goalMet(state, date, goal) {
+  if (!goal.minutes && !goal.checks.length) return null;
+  if (state.manualMet[date]?.[goal.id]) return true;
+  const min = goal.minutes ? goal.minutes[isWeekend(date) ? 'weekend' : 'weekday'] : 0;
+  return goalMinutes(state, date, goal.id) >= min && goal.checks.every(c => state.checks[date]?.[c.id]);
+}
+
+export function dayWon(state, date) {
+  const met = state.goals.map(g => goalMet(state, date, g)).filter(m => m !== null);
+  return met.length > 0 && met.every(Boolean);
+}
+
+export function dayStatus(state, date) {
+  if (dayWon(state, date)) return 'won';
+  const any = obj => Object.values(obj ?? {}).some(v => v === true || v > 0);
+  const logged = state.goals.some(g => goalMinutes(state, date, g.id) > 0)
+    || any(state.checks[date]) || any(state.counts[date]) || any(state.manualMet[date]);
+  return logged ? 'partial' : 'empty';
+}
+
+const count = (state, date, goalId) => state.counts[date]?.[goalId] ?? 0;
+
+export function weekSummary(state, date) {
+  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart(date), i));
+  const sum = f => days.reduce((s, d) => s + f(d), 0);
+  return Object.fromEntries(state.goals.filter(g => g.minutes || g.weeklyCount).map(g => [g.id, g.minutes
+    ? { done: sum(d => goalMinutes(state, d, g.id)), target: 5 * g.minutes.weekday + 2 * g.minutes.weekend, unit: 'min' }
+    : { done: sum(d => count(state, d, g.id)), target: g.weeklyCount.target, unit: 'count' }]));
+}
+
+export function windowTotals(state, endDate, n) {
+  const zero = () => Object.fromEntries(state.goals.map(g => [g.id, 0]));
+  const t = { won: 0, partial: 0, minutes: zero(), counts: zero(), unsorted: 0 };
+  for (let i = n - 1; i >= 0; i--) {
+    const d = addDays(endDate, -i), st = dayStatus(state, d);
+    if (st !== 'empty') t[st]++;
+    for (const g of state.goals) { t.minutes[g.id] += goalMinutes(state, d, g.id); t.counts[g.id] += count(state, d, g.id); }
+    t.unsorted += unsortedMinutes(state, d);
+  }
+  return t;
+}
+
+export function redLineSummary(state, endDate, n) {
+  const r = { held: 0, slipped: 0 };
+  for (let i = 0; i < n; i++) {
+    const day = state.red[addDays(endDate, -i)] ?? {};
+    for (const line of state.redLines) if (day[line.id]) r[day[line.id]]++;
+  }
+  return r;
+}
+
+export function lifetime(state, today) {
+  const first = [...Object.keys(state.occ).map(occDate), ...Object.keys(state.counts)].sort()[0] ?? today;
+  const { minutes, counts, unsorted } = windowTotals(state, today, daysBetween(first, today) + 1);
+  return { minutes, counts, unsorted };
+}
+
+export const needsCommitConfirm = (goal, today) => today < goal.committedUntil;
