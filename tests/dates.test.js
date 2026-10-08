@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import * as L from '../src/logic.js';
+test('dateKey local',()=>assert.equal(L.dateKey(new Date(2026,9,9,0,30)),'2026-10-09'));
+test('addDays',()=>{assert.equal(L.addDays('2026-10-31',1),'2026-11-01');assert.equal(L.addDays('2026-03-01',-1),'2026-02-28');assert.equal(L.addDays('2028-02-28',1),'2028-02-29');assert.equal(L.addDays('2026-03-28',2),'2026-03-30');assert.equal(L.addDays('2026-10-24',2),'2026-10-26')});
+test('daysBetween DST safe',()=>{assert.equal(L.daysBetween('2026-10-08','2026-11-07'),30);assert.equal(L.daysBetween('2026-03-28','2026-03-30'),2);assert.equal(L.daysBetween('2026-10-24','2026-10-26'),2);assert.equal(L.daysBetween('2026-10-08','2026-10-08'),0);assert.equal(L.daysBetween('2026-10-08','2026-10-01'),-7)});
+test('weekday',()=>{assert.equal(L.weekdayIdx('2026-10-05'),0);assert.equal(L.weekdayIdx('2026-10-08'),3);assert.equal(L.weekdayIdx('2026-10-11'),6)});
+test('weekend',()=>{assert.ok(L.isWeekend('2026-10-10'));assert.ok(L.isWeekend('2026-10-11'));assert.ok(!L.isWeekend('2026-10-09'))});
+test('weekStart',()=>{for(const k of ['2026-10-08','2026-10-11','2026-10-05'])assert.equal(L.weekStart(k),'2026-10-05')});
+test('time',()=>{assert.equal(L.toMin('20:30'),1230);assert.equal(L.fromMin(1310),'21:50');assert.ok(Number.isNaN(L.toMin('25:61')));assert.ok(Number.isNaN(L.toMin('')));assert.ok(Number.isNaN(L.toMin(undefined)));assert.equal(L.fromMin(0),'00:00')});
+test('resolveViewDate',()=>{assert.equal(L.resolveViewDate(null,'2026-10-08'),'2026-10-08');assert.equal(L.resolveViewDate('2026-10-06','2026-10-08'),'2026-10-06');assert.equal(L.resolveViewDate('2026-10-09','2026-10-08'),'2026-10-08')});
+test('uid',()=>{const a=L.uid(),b=L.uid();assert.ok(a&&a!==b&&!a.includes(':'))});
