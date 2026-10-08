@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lock In">
+  <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <title>Lock In</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <p id="save-banner" role="alert" hidden>Couldn't save. Export a backup in Settings.</p>
+  <main id="view"></main>
+  <nav class="tabbar" aria-label="Tabs">
+    <button class="tab" type="button" data-tab="today"><span class="caption2">Today</span></button>
+    <button class="tab" type="button" data-tab="plan"><span class="caption2">Plan</span></button>
+    <button class="tab" type="button" data-tab="progress"><span class="caption2">Progress</span></button>
+    <button class="tab" type="button" data-tab="settings"><span class="caption2">Settings</span></button>
+  </nav>
+</body>
+</html>

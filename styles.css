@@ -1,0 +1,170 @@
+/* Lock In: tokens, text styles, components (spec §3). Pixel values are iOS points. */
+
+:root {
+  color-scheme: light dark;
+  /* tokens:light */
+  --bg: #F2F2F7;
+  --surface: #FFFFFF;
+  --surface-2: #FFFFFF;
+  --text: #000000;
+  --text-2: #5C5C63;
+  --text-3: #6B6B72;
+  --accent: #0062CC;
+  --on-accent: #FFFFFF;
+  --red: #C4261D;
+  --outline: #767680;
+  --sep: rgba(60,60,67,.29);
+  --g-biz: #0062CC;
+  --g-uni: #5E4DC7;
+  --g-body: #1D7A3A;
+  --g-social: #B25000;
+  --g-unsorted: #6B6B72;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* tokens:dark */
+    --bg: #000000;
+    --surface: #1C1C1E;
+    --surface-2: #2C2C2E;
+    --text: #FFFFFF;
+    --text-2: #AEAEB4;
+    --text-3: #98989F;
+    --accent: #4DA0FF;
+    --on-accent: #000000;
+    --red: #FF6961;
+    --outline: #8E8E93;
+    --sep: rgba(84,84,88,.6);
+    --g-biz: #4DA0FF;
+    --g-uni: #9A8CFF;
+    --g-body: #4CD27A;
+    --g-social: #FFA94D;
+    --g-unsorted: #98989F;
+  }
+}
+@media (prefers-contrast: more) {
+  :root { --sep: var(--outline); }
+}
+
+:root {
+  --font: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --radius: 20px;
+  --pad: 16px;
+  --side-l: max(var(--pad), env(safe-area-inset-left));
+  --side-r: max(var(--pad), env(safe-area-inset-right));
+}
+
+/* ---- Base */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body {
+  margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+  font: 17px/22px var(--font); font: -apple-system-body;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+button:disabled { opacity: .4; cursor: default; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+svg { flex: none; width: 24px; height: 24px; }
+
+/* ---- Text styles (§3.4). Title sizes are em of Body so they follow Dynamic Type. */
+.large-title { font: 700 2em/1.2 var(--font); margin: 12px 0 8px; letter-spacing: .01em; }
+.title1 { font: 700 1.647em/1.214 var(--font); }
+.title3 { font: 600 1.176em/1.25 var(--font); }
+@supports (font: -apple-system-title1) { .title1 { font: -apple-system-title1; font-weight: 700; } }
+@supports (font: -apple-system-title3) { .title3 { font: -apple-system-title3; font-weight: 600; } }
+.headline { font: 600 17px/22px var(--font); font: -apple-system-headline; }
+.subhead { font: 15px/20px var(--font); font: -apple-system-subheadline; color: var(--text-2); }
+.footnote { font: 13px/18px var(--font); font: -apple-system-footnote; color: var(--text-2); }
+.caption2 { font: 500 11px/13px var(--font); font: -apple-system-caption2; font-weight: 500; }
+
+/* ---- Layout (§3.5) */
+#view {
+  max-width: calc(640px + 2 * var(--pad)); margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 8px) var(--side-r) calc(env(safe-area-inset-bottom) + 112px) var(--side-l);
+}
+/* Scroll-edge fades under the status bar and above the tab bar. */
+body::before, body::after { content: ""; position: fixed; left: 0; right: 0; z-index: 5; pointer-events: none; }
+body::before { top: 0; height: env(safe-area-inset-top); background: linear-gradient(var(--bg) 60%, transparent); }
+body::after { bottom: 0; height: calc(env(safe-area-inset-bottom) + 96px); background: linear-gradient(transparent, var(--bg) 70%); }
+
+#save-banner {
+  position: sticky; top: 0; z-index: 20; margin: 0;
+  padding: calc(env(safe-area-inset-top) + 10px) var(--side-r) 10px var(--side-l);
+  background: var(--surface); color: var(--red); font-weight: 600; border-bottom: 1px solid var(--outline);
+}
+
+/* ---- Grouped list */
+.section-header { margin: 24px var(--pad) 6px; text-transform: uppercase; }
+.section-footer { margin: 6px var(--pad) 0; }
+.group { background: var(--surface); border-radius: var(--radius); overflow: hidden; }
+.row { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px var(--pad); }
+.row + .row::before { content: ""; position: absolute; top: 0; left: var(--pad); right: 0; border-top: .5px solid var(--sep); }
+.row-main { flex: 1; min-width: 0; }
+
+/* ---- Goal identity: color is always paired with an icon and a name. */
+.g-biz { --g: var(--g-biz); }
+.g-uni { --g: var(--g-uni); }
+.g-body { --g: var(--g-body); }
+.g-social { --g: var(--g-social); }
+.g-unsorted { --g: var(--g-unsorted); }
+.badge {
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; flex: none;
+  color: var(--g); background: color-mix(in srgb, var(--g) 14%, var(--surface));
+}
+.badge svg { width: 20px; height: 20px; }
+.card { background: color-mix(in srgb, var(--g, var(--accent)) 14%, var(--surface)); border-radius: var(--radius); padding: var(--pad); }
+.bar { height: 4px; border-radius: 2px; background: var(--sep); overflow: hidden; }
+.bar > span { display: block; height: 100%; width: var(--p, 0%); background: var(--g, var(--accent)); }
+
+/* ---- Buttons (inset capsules, never full width) */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; min-width: 44px; padding: 0 20px; border-radius: 999px; font-weight: 600;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-text { color: var(--accent); padding: 0 12px; font-weight: 400; }
+.icon-btn { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; color: var(--accent); }
+
+/* ---- Chips: selected = filled + checkmark */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 14px;
+  border: 1px solid var(--outline); border-radius: 999px; transition: background-color 120ms, color 120ms;
+}
+.chip-check { display: none; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip[aria-pressed="true"] .chip-check { display: inline; }
+
+/* ---- Segmented control (Held | Slipped): equal widths, text only */
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--outline); border-radius: 999px; overflow: hidden; }
+.seg > button { min-height: 44px; padding: 0 12px; }
+.seg > [aria-checked="true"] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+
+/* ---- Tab bar: the only glass element (§3.6) */
+.tabbar {
+  position: fixed; z-index: 10; margin: 0 auto; max-width: 640px;
+  left: var(--side-l); right: var(--side-r); bottom: max(12px, env(safe-area-inset-bottom));
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 4px;
+  border: 1px solid var(--sep); border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: 52px; border-radius: 999px; color: var(--text-2);
+}
+.tab[aria-current="page"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+/* ---- Accessibility preferences */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .tabbar { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; border-color: var(--outline); }
+}
+@media (prefers-contrast: more) {
+  .chip, .seg { border-width: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 120ms !important; transition-duration: 120ms !important; scroll-behavior: auto !important; }
+}
