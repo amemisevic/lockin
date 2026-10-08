@@ -85,6 +85,7 @@ Wake-time setting, `.ics`/Add to Calendar, in-app notifications, panic/Rut-Break
 - **Install first, then use only the Home Screen app.** On iPhone a Home Screen web app has its own storage, separate from Safari. Data typed in a Safari tab is not visible in the installed app.
 - Deleting the Home Screen icon deletes the app's data. Export is the only backup.
 - Request persistent storage at startup (`navigator.storage.persist?.()`); failure is ignored.
+- **Zoom is locked (deliberate deviation, owner's choice on 2026-10-09):** pinch and double-tap zoom are disabled (`maximum-scale=1, user-scalable=no`, `touch-action: manipulation`, `gesturestart` prevented). This departs from the HIG/WCAG advice to allow zoom; iPhone Larger Text (Dynamic Type) still scales the text. Form controls stay at ≥ 16 px so iOS never zooms on focus.
 - Service-worker updates apply after the app is fully closed and reopened. Each release bumps one version string; Settings shows it.
 - `localStorage` writes can fail (quota/private mode): the app must show a persistent banner "Couldn't save. Export a backup." and never silently drop data.
 - iOS has no web haptics and no background timers; the Now card is correct only while the app is open, and recomputes from the clock on open.

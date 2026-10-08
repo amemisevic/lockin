@@ -35,6 +35,8 @@ export const app = {
 };
 
 navigator.storage?.persist?.().catch(() => {});
+// iOS ignores user-scalable=no for pinch; zoom is locked by the owner's choice (spec §2).
+document.addEventListener('gesturestart', e => e.preventDefault());
 
 const routes = { today: renderToday, plan: renderPlan, progress: renderProgress, settings: renderSettings };
 const view = document.getElementById('view');
