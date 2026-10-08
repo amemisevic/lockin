@@ -44,7 +44,9 @@ let shown = null;
 function render() {
   const route = routes[location.hash.slice(1)] ? location.hash.slice(1) : 'today';
   const y = route === shown ? window.scrollY : 0; // keep position on re-render, top on tab switch
+  const focusId = view.contains(document.activeElement) && document.activeElement.id;
   view.replaceChildren(routes[route](app));
+  if (focusId) document.getElementById(focusId)?.focus({ preventScroll: true });
   for (const t of tabs) {
     if (t.dataset.tab === route) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
   }

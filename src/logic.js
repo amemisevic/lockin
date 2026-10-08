@@ -1,17 +1,17 @@
 // Pure rules. Dates are local 'YYYY-MM-DD' keys, times 'HH:MM', weekday Mon=0…Sun=6.
 
 const pad = n => String(n).padStart(2, '0');
-const parse = key => { const [y, m, d] = key.split('-').map(Number); return new Date(y, m - 1, d); };
+export const keyToDate = key => { const [y, m, d] = key.split('-').map(Number); return new Date(y, m - 1, d); };
 
 export const dateKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
-export function addDays(key, n) { const d = parse(key); d.setDate(d.getDate() + n); return dateKey(d); }
+export function addDays(key, n) { const d = keyToDate(key); d.setDate(d.getDate() + n); return dateKey(d); }
 
 // Date.UTC day numbers: the only allowed UTC use, immune to DST.
 const dayNum = key => { const [y, m, d] = key.split('-').map(Number); return Date.UTC(y, m - 1, d) / 864e5; };
 export const daysBetween = (a, b) => dayNum(b) - dayNum(a);
 
-export const weekdayIdx = key => (parse(key).getDay() + 6) % 7;
+export const weekdayIdx = key => (keyToDate(key).getDay() + 6) % 7;
 export const isWeekend = key => weekdayIdx(key) >= 5;
 export const weekStart = key => addDays(key, -weekdayIdx(key));
 
@@ -51,10 +51,10 @@ function repeatsOn(b, date) {
   }
 }
 
-function makeOcc(occId, base, o = {}) {
+function makeOcc(occId, base, o = {}, orphan = false) {
   const v = o.done && o.snap ? { ...base, ...o.snap } : base;
   return { occId, blockId: occBlockId(occId), date: occDate(occId), ...v,
-    done: !!o.done, actualMin: o.actualMin, movedTo: o.movedTo };
+    done: !!o.done, actualMin: o.actualMin, movedTo: o.movedTo, orphan };
 }
 
 export function occurrencesOn(state, date) {
@@ -66,7 +66,7 @@ export function occurrencesOn(state, date) {
   // Orphans: completed occurrences the blocks no longer generate keep their frozen snapshot.
   for (const [occId, o] of Object.entries(state.occ)) {
     if (occDate(occId) === date && o.done && o.snap && !out.some(x => x.occId === occId))
-      out.push(makeOcc(occId, { desc: '' }, o));
+      out.push(makeOcc(occId, { desc: '' }, o, true));
   }
   return out.sort((a, b) => toMin(a.start) - toMin(b.start));
 }
