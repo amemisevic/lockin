@@ -11,19 +11,26 @@ function refocus(opener) {
   el?.focus?.();
 }
 
+// Shows the dialog modally; returns its dismiss function. Removal is synchronous so a closed
+// dialog never lingers in the DOM (its title id would shadow the next sheet's aria-labelledby).
 function present(dialog, onCancel) {
   const opener = document.activeElement;
   dialog.addEventListener('cancel', e => { e.preventDefault(); onCancel(); });
-  dialog.addEventListener('close', () => { dialog.remove(); refocus(opener); });
   document.body.append(dialog);
   dialog.showModal();
+  return () => {
+    if (!dialog.isConnected) return;
+    dialog.close();
+    dialog.remove();
+    refocus(opener);
+  };
 }
 
 export function openSheet({ title, action, content, isDirty = () => false, onAction }) {
   currentActions?.close();
   currentSheet?.close();
   const titleId = 'sheet-title';
-  const close = () => { if (dialog.open) dialog.close(); if (currentSheet === api) currentSheet = null; };
+  const close = () => { dismiss(); if (currentSheet === api) currentSheet = null; };
   const requestClose = () => {
     if (!isDirty()) return close();
     openActionSheet([{ label: 'Discard Changes', destructive: true, onSelect: close }], { cancel: 'Keep Editing' });
@@ -39,7 +46,7 @@ export function openSheet({ title, action, content, isDirty = () => false, onAct
   swipeToDismiss(dialog, header, requestClose);
   const api = { close, actionButton };
   currentSheet = api;
-  present(dialog, requestClose);
+  const dismiss = present(dialog, requestClose);
   return api;
 }
 
@@ -71,7 +78,7 @@ function swipeToDismiss(dialog, handle, requestClose) {
 // items: {label, destructive?, onSelect}[]; opts: {message?, cancel? = 'Cancel'}
 export function openActionSheet(items, { message, cancel = 'Cancel' } = {}) {
   currentActions?.close();
-  const close = () => { if (dialog.open) dialog.close(); if (currentActions === api) currentActions = null; };
+  const close = () => { dismiss(); if (currentActions === api) currentActions = null; };
   const choose = onSelect => () => {
     close(); // focus is back on the opener before onSelect may open the next sheet
     onSelect();
@@ -84,5 +91,5 @@ export function openActionSheet(items, { message, cancel = 'Cancel' } = {}) {
   dialog.addEventListener('click', e => { if (e.target === dialog) close(); }); // tap on the dimmed backdrop
   const api = { close };
   currentActions = api;
-  present(dialog, close);
+  const dismiss = present(dialog, close);
 }
