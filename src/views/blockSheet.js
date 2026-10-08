@@ -4,8 +4,9 @@ import { icon } from '../icons.js';
 import { openSheet } from '../sheet.js';
 import { toMin, fromMin, validateBlock, upsertBlock, moveOccurrence, rescheduleDraft, weekdayIdx, uid } from '../logic.js';
 
-export const TAGS = [['biz', 'briefcase', 'Business'], ['uni', 'book', 'Uni'], ['body', 'heart', 'Body & Health'],
-  ['social', 'people', 'Socializing'], ['unsorted', 'tray', 'Unsorted']];
+export const TAGS = [['biz', 'briefcase'], ['uni', 'book'], ['body', 'heart'], ['social', 'people'], ['unsorted', 'tray']]; // [id, icon]
+// Goal names are renamable in Settings, so labels come from state; Unsorted is fixed.
+export const tagName = (state, id) => state.goals.find(g => g.id === id)?.name ?? 'Unsorted';
 const CHIPS = [15, 30, 45, 60, 90, 120, 180];
 const DAYS = [['M', 'Monday'], ['T', 'Tuesday'], ['W', 'Wednesday'], ['T', 'Thursday'], ['F', 'Friday'], ['S', 'Saturday'], ['S', 'Sunday']];
 const REPEATS = [['none', 'Never'], ['daily', 'Daily'], ['weekdays', 'Weekdays'], ['weekends', 'Weekends'], ['custom', 'Custom days']];
@@ -54,8 +55,8 @@ export function openBlockSheet(app, opts) {
   const custom = h('input', { type: 'checkbox', switch: true, onChange: () => { if (!custom.checked) syncEnd(); touched = true; update(); } });
   const endRow = field('End', endIn);
 
-  const tagChips = TAGS.map(([id, ic, name]) => h('button', { type: 'button', class: `chip g-${id}`, onClick: () => { f.tag = id; touched = true; update(); } },
-    h('span', { class: 'chip-check' }, icon('check')), h('span', { class: 'chip-icon' }, icon(ic)), name));
+  const tagChips = TAGS.map(([id, ic]) => h('button', { type: 'button', class: `chip g-${id}`, onClick: () => { f.tag = id; touched = true; update(); } },
+    h('span', { class: 'chip-check' }, icon('check')), h('span', { class: 'chip-icon' }, icon(ic)), tagName(app.state, id)));
   const repeat = h('select', { 'aria-label': 'Repeat', onChange: e => {
     f.repeat.type = e.target.value;
     if (f.repeat.type === 'custom' && !f.repeat.days.length && f.date) f.repeat.days = [weekdayIdx(f.date)];

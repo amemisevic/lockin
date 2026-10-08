@@ -2,7 +2,7 @@
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { openSheet, openActionSheet } from '../sheet.js';
-import { openBlockSheet, TAGS } from './blockSheet.js';
+import { openBlockSheet, TAGS, tagName } from './blockSheet.js';
 import { keyToDate, minutesFor, completeOcc, uncompleteOcc, removeBlock, deleteOccurrence, deleteFuture } from '../logic.js';
 
 export const shortDate = key => keyToDate(key).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
@@ -10,7 +10,7 @@ export const shortDate = key => keyToDate(key).toLocaleDateString('en-GB', { wee
 const domId = occ => occ.occId.replace(/[^\w-]/g, '_');
 
 export function blockRow(app, occ, { missed }) {
-  const [, tagIcon, tagName] = TAGS.find(t => t[0] === occ.tag) ?? TAGS[4];
+  const [, tagIcon] = TAGS.find(t => t[0] === occ.tag) ?? TAGS[4];
   const moved = occ.movedTo && app.state.blocks.find(b => b.id === occ.movedTo);
   const minutes = occ.actualMin !== undefined ? `${occ.actualMin} / ${occ.plannedMin} min` : `${occ.plannedMin} min`;
   const status = occ.movedTo
@@ -35,7 +35,7 @@ export function blockRow(app, occ, { missed }) {
     h('div', { class: 'row-main' },
       h('p', { class: 'subhead' }, `${occ.start}–${occ.end}`),
       h('p', { class: 'block-title' }, occ.title),
-      h('p', { class: 'subhead block-meta' }, h('span', { class: 'tag-icon' }, icon(tagIcon)), `${tagName} · ${minutes}`),
+      h('p', { class: 'subhead block-meta' }, h('span', { class: 'tag-icon' }, icon(tagIcon)), `${tagName(app.state, occ.tag)} · ${minutes}`),
       status),
     more);
 }

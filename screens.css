@@ -85,3 +85,18 @@
 .chart .logged { fill: none; stroke: var(--g-body); stroke-width: 2.5; stroke-linejoin: round; }
 .chart .logged-dot { fill: var(--g-body); }
 .goal-label { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---- Settings */
+.row-btn { width: 100%; text-align: left; color: var(--text); }
+.row-btn.action { color: var(--accent); }
+.row-btn.destructive { color: var(--red); }
+.chevron { display: inline-flex; color: var(--text-3); }
+.chevron svg { width: 18px; height: 18px; }
+.goal-line { display: flex; align-items: center; gap: 12px; }
+.block { display: block; }
+.import-error { margin-top: 8px; }
+.steps { margin: 0; padding-left: 1.5em; color: var(--text); }
+.steps li + li { margin-top: 6px; }
+.reminder { align-items: flex-start; }
+.reminder-text { margin: 2px 0 0; user-select: text; -webkit-user-select: text; }
+.version { margin: 24px var(--pad) 0; text-align: center; }

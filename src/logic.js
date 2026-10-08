@@ -225,3 +225,14 @@ export const needsCommitConfirm = (goal, today) => today < goal.committedUntil;
 // One weigh-in per date (a same-date entry is replaced), kept in date order.
 export const setWeight = (state, date, kg) =>
   ({ ...state, weights: [...state.weights.filter(w => w.date !== date), { date, kg }].sort((a, b) => (a.date < b.date ? -1 : 1)) });
+
+// Commitment friction (spec §1.10): minimums, weekly target and daily checks are rules; the name is not.
+const rules = g => JSON.stringify([g.minutes, g.weeklyCount?.target, g.checks]);
+export const goalRulesChanged = (before, after) => rules(before) !== rules(after);
+
+// Replaces a goal; a rule change starts a new 30-day commitment.
+export function saveGoal(state, goal, today) {
+  const old = state.goals.find(g => g.id === goal.id);
+  const next = goalRulesChanged(old, goal) ? { ...goal, committedUntil: addDays(today, 30) } : goal;
+  return { ...state, goals: state.goals.map(g => (g.id === goal.id ? next : g)) };
+}

@@ -1,7 +1,7 @@
 // Today: date switcher, Now card (today only), blocks, goals, red lines. Past days are fully editable.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
-import { openBlockSheet, TAGS } from './blockSheet.js';
+import { openBlockSheet, TAGS, tagName } from './blockSheet.js';
 import { blockRow, shortDate } from './blockRow.js';
 import { addDays, keyToDate, fromMin, toMin, formatClock, occurrencesOn, nowNext, completeOcc, elapsedMin, copyDay, uid,
   goalMinutes, dayStatus, weekSummary, isWeekend, unsortedMinutes } from '../logic.js';
@@ -70,9 +70,8 @@ function switcher(app, date, today) {
     h('button', { type: 'button', class: 'btn btn-text', id: 'day-today', disabled: date === today, onClick: () => go(today) }, 'Today'));
 }
 
-const tagOf = tag => TAGS.find(t => t[0] === tag) ?? TAGS[4]; // [id, icon, name]
-const tagIcon = tag => tagOf(tag)[1];
-const label = tag => h('p', { class: 'card-label footnote' }, h('span', { class: 'tag-icon' }, icon(tagIcon(tag))), tagOf(tag)[2]);
+const tagIcon = tag => (TAGS.find(t => t[0] === tag) ?? TAGS[4])[1];
+const label = (state, tag) => h('p', { class: 'card-label footnote' }, h('span', { class: 'tag-icon' }, icon(tagIcon(tag))), tagName(state, tag));
 const primary = (text, onClick, id) => h('button', { type: 'button', class: 'btn btn-primary', id, onClick }, text);
 
 function nowCard(app, occs, nn, today) {
@@ -86,7 +85,7 @@ function nowCard(app, occs, nn, today) {
     paint();
     if (!document.hidden) ticker = setInterval(() => (document.hidden || !elapsed.isConnected ? stopTicker() : paint()), 1000);
     [key, say] = [`timer:${running.occId}`, `Timer running for ${running.title}`];
-    card = h('div', { class: `card now-card g-${running.tag}` }, label(running.tag),
+    card = h('div', { class: `card now-card g-${running.tag}` }, label(s, running.tag),
       h('p', { class: 'title3' }, running.title),
       h('p', { class: 'subhead' }, `Started ${clock(startedAt)} · planned ${running.plannedMin} min`),
       h('p', { class: 'title1 clock' }, elapsed),
@@ -96,7 +95,7 @@ function nowCard(app, occs, nn, today) {
   } else if (nn.current) {
     const o = nn.current, spent = o.plannedMin - nn.minsLeft;
     [key, say] = [`cur:${o.occId}`, `Now: ${o.title}, ${nn.minsLeft} minutes left`];
-    card = h('div', { class: `card now-card g-${o.tag}` }, label(o.tag),
+    card = h('div', { class: `card now-card g-${o.tag}` }, label(s, o.tag),
       h('p', { class: 'title3' }, o.title),
       o.desc && h('p', { class: 'subhead now-desc' }, o.desc),
       h('p', { class: 'subhead' }, `${o.start}–${o.end}`),
