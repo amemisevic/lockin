@@ -10,7 +10,7 @@ const CHIPS = [15, 30, 45, 60, 90, 120, 180];
 const DAYS = [['M', 'Monday'], ['T', 'Tuesday'], ['W', 'Wednesday'], ['T', 'Thursday'], ['F', 'Friday'], ['S', 'Saturday'], ['S', 'Sunday']];
 const REPEATS = [['none', 'Never'], ['daily', 'Daily'], ['weekdays', 'Weekdays'], ['weekends', 'Weekends'], ['custom', 'Custom days']];
 const MESSAGES = { 'title-required': 'Add a title.', 'bad-time': 'Enter a valid time.',
-  'ends-before-start': 'Ends before it starts. Move the end time later.', 'no-days': 'Choose at least one day.', 'no-date': 'Choose a date.' };
+  'ends-before-start': 'Ends before it starts. Move the end time later.', 'no-days': 'Choose at least one day.', 'no-date': 'Choose a date.', 'no-tag': 'Choose a tag.' };
 const MODES = { new: ['New Block', 'Add'], edit: ['Edit Block', 'Done'], move: ['Move Block', 'Move'] };
 
 export const formatDuration = min => min < 60 ? `${min} min` : min % 60 ? `${Math.floor(min / 60)} h ${min % 60} min` : `${min / 60} h`;
@@ -20,7 +20,7 @@ function initial(app, { mode, occ, draft, date }) {
     const b = app.state.blocks.find(x => x.id === occ.blockId);
     return { ...b, repeat: { ...b.repeat, days: [...b.repeat.days] }, duration: toMin(b.end) - toMin(b.start) };
   }
-  const d = mode === 'move' ? (draft ?? rescheduleDraft(occ, app.today())) : { title: '', desc: '', tag: 'unsorted', date: date ?? app.today(), start: '', durationMin: 60 };
+  const d = mode === 'move' ? (draft ?? rescheduleDraft(occ, app.today())) : { title: '', desc: '', tag: null, date: date ?? app.today(), start: '', durationMin: 60 };
   return { id: uid(), title: d.title, desc: d.desc, tag: d.tag, date: d.date, start: d.start, duration: d.durationMin,
     end: '', repeat: { type: 'none', days: [] }, until: null, skip: [] };
 }
@@ -85,6 +85,7 @@ export function openBlockSheet(app, opts) {
     const p = validateBlock(f);
     if (p) return p;
     if (!f.date) return 'no-date';
+    if (!f.tag) return 'no-tag';
     return f.repeat.type === 'custom' && !f.repeat.days.length ? 'no-days' : null;
   }
   function update() {
