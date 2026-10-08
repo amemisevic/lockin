@@ -3,7 +3,7 @@ import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { openBlockSheet, TAGS } from './blockSheet.js';
 import { blockRow, shortDate } from './blockRow.js';
-import { addDays, keyToDate, fromMin, occurrencesOn, nowNext, completeOcc, elapsedMin, copyDay, uid,
+import { addDays, keyToDate, fromMin, toMin, formatClock, occurrencesOn, nowNext, completeOcc, elapsedMin, copyDay, uid,
   goalMinutes, dayStatus, weekSummary, isWeekend, unsortedMinutes } from '../logic.js';
 
 const SLIP = 'Costs one day, not the month.';
@@ -24,6 +24,12 @@ export function finishTimer(app) {
   });
 }
 
+// Running-timer clock: one interval updating two text nodes, never a re-render. It stops when the
+// view is replaced or the page is hidden; the app re-renders on return, which restarts it from startedAt.
+let ticker = null;
+const stopTicker = () => { clearInterval(ticker); ticker = null; };
+globalThis.document?.addEventListener('visibilitychange', () => { if (document.hidden) stopTicker(); });
+
 // Announce only when the Now state changes (block starts/ends), never on the 30 s tick.
 let live = null, lastNowKey = null;
 function announce(key, text) {
@@ -33,6 +39,7 @@ function announce(key, text) {
 }
 
 export function renderToday(app) {
+  stopTicker();
   const today = app.today(), date = app.viewDate(), isToday = date === today;
   const occs = occurrencesOn(app.state, date);
   const now = new Date();
@@ -73,12 +80,17 @@ function nowCard(app, occs, nn, today) {
   const running = s.timer && occById(s, s.timer.occId);
   let key, say, card;
   if (running) {
-    const min = elapsedMin(s.timer.startedAt, Date.now());
+    const { startedAt } = s.timer, endMs = keyToDate(running.date).setHours(0, toMin(running.end));
+    const elapsed = h('span', { role: 'timer', 'aria-label': 'Elapsed' }), left = h('span', { role: 'timer' });
+    const paint = () => { const now = Date.now(); elapsed.textContent = formatClock(now - startedAt); left.textContent = formatClock(endMs - now); };
+    paint();
+    if (!document.hidden) ticker = setInterval(() => (document.hidden || !elapsed.isConnected ? stopTicker() : paint()), 1000);
     [key, say] = [`timer:${running.occId}`, `Timer running for ${running.title}`];
     card = h('div', { class: `card now-card g-${running.tag}` }, label(running.tag),
       h('p', { class: 'title3' }, running.title),
-      h('p', { class: 'subhead' }, `Started ${clock(s.timer.startedAt)} · planned ${running.plannedMin} min`),
-      h('p', { class: 'title1' }, `${min} min`),
+      h('p', { class: 'subhead' }, `Started ${clock(startedAt)} · planned ${running.plannedMin} min`),
+      h('p', { class: 'title1 clock' }, elapsed),
+      h('p', { class: 'subhead clock' }, 'Left in block: ', left),
       h('div', { class: 'card-actions' }, primary('Finish', () => finishTimer(app), 'now-action'),
         h('button', { type: 'button', class: 'btn btn-text', onClick: () => cancelTimer(app) }, 'Cancel Timer')));
   } else if (nn.current) {

@@ -135,6 +135,13 @@ export function elapsedMin(startedAt, nowMs) {
   return Math.min(720, Math.floor((nowMs - startedAt) / 60000));
 }
 
+// Running-timer clock: m:ss, h:mm:ss from an hour; capped at 12 h like elapsedMin.
+export function formatClock(ms) {
+  const t = Number.isFinite(ms) && ms > 0 ? Math.floor(Math.min(ms, 720 * 60000) / 1000) : 0;
+  const h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = pad(t % 60);
+  return h ? `${h}:${pad(m)}:${s}` : `${m}:${s}`;
+}
+
 export function sanitizeTimer(state) {
   const t = state.timer;
   if (!t) return { ...state, timer: null };
