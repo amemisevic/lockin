@@ -221,3 +221,7 @@ export function lifetime(state, today) {
 }
 
 export const needsCommitConfirm = (goal, today) => today < goal.committedUntil;
+
+// One weigh-in per date (a same-date entry is replaced), kept in date order.
+export const setWeight = (state, date, kg) =>
+  ({ ...state, weights: [...state.weights.filter(w => w.date !== date), { date, kg }].sort((a, b) => (a.date < b.date ? -1 : 1)) });

@@ -19,6 +19,8 @@ export const icons = {
   // Controls
   plus: svg('<path d="M12 5v14M5 12h14"/>'),
   minus: svg('<path d="M5 12h14"/>'),
+  arrowUp: svg('<path d="M12 19V5M6 11l6-6 6 6"/>'),
+  arrowDown: svg('<path d="M12 5v14M6 13l6 6 6-6"/>'),
   ellipsis: svg('<circle cx="5.5" cy="12" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="18.5" cy="12" r="1.75"/>', true),
   check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
   chevronLeft: svg('<path d="M15 5l-7 7 7 7"/>'),
