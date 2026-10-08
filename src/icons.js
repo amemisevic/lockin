@@ -23,6 +23,7 @@ export const icons = {
   arrowDown: svg('<path d="M12 5v14M6 13l6 6 6-6"/>'),
   ellipsis: svg('<circle cx="5.5" cy="12" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="18.5" cy="12" r="1.75"/>', true),
   check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  xmark: svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
   chevronLeft: svg('<path d="M15 5l-7 7 7 7"/>'),
   chevronRight: svg('<path d="M9 5l7 7-7 7"/>'),
   partial: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17Z" fill="currentColor"/>'),

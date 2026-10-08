@@ -100,3 +100,13 @@
 .reminder { align-items: flex-start; }
 .reminder-text { margin: 2px 0 0; user-select: text; -webkit-user-select: text; }
 .version { margin: 24px var(--pad) 0; text-align: center; }
+
+/* ---- Measured red lines */
+.red-status { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; color: var(--text); vertical-align: -4px; }
+.red-status svg { width: 18px; height: 18px; }
+.red-status.slipped { color: var(--red); }
+.none-row { display: flex; justify-content: center; }
+.red-card-empty { color: var(--text-2); }
+.chart .held-bar { fill: var(--text-3); }
+.chart .slip-bar { fill: var(--red); }
+.chart .slip-mark { stroke: var(--red); stroke-width: 1.75; stroke-linecap: round; }

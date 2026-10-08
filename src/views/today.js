@@ -4,7 +4,8 @@ import { icon } from '../icons.js';
 import { openBlockSheet, TAGS, tagName } from './blockSheet.js';
 import { blockRow, shortDate } from './blockRow.js';
 import { addDays, keyToDate, fromMin, toMin, formatClock, occurrencesOn, nowNext, completeOcc, elapsedMin, copyDay, uid,
-  goalMinutes, dayStatus, weekSummary, isWeekend, unsortedMinutes } from '../logic.js';
+  goalMinutes, dayStatus, weekSummary, isWeekend, unsortedMinutes, redStatus } from '../logic.js';
+import { measuredRow } from './redLineLog.js';
 
 const SLIP = 'Costs one day, not the month.';
 const longDate = key => keyToDate(key).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -185,8 +186,8 @@ function redLines(app, date) {
     h('button', { type: 'button', class: 'btn btn-text', onClick: () => { location.hash = 'settings'; } }, 'Add your red lines')))];
   const mark = (id, v) => app.set(st => setIn(st, 'red', date, id, (st.red[date] ?? {})[id] === v ? undefined : v));
   return [header,
-    h('div', { class: 'group' }, s.redLines.map(l => h('div', { class: 'row red-row' }, h('p', { class: 'row-main' }, l.name),
+    h('div', { class: 'group' }, s.redLines.map(l => l.limit !== undefined ? measuredRow(app, l, date) : h('div', { class: 'row red-row' }, h('p', { class: 'row-main' }, l.name),
       h('div', { class: 'seg', role: 'radiogroup', 'aria-label': l.name }, [['held', 'Held'], ['slipped', 'Slipped']].map(([v, text]) =>
         h('button', { type: 'button', role: 'radio', class: `seg-${v}`, id: `red-${l.id}-${v}`, 'aria-checked': String(day[l.id] === v), onClick: () => mark(l.id, v) }, text)))))),
-    s.redLines.some(l => day[l.id] === 'slipped') && h('p', { class: 'footnote section-footer' }, SLIP)];
+    s.redLines.some(l => day[l.id] && redStatus(day[l.id]) === 'slipped') && h('p', { class: 'footnote section-footer' }, SLIP)];
 }

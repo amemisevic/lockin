@@ -6,6 +6,8 @@ import { formatDuration } from './blockSheet.js';
 import { exportBackup } from './settings.js';
 import { backupStatus } from '../store.js';
 import { addDays, daysBetween, keyToDate, weekStart, windowTotals, weekSummary, redLineSummary, lifetime, unsortedMinutes, setWeight } from '../logic.js';
+import { redLineStats } from '../redlines.js';
+import { fmtAmount } from './redLineLog.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const svg = (tag, attrs, ...kids) => {
@@ -25,7 +27,8 @@ export function renderProgress(app) {
   return h('section', null,
     h('h1', { class: 'large-title' }, 'Progress'),
     headline(s, today), sevenVsSeven(s, today), thisWeek(s, today), allTime(s, today),
-    redLines(s, today), backup(app, today), weighIn(app, today));
+    redLines(s, today), s.redLines.filter(l => l.limit !== undefined).map(l => measuredCard(s, l, today)),
+    backup(app, today), weighIn(app, today));
 }
 
 function headline(s, today) {
@@ -78,6 +81,48 @@ function redLines(s, today) {
   const r = redLineSummary(s, today, 30);
   return [header('Red Lines, Last 30 Days'), h('div', { class: 'group' },
     s.redLines.length ? row(`Held ${r.held} · Slipped ${r.slipped}`) : row('No red lines yet.', null, 'subhead'))];
+}
+
+// One card per existing measured red line (spec §1.7). Counts by each day's frozen limit.
+function measuredCard(s, line, today) {
+  const st = redLineStats(s, line.id, today, 30), u = line.unit, a = n => `${fmtAmount(n)} ${u}`;
+  const title = header(`${line.name}, Last 30 Days`);
+  if (!st.days.some(d => d.amount !== null)) return [title, h('div', { class: 'group' }, row('Log an amount on Today to see this.', null, 'red-card-empty'))];
+  const avg = n => (n === null ? 'no logs' : `${a(n)} a day`);
+  return [title, h('div', { class: 'group' },
+    row(`Held ${st.held} · Slipped ${st.slipped} · Not logged ${st.unlogged}`),
+    row(`Used ${fmtAmount(st.used)} of ${a(st.allowed)} allowed`),
+    st.slipped > 0 && st.worst && row(`Over the limit: ${a(st.totalOver)} in total, ${a(st.avgOver)} per slipped day`),
+    st.worst && row(`Worst day: ${short(st.worst.date)}, ${a(st.worst.amount)} (${fmtAmount(st.worst.over)} over)`),
+    st.avgMargin !== null && row(`Under the limit: ${a(st.avgMargin)} to spare per held day`),
+    row(`Last 7 days: ${avg(st.last7Avg)}`, `The 7 before: ${avg(st.prev7Avg)}`),
+    h('div', { class: 'row stack' }, barChart(st, line),
+      h('p', { class: 'footnote' }, 'Bars: amount per day. Pointed bars marked ✕ are over the limit. Dashed line: limit. A dot is a logged 0.')))];
+}
+
+// 30 bars; over-limit bars are pointed and carry a cross (shape + icon, not color alone).
+function barChart(st, line) {
+  const W = 300, H = 140, L = 40, R = 6, T = 16, B = 22, n = st.days.length, slot = (W - L - R) / n, bw = slot * 0.7;
+  const limitOf = d => d.limit ?? line.limit;
+  const top = Math.max(1, ...st.days.map(d => d.amount ?? 0), ...st.days.map(limitOf)) * 1.15;
+  const y = v => T + (H - T - B) * (1 - v / top), base = H - B;
+  const x = i => L + i * slot + (slot - bw) / 2;
+  const marks = st.days.flatMap((d, i) => {
+    if (d.amount === null) return [];
+    if (d.amount === 0) return [svg('circle', { class: 'held-bar', cx: x(i) + bw / 2, cy: base - 4, r: 2.5 })]; // logged 0: a dot, not 'not logged'
+    if (d.status === 'held') return [svg('rect', { class: 'held-bar', x: x(i), y: y(d.amount), width: bw, height: base - y(d.amount) })];
+    const tip = y(d.amount), cx = x(i) + bw / 2, c = Math.min(4, bw / 2);
+    return [svg('polygon', { class: 'slip-bar', points: `${x(i)},${base} ${x(i)},${Math.min(base, tip + bw * 1.2)} ${cx},${tip} ${x(i) + bw},${Math.min(base, tip + bw * 1.2)} ${x(i) + bw},${base}` }),
+      svg('path', { class: 'slip-mark', d: `M${cx - c} ${tip - 9 - c}l${2 * c} ${2 * c}M${cx + c} ${tip - 9 - c}l${-2 * c} ${2 * c}` })];
+  });
+  const limitPath = st.days.map((d, i) => `${i ? 'L' : 'M'}${L + i * slot} ${y(limitOf(d))}H${L + (i + 1) * slot}`).join('');
+  const text = (tx, ty, anchor, t) => svg('text', { x: tx, y: ty, 'text-anchor': anchor }, t);
+  const summary = `${line.name}: held ${st.held}, slipped ${st.slipped}, not logged ${st.unlogged} of 30 days. Limit ${fmtAmount(line.limit)} ${line.unit}.`;
+  return svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': summary },
+    ...marks, // no axis line: a limit of 0 must stay visible as a dashed line
+    svg('path', { class: 'target', d: limitPath, fill: 'none' }),
+    text(L - 6, y(line.limit) + 4, 'end', fmtAmount(line.limit)),
+    text(L, H - 6, 'start', short(st.days[0].date)), text(W - R, H - 6, 'end', short(st.days.at(-1).date)));
 }
 
 function backup(app, today) {

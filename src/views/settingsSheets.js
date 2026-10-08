@@ -4,6 +4,7 @@ import { icon } from '../icons.js';
 import { openSheet, openActionSheet } from '../sheet.js';
 import { shortDate } from './blockRow.js';
 import { needsCommitConfirm, goalRulesChanged, saveGoal, uid } from '../logic.js';
+import { parseAmount } from '../redlines.js';
 
 const REMINDERS = [
   ['09:00', "Lock in. Open the plan, put today's blocks in, start the first one."],
@@ -63,19 +64,47 @@ export function openGoalSheet(app, goal) {
   check();
 }
 
-// Add (line = undefined) or rename a red line.
+// Add (line = undefined) or edit a red line. An optional limit + unit makes it measured (spec §1.5).
+// No commitment friction: red lines are not goals.
+const UNITS = ['min', 'times', 'drinks'];
 export function openRedLineSheet(app, line) {
-  const name = h('input', { type: 'text', class: 'text-input', value: line?.name ?? '', placeholder: 'Red line', 'aria-label': 'Red line', onInput: () => { sheet.actionButton.disabled = !name.value.trim(); } });
-  const sheet = openSheet({ title: line ? 'Rename Red Line' : 'New Red Line', action: line ? 'Done' : 'Add',
-    content: h('div', { class: 'form' }, h('div', { class: 'group' }, h('div', { class: 'row' }, name)),
-      h('p', { class: 'footnote section-footer' }, 'Something you will not do. Mark it Held or Slipped on Today.')),
-    isDirty: () => name.value !== (line?.name ?? ''),
+  const start = { name: line?.name ?? '', limit: line?.limit === undefined ? '' : String(line.limit), unit: line?.unit ?? '' };
+  const input = (value, attrs) => h('input', { type: 'text', value, ...attrs, onInput: () => update() });
+  const name = input(start.name, { class: 'text-input', placeholder: 'Red line', 'aria-label': 'Red line' });
+  const limit = input(start.limit, { inputmode: 'decimal', placeholder: 'None', 'aria-label': 'Limit per day', autocomplete: 'off' });
+  const unit = input(start.unit, { maxlength: '12', placeholder: 'Unit', 'aria-label': 'Unit', autocomplete: 'off' });
+  const chips = UNITS.map(u => h('button', { type: 'button', class: 'chip', onClick: () => { unit.value = u; update(); } },
+    h('span', { class: 'chip-check' }, icon('check')), u));
+  const error = h('p', { class: 'form-error', role: 'status' });
+  const problem = () => {
+    if (!name.value.trim()) return 'Add a name.';
+    const hasLimit = limit.value.trim() !== '', hasUnit = unit.value.trim() !== '';
+    if (hasLimit && parseAmount(limit.value) === null) return 'Enter the limit as a number, like 30 or 1,5.';
+    return hasLimit !== hasUnit ? 'Add both a limit and a unit, or leave both empty.' : null;
+  };
+  const touched = () => name.value !== start.name || limit.value !== start.limit || unit.value !== start.unit;
+  function update() {
+    chips.forEach((c, i) => c.setAttribute('aria-pressed', String(unit.value.trim() === UNITS[i])));
+    const p = problem();
+    error.textContent = touched() && p ? p : '';
+    if (sheet) sheet.actionButton.disabled = !!p;
+  }
+  let sheet = null;
+  sheet = openSheet({ title: line ? 'Edit Red Line' : 'New Red Line', action: line ? 'Done' : 'Add',
+    content: h('div', { class: 'form' },
+      h('div', { class: 'group' }, h('div', { class: 'row' }, name)),
+      h('h3', { class: 'section-header footnote' }, 'Limit (Optional)'),
+      h('div', { class: 'group' }, field('Limit per day', limit), field('Unit', unit), h('div', { class: 'row' }, h('div', { class: 'chips' }, chips))),
+      h('p', { class: 'footnote section-footer' }, 'Without a limit, mark it Held or Slipped on Today. With a limit, log an amount: at or under the limit is Held. Changing the limit never changes days already logged.'),
+      error),
+    isDirty: touched,
     onAction: () => {
-      const n = name.value.trim();
-      if (!n) return false;
-      app.set(s => ({ ...s, redLines: line ? s.redLines.map(l => (l.id === line.id ? { ...l, name: n } : l)) : [...s.redLines, { id: uid(), name: n }] }));
+      if (problem()) return false;
+      const next = { id: line?.id ?? uid(), name: name.value.trim() };
+      if (limit.value.trim()) Object.assign(next, { limit: parseAmount(limit.value), unit: unit.value.trim() });
+      app.set(s => ({ ...s, redLines: line ? s.redLines.map(l => (l.id === line.id ? next : l)) : [...s.redLines, next] }));
     } });
-  sheet.actionButton.disabled = !name.value.trim();
+  update();
 }
 
 export function openWeightTargetSheet(app) {

@@ -51,9 +51,9 @@ export function renderSettings(app) {
 
     header('Red Lines'),
     h('div', { class: 'group' },
-      s.redLines.map(l => h('div', { class: 'row' }, h('p', { class: 'row-main' }, l.name),
+      s.redLines.map(l => h('div', { class: 'row' }, h('div', { class: 'row-main' }, h('p', null, l.name), l.limit !== undefined && h('p', { class: 'subhead' }, `Limit ${l.limit} ${l.unit} a day`)),
         h('button', { type: 'button', class: 'icon-btn', id: `red-more-${l.id}`, 'aria-label': `Actions for ${l.name}`, onClick: () => openActionSheet([
-          { label: 'Rename', onSelect: () => openRedLineSheet(app, l) },
+          { label: 'Edit', onSelect: () => openRedLineSheet(app, l) },
           { label: 'Delete', destructive: true, onSelect: () => openActionSheet([{ label: 'Delete Red Line', destructive: true,
             onSelect: () => app.set(st => ({ ...st, redLines: st.redLines.filter(x => x.id !== l.id) })) }],
             { message: 'Its past marks stay saved but no longer count in Progress.' }) },
