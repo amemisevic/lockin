@@ -41,7 +41,8 @@ An occurrence's minutes = `actualMin` if a timer or manual log set it (even 0), 
 - **Blocks group** (any viewed day): that day's blocks as rows with a done toggle, time, title, and a "…" menu (Log Minutes, Move, Delete).
 - **Goals group:** the four goals with a thin progress bar and text ("45 / 60 min"). Business/Uni auto-show met when minutes reach the minimum, and also allow a manual tick. Body & Health: Calories toggle and a gym stepper "n of 4 this week". Socializing: stepper "n of 3 this week".
 - **Day status line** at the top of the Goals group: "Won", "Partial" or nothing.
-- **Red lines:** none ship in the code (public repo). First launch shows "Add your red lines" linking to Settings. Each line has a **Held | Slipped** control; a slip shows exactly `Costs one day, not the month.` once under the list.
+- **Red lines:** none ship in the code (public repo). First launch shows "Add your red lines" linking to Settings. Each plain line has a **Held | Slipped** control; a slip shows exactly `Costs one day, not the month.` once under the list.
+- **Measured red lines** (added 2026-10-09, owner request): a line may have an optional **limit** (number ≥ 0) and **unit** (≤ 12 characters, e.g. min, times, drinks); both set or both absent. Today shows **Log amount** for it, opening a sheet with a decimal field (comma or point) and a prominent **None** button that logs 0. The status is derived, never chosen: `amount ≤ limit` → **Held** (exactly at the limit is held), otherwise **Slipped**, shown as icon + text. A logged entry freezes the line's limit, unit and name at that moment (like `snap` on occurrences), so editing a limit never rewrites history and a deleted line's history keeps its name. Past days stay editable. Data is additive under `lockin.v1`: a plain entry stays `'held' | 'slipped'`; a measured entry is `{amount, limit, unit, name}`.
 
 ### 1.6 Plan (time-block list)
 - Day strip Mon–Sun with previous/next week, and the selected day's blocks. Any date, past or future, can be selected and edited.
@@ -56,12 +57,13 @@ An occurrence's minutes = `actualMin` if a timer or manual log set it (even 0), 
 - **Headline:** "Good days: X of last 30 (target 27)" and 90-day equivalent, with Partial count.
 - **Last 7 days vs. previous 7:** Business min, Uni min, gym sessions, social reps, each with the difference.
 - **This week per goal:** bar vs. target (Business 780 = 5×60+2×240, Uni 1080 = 5×120+2×240, gym 4, social 3), Unsorted minutes on its own line, lifetime totals (hours and counts).
-- **Red lines:** held/slipped counts, last 30 days (counts only lines that still exist).
+- **Red lines:** held/slipped counts, last 30 days (counts only lines that still exist; a measured entry counts by its derived status).
+- **Measured red line cards** (one per existing measured line, below the Red lines section, last 30 days): held, slipped and not-logged days; total and average amount over the limit on slipped days and the worst day; average margin under the limit on held days; used vs. allowed (sums over logged days); average per logged day for the last 7 days vs. the 7 before. A 30-day bar chart with a dashed limit line; over-limit bars differ by **shape and an icon**, not color alone. Empty state: "Log an amount on Today to see this." 
 - **Weigh-in** (optional): kg entries, line chart with dashed target line; the weight target is typed into the app at runtime (never in the repo).
 - **Backup status:** "Last backup: N days ago" (or "Never backed up"), highlighted when > 7 days or never.
 
 ### 1.8 Settings
-Goals (rename; weekday/weekend minimums; weekly targets; daily check labels; color is fixed), Red Lines (add/rename/delete; deleting hides a line from summaries, stored history is kept), Weight target, **Reminders** (setup instructions, see 1.9), Data (Export / Import / last backup), app version text.
+Goals (rename; weekday/weekend minimums; weekly targets; daily check labels; color is fixed), Red Lines (add/rename/delete; optional limit + unit with chips **min, times, drinks** or free text; no commitment friction, red lines are not goals; deleting hides a line from summaries, stored history is kept), Weight target, **Reminders** (setup instructions, see 1.9), Data (Export / Import / last backup), app version text.
 
 ### 1.9 Reminders (iOS Shortcuts, no code in the app)
 A web app on iPhone cannot schedule its own notifications. Reminders are three **iOS Shortcuts personal automations** (Shortcuts › Automation › New › Time of Day › Daily › *Run Immediately* › action *Show Notification*). Settings › Reminders shows these steps and the texts with a Copy button each:
@@ -226,3 +228,4 @@ RED LINES
 - **Blocks group on Today:** same row component as Plan (`src/views/blockRow.js`).
 - **Backup status line** uses `--text-2`; turns `--red` text plus the words "Back up now" when overdue (> 7 days or never).
 - **Reminders sheet:** numbered steps as plain text, three text rows each with a **Copy** button (44 pt).
+- **Measured red lines:** Held = check icon + "Held"; Slipped = cross icon + "Slipped" in `--red`. Progress bar chart: held bars are flat-topped in `--text-3`; slipped bars are pointed (a different shape) in `--red` with a cross icon above; the limit is a dashed line; a logged 0 shows as a short baseline mark so it differs from "not logged". No new color tokens.

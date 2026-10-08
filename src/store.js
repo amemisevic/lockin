@@ -39,6 +39,12 @@ const blockOk = b => isObj(b) && isStr(b.id) && !b.id.includes(':') && isStr(b.t
   && isObj(b.repeat) && isStr(b.repeat.type) && Array.isArray(b.repeat.days)
   && (b.until === null || isDate(b.until)) && Array.isArray(b.skip);
 
+// Red lines may be measured: limit (>= 0) and unit (1-12 chars), both or neither.
+const lineOk = r => isObj(r) && isStr(r.id) && isStr(r.name) && ((r.limit === undefined && r.unit === undefined)
+  || (isNum(r.limit) && r.limit >= 0 && isStr(r.unit) && r.unit.length >= 1 && r.unit.length <= 12));
+const entryOk = e => e === 'held' || e === 'slipped' || (isObj(e) && isNum(e.amount) && e.amount >= 0
+  && isNum(e.limit) && e.limit >= 0 && isStr(e.unit) && isStr(e.name));
+
 export function validateState(obj) {
   if (!isObj(obj)) return 'This is not a Lock In backup.';
   if (obj.v !== 1) return 'Unsupported version. Expected v1.';
@@ -47,7 +53,8 @@ export function validateState(obj) {
   if (obj.weights !== undefined && !Array.isArray(obj.weights)) return "The backup's weigh-ins are damaged.";
   if (obj.goals.map(g => g?.id).join() !== 'biz,uni,body,social' || !obj.goals.every(goalOk))
     return "The backup's goals are damaged.";
-  if (!obj.redLines.every(r => isObj(r) && isStr(r.id) && isStr(r.name))) return "The backup's red lines are damaged.";
+  if (!obj.redLines.every(lineOk)) return "The backup's red lines are damaged.";
+  if (!Object.values(obj.red).every(day => isObj(day) && Object.values(day).every(entryOk))) return "The backup's red-line log is damaged.";
   if (!obj.blocks.every(blockOk)) return "The backup's blocks are damaged.";
   if (obj.timer != null && !(isObj(obj.timer) && isStr(obj.timer.occId) && isNum(obj.timer.startedAt)))
     return "The backup's timer is damaged.";

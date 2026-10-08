@@ -1,0 +1,127 @@
+{
+  "v": 1,
+  "goals": [
+    {
+      "id": "biz",
+      "name": "Business",
+      "icon": "briefcase",
+      "minutes": {
+        "weekday": 60,
+        "weekend": 240
+      },
+      "weeklyCount": null,
+      "checks": [],
+      "committedUntil": "2026-10-31"
+    },
+    {
+      "id": "uni",
+      "name": "Uni",
+      "icon": "book",
+      "minutes": {
+        "weekday": 120,
+        "weekend": 240
+      },
+      "weeklyCount": null,
+      "checks": [],
+      "committedUntil": "2026-10-31"
+    },
+    {
+      "id": "body",
+      "name": "Body & Health",
+      "icon": "heart",
+      "minutes": null,
+      "weeklyCount": {
+        "label": "Gym sessions",
+        "target": 4
+      },
+      "checks": [
+        {
+          "id": "cal",
+          "label": "Calories on target"
+        }
+      ],
+      "committedUntil": "2026-10-31"
+    },
+    {
+      "id": "social",
+      "name": "Socializing",
+      "icon": "people",
+      "minutes": null,
+      "weeklyCount": {
+        "label": "Social reps",
+        "target": 3
+      },
+      "checks": [],
+      "committedUntil": "2026-10-31"
+    }
+  ],
+  "redLines": [
+    {
+      "id": "r1",
+      "name": "Example line"
+    },
+    {
+      "id": "r2",
+      "name": "Another line"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "b1",
+      "title": "Example block",
+      "desc": "",
+      "date": "2026-10-05",
+      "start": "09:00",
+      "end": "10:00",
+      "tag": "biz",
+      "repeat": {
+        "type": "weekdays",
+        "days": []
+      },
+      "until": null,
+      "skip": []
+    }
+  ],
+  "occ": {
+    "b1:2026-10-06": {
+      "done": true,
+      "snap": {
+        "title": "Example block",
+        "start": "09:00",
+        "end": "10:00",
+        "tag": "biz",
+        "plannedMin": 60
+      },
+      "actualMin": 55
+    }
+  },
+  "checks": {
+    "2026-10-06": {
+      "cal": true
+    }
+  },
+  "manualMet": {},
+  "counts": {
+    "2026-10-06": {
+      "body": 1
+    }
+  },
+  "red": {
+    "2026-10-06": {
+      "r1": "held",
+      "r2": "slipped"
+    },
+    "2026-10-07": {
+      "r1": "slipped"
+    }
+  },
+  "weights": [
+    {
+      "date": "2026-10-06",
+      "kg": 72.5
+    }
+  ],
+  "targetWeightKg": 70,
+  "timer": null,
+  "lastBackup": "2026-10-08"
+}

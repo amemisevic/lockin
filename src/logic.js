@@ -205,11 +205,14 @@ export function windowTotals(state, endDate, n) {
   return t;
 }
 
+// A plain entry is 'held' | 'slipped'; a measured one {amount, limit, ...} is held when amount <= its frozen limit.
+export const redStatus = e => (typeof e === 'string' ? e : e.amount <= e.limit ? 'held' : 'slipped');
+
 export function redLineSummary(state, endDate, n) {
   const r = { held: 0, slipped: 0 };
   for (let i = 0; i < n; i++) {
     const day = state.red[addDays(endDate, -i)] ?? {};
-    for (const line of state.redLines) if (day[line.id]) r[day[line.id]]++;
+    for (const line of state.redLines) if (day[line.id]) r[redStatus(day[line.id])]++;
   }
   return r;
 }
