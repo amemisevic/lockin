@@ -18,6 +18,7 @@ export const icons = {
   tray: svg('<path d="M3 13.5h5l1.5 2.5h5l1.5-2.5h5M5.5 5h13l2.5 8.5V19H3v-5.5Z"/>'),
   // Controls
   plus: svg('<path d="M12 5v14M5 12h14"/>'),
+  minus: svg('<path d="M5 12h14"/>'),
   ellipsis: svg('<circle cx="5.5" cy="12" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="18.5" cy="12" r="1.75"/>', true),
   check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
   chevronLeft: svg('<path d="M15 5l-7 7 7 7"/>'),
