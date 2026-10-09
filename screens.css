@@ -156,6 +156,18 @@
 .reminder { align-items: flex-start; }
 .reminder-text { margin: 2px 0 0; user-select: text; -webkit-user-select: text; }
 .version { margin: 24px var(--pad) 0; text-align: center; }
+/* Iron Settings (step 4a): logo tile + wordmark plate, the only place the logo appears (spec §3.1). */
+.brand { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px var(--pad); }
+.brand-logo { flex: none; width: 64px; height: 64px; border-radius: 15px; box-shadow: 0 0 0 1px #3A3940; }
+.wordmark { /* Cinzel caps, wide tracking; 22 pt default, capped so "LOCK IN" fits the plate like .large-title */
+  margin: 0; font: 600 calc(1em + 5px)/1.2 var(--caps); font-size: min(calc(1em + 5px), calc((100vw - var(--side-l) - var(--side-r) - 2 * var(--pad)) / 6));
+  letter-spacing: .22em; text-transform: uppercase; color: var(--accent); text-shadow: var(--engrave);
+}
+#add-red-line { margin-left: -12px; } /* the + lines up with row text; hit area stays 44 pt */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .wordmark { text-shadow: none; }
+  .brand-logo { box-shadow: 0 0 0 1px var(--outline); }
+}
 
 /* ---- Measured red lines */
 .red-status { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; color: var(--text); vertical-align: -4px; }

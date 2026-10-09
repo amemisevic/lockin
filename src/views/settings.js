@@ -42,6 +42,8 @@ export function renderSettings(app) {
   const fileInput = h('input', { type: 'file', accept: 'application/json,.json', hidden: true, onChange: e => importFile(app, e.target) });
   return h('section', null,
     h('h1', { class: 'large-title' }, 'Settings'),
+    // The only place the logo appears (spec §3.1); decorative, the wordmark beside it is the text.
+    h('div', { class: 'group brand' }, h('img', { class: 'brand-logo', src: 'icons/icon-192.png', alt: '', width: '64', height: '64' }), h('p', { class: 'wordmark' }, 'Lock In')),
 
     header('Goals'),
     h('div', { class: 'group' }, s.goals.map(g => navRow(`goal-${g.id}`,
@@ -58,7 +60,7 @@ export function renderSettings(app) {
             onSelect: () => app.set(st => ({ ...st, redLines: st.redLines.filter(x => x.id !== l.id) })) }],
             { message: 'Its past marks stay saved but no longer count in Progress.' }) },
         ]) }, icon('ellipsis')))),
-      h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn btn-text', id: 'add-red-line', onClick: () => openRedLineSheet(app) }, 'Add Red Line'))),
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn btn-text', id: 'add-red-line', onClick: () => openRedLineSheet(app) }, icon('plus'), 'Add Red Line'))),
 
     header('Weight'),
     h('div', { class: 'group' }, navRow('weight-target', h('span', { class: 'row-main' }, 'Weight target'),
