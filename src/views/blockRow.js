@@ -38,7 +38,7 @@ export function blockRow(app, occ, { missed, canLog = false }) {
       h('p', { class: 'subhead block-meta' }, h('span', { class: 'tag-icon' }, icon(tagIcon)), `${tagName(app.state, occ.tag)} · ${minutes}`),
       status,
       // On its own line under the title: beside it, the title column is too narrow at 375 px.
-      canLog && h('button', { type: 'button', class: 'btn btn-text log-time', id: `log-time-${domId(occ)}`, 'aria-label': `Log time: ${occ.title}`,
+      canLog && !occ.movedTo && h('button', { type: 'button', class: 'btn btn-text log-time', id: `log-time-${domId(occ)}`, 'aria-label': `Log time: ${occ.title}`,
         onClick: () => openLogTime(app, occ) }, icon('stopwatch'), 'Log time')),
     more);
 }

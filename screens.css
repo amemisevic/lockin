@@ -68,7 +68,7 @@
 .done-toggle[aria-disabled="true"] { cursor: default; }
 @media (max-width: 320px) { /* ~300% zoom: restack instead of squeezing controls below 44 pt */
   .goal > .sub-row { padding-left: 0; } .goal-bar { margin-left: 0; }
-  .red-row .seg { flex-basis: 100%; grid-auto-flow: row; border-radius: 22px; }
+  .red-row .seg { flex-basis: 100%; }
   .day-strip { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
 }
 

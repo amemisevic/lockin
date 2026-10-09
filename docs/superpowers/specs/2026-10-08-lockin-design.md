@@ -158,7 +158,7 @@ Text styles (Large default sizes from `typography.md › iOS Dynamic Type sizes`
 | Footnote | 13 / 18 | Regular, `--text-2` | section headers, footers |
 | Caption 2 | 11 / 13 | Medium | tab labels (minimum size) |
 
-Dynamic Type on web: use `font: -apple-system-body` (and `-apple-system-headline`, `-subheadline`, `-footnote`, `-caption2`; title styles only if `CSS.supports('font','-apple-system-title1')`), with the fixed pt values above as fallbacks. Verify on the device which keywords resolve. At accessibility sizes, rows restack vertically instead of truncating (`typography.md › Supporting Dynamic Type`).
+Dynamic Type on web: use `font: -apple-system-body` (and `-apple-system-headline`, `-subheadline`, `-footnote`, `-caption2`; title styles only if `CSS.supports('font','-apple-system-title1')`), with the fixed pt values above as fallbacks. Verify on the device which keywords resolve. At accessibility sizes, rows restack vertically instead of truncating (`typography.md › Supporting Dynamic Type`). Large Title is `calc(1em + 17px)` of Body (34 pt at the default size, 70 pt at AX5; `2em` gave 106 pt and ran off screen, Task 11).
 
 ### 3.5 Layout
 
@@ -169,16 +169,16 @@ Dynamic Type on web: use `font: -apple-system-body` (and `-apple-system-headline
 
 ### 3.6 Components
 
-- **Tab bar** (Today, Plan, Progress, Settings): single-word labels, filled icons, always visible, none disabled (`tab-bars.md › Best practices`). **The only glass element** in the app: `backdrop-filter: blur(24px) saturate(1.4)`, ~70% translucent fill, 1 px translucent border, floating capsule 16 pt from the sides. Fallback to opaque `--surface` under `prefers-reduced-transparency: reduce` and `prefers-contrast: more` (support varies by browser; check on the device). No glass in content (`liquid-glass.md › Review checklist`).
+- **Tab bar** (Today, Plan, Progress, Settings): single-word labels, filled icons, always visible, none disabled (`tab-bars.md › Best practices`). **The only glass element** in the app: `backdrop-filter: blur(24px) saturate(1.4)`, ~70% translucent fill, 1 px translucent border, floating capsule 16 pt from the sides. When the labels do not fit in one row (large text or zoom), the tabs wrap to a second row inside the bar instead of leaving the screen (Task 11). Fallback to opaque `--surface` under `prefers-reduced-transparency: reduce` and `prefers-contrast: more` (support varies by browser; check on the device). No glass in content (`liquid-glass.md › Review checklist`).
 - **Icons:** inline SVG, 24 px, stroke/weight matched to text, `aria-hidden` when paired with text, `aria-label` when alone. Do not copy SF Symbols into the web app (licensed for Apple-platform use).
 - **Now card:** goal-tinted surface, goal icon + goal name label, block title, 2-line description, time range, minutes left in Title 1, thin progress bar (`role="progressbar"` + text), one primary button (capsule, `--accent` fill). Boldness is spent here only.
 - **Goal row:** 32 pt tinted badge (icon), name, progress text ("45 / 60 min"), 44×44 check button (`aria-pressed`). Body & Health expands to sub-rows (Calories, Gym − n +). A thin progress bar sits under each goal row.
-- **Red line row:** name + two-segment control **Held | Slipped** (`role="radiogroup"`, equal widths, text only, `segmented-controls.md › Content`). Unmarked = neither selected.
+- **Red line row:** name + two-segment control **Held | Slipped** (`role="radiogroup"`, equal widths, text only, `segmented-controls.md › Content`). Segments stack when their labels do not fit side by side (large text), never clip (Task 11). Unmarked = neither selected.
 - **Chip** (duration, tag, weekday): ≥ 44 pt tall, capsule, `aria-pressed`, selected = filled + checkmark.
 - **Switch** ("Custom end time"): native `<input type="checkbox" switch>` (Safari 17.4+), switch only inside a list row (`toggles.md › Mobile`).
 - **Date / time / repeat:** native `<input type="date">`, `<input type="time">`, `<select>` (iOS shows system pickers; `entering-data.md › Best practices`: offer choices over typing).
 - **Slider:** native `<input type="range">`, min on the leading side, shows the live value as text next to the chips (`sliders.md › Best practices`).
-- **Sheet:** `<dialog>` presented bottom-up, large detent, visible grabber, **Cancel** (leading) + one trailing action (Add / Done / Move); never all of Cancel/Done/Back. Swipe down dismisses; if the form has changes, an action sheet asks "Discard Changes" / "Keep Editing" (`sheets.md › Best practices, Mobile`). A visible Cancel always exists as the non-gesture alternative.
+- **Sheet:** `<dialog>` presented bottom-up, large detent, visible grabber, **Cancel** (leading) + one trailing action (Add / Done / Move); never all of Cancel/Done/Back. Swipe down dismisses; if the form has changes, an action sheet asks "Discard Changes" / "Keep Editing" (`sheets.md › Best practices, Mobile`). A visible Cancel always exists as the non-gesture alternative. At large text the title column gives way (wraps) so Cancel and the action stay on screen (Task 11).
 - **Row menu:** 44 pt "…" button opens an action sheet (Move, Delete, Cancel). No swipe-only actions (`accessibility.md › Offer alternatives to gestures`).
 
 ### 3.7 Wireframes (440 pt wide)

@@ -13,5 +13,6 @@ export function parseDuration(hours, minutes) {
 export const canSave = (min, mode) => min !== null && (min > 0 || mode === 'replace');
 
 // Marks the block done like any log; a running timer is left alone (Finish adds its elapsed minutes).
-export const logTime = (state, occ, min, mode) =>
+// A moved original counts as neither missed nor done (spec §1.6), so it takes no log.
+export const logTime = (state, occ, min, mode) => occ.movedTo ? state :
   completeOcc(state, occ, mode === 'add' ? (occ.actualMin ?? 0) + min : min);

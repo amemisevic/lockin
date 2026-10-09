@@ -71,7 +71,8 @@ export function renderSettings(app) {
     header('Data'),
     h('div', { class: 'group' },
       h('div', { class: 'row' }, h('p', { class: `row-main${overdue ? ' overdue' : ' subhead'}` },
-        days === null ? 'Never backed up' : days === 0 ? 'Last backup: today' : `Last backup: ${days} ${days === 1 ? 'day' : 'days'} ago`)),
+        days === null ? 'Never backed up' : days === 0 ? 'Last backup: today' : `Last backup: ${days} ${days === 1 ? 'day' : 'days'} ago`,
+        overdue && '. Back up now.')), // words, not only red (spec §3.10)
       h('button', { type: 'button', class: 'row row-btn action', id: 'export', onClick: () => exportBackup(app) }, 'Export Backup'),
       h('button', { type: 'button', class: 'row row-btn action', id: 'import', onClick: () => fileInput.click() }, 'Import Backup'),
       h('button', { type: 'button', class: 'row row-btn action destructive', id: 'erase', onClick: () => openActionSheet([{ label: 'Erase All Data', destructive: true,

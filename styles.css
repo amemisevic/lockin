@@ -70,7 +70,8 @@ button:disabled { opacity: .4; cursor: default; }
 svg { flex: none; width: 24px; height: 24px; }
 
 /* ---- Text styles (§3.4). Title sizes are em of Body so they follow Dynamic Type. */
-.large-title { font: 700 2em/1.2 var(--font); margin: 12px 0 8px; letter-spacing: .01em; }
+/* Body + 17: 34 pt at the default size, 70 pt at AX5 (2em would be 106 pt and run off screen). */
+.large-title { font: 700 calc(1em + 17px)/1.2 var(--font); margin: 12px 0 8px; letter-spacing: .01em; overflow-wrap: anywhere; }
 .title1 { font: 700 1.647em/1.214 var(--font); }
 .title3 { font: 600 1.176em/1.25 var(--font); }
 @supports (font: -apple-system-title1) { .title1 { font: -apple-system-title1; font-weight: 700; } }
@@ -139,23 +140,23 @@ body::after { bottom: 0; height: calc(env(safe-area-inset-bottom) + 96px); backg
 .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .chip[aria-pressed="true"] .chip-check { display: inline; }
 
-/* ---- Segmented control (Held | Slipped): equal widths, text only */
-.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--outline); border-radius: 999px; overflow: hidden; }
-.seg > button { min-height: 44px; padding: 0 12px; }
+/* ---- Segmented control (Held | Slipped): equal widths, text only; stacks instead of clipping at large text */
+.seg { display: flex; flex-wrap: wrap; min-width: min-content; border: 1px solid var(--outline); border-radius: 22px; overflow: hidden; }
+.seg > button { flex: 1 1 0; min-height: 44px; padding: 0 12px; }
 .seg > [aria-checked="true"] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
 
 /* ---- Tab bar: the only glass element (§3.6) */
 .tabbar {
   position: fixed; z-index: 10; margin: 0 auto; max-width: 640px;
   left: var(--side-l); right: var(--side-r); bottom: max(12px, env(safe-area-inset-bottom));
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 4px;
-  border: 1px solid var(--sep); border-radius: 999px;
+  display: flex; flex-wrap: wrap; gap: 2px; padding: 4px; /* wraps to a second row at large text or zoom instead of cutting a tab */
+  border: 1px solid var(--sep); border-radius: 30px;
   background: color-mix(in srgb, var(--surface) 70%, transparent);
   -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4);
   box-shadow: 0 8px 24px rgba(0,0,0,.12);
 }
 .tab {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  flex: 1 1 0; min-width: min-content; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   min-height: 52px; border-radius: 999px; color: var(--text-2);
 }
 .tab[aria-current="page"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
@@ -169,8 +170,9 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
   background: var(--bg); border-radius: var(--radius) var(--radius) 0 0;
   animation: sheet-in 320ms cubic-bezier(.2,.8,.2,1); transition: transform 320ms cubic-bezier(.2,.8,.2,1);
 }
-.sheet-header { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 4px 6px; touch-action: none; }
-.sheet-header h2 { margin: 0; text-align: center; }
+/* The title column gives way at large text so Cancel and the action never leave the screen. */
+.sheet-header { position: relative; display: grid; grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr); align-items: center; padding: 14px 4px 6px; touch-action: none; }
+.sheet-header h2 { margin: 0; text-align: center; overflow-wrap: anywhere; }
 .sheet-header > button:first-of-type { justify-self: start; }
 .sheet-action { justify-self: end; font-weight: 600; }
 .grabber { position: absolute; top: 6px; left: calc(50% - 18px); width: 36px; height: 5px; border-radius: 3px; background: var(--outline); }

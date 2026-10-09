@@ -3,8 +3,8 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.12** (`src/version.js` = `sw.js`). Last code commit: "feat: offline service worker" (Task 10).
-- **86 tests, 86 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland`.
+- Version **1.0.13** (`src/version.js` = `sw.js`). Last code commit: "fix: HIG audit and device test findings" (Task 11).
+- **87 tests, 87 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland` (set `TZ` from PowerShell: Git Bash on Windows does not pass it to Node).
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
 
 ## 2. Done
@@ -19,7 +19,8 @@ Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpower
 | Measured red lines (data/logic/tests · UI) | `054c121` · `d5b8ecc` |
 | Clear a measured red-line log | `443182d` |
 | Log time on Today blocks (replaces Log Minutes) | `126b050` |
-| Task 10 offline service worker | feat: offline service worker |
+| Task 10 offline service worker | `03a31ac` |
+| Task 11 HIG audit + code review fixes | fix: HIG audit and device test findings |
 
 ## 3. In progress
 Nothing.
@@ -27,7 +28,7 @@ Nothing.
 ## 4. Next, in order
 - [x] **a. Clear a measured red-line log** — done (owner approved 2026-10-09; spec §3.10).
 - [x] **b. Task 10** done (1.0.12). `tests/sw.test.js` keeps `ASSETS` equal to the shipped files: add a file → add it to `ASSETS`. ⛔ Checkpoint: owner tests airplane mode on the iPhone.
-- [ ] **c. Task 11** HIG audit + code review (backlog item: at ~300 % browser zoom the 4-tab bar clips "Settings").
+- [x] **c. Task 11** done (1.0.13): 6 High fixed, Medium/Low listed in §8 and `docs/backlog.md`. ⛔ Checkpoint: owner runs the iPhone checks (plan Task 11 Step 2).
 - [ ] **d. 14-day trial** (plan Checkpoint D).
 
 ## 5. Decisions a fresh session could get wrong
@@ -41,7 +42,7 @@ Nothing.
 - **Tracked time is whole minutes** (`actualMin`), never seconds (owner). **Finish adds** elapsed minutes to the stored total (owner). Log Minutes is gone; Log time on Today rows replaces it.
 
 ## 6. Open phone checks (untested on the iPhone)
-Owner confirmed on 2026-10-09 that all earlier checks pass (zoom lock, timer seconds, measured red lines incl. Clear, Log time, Reduce Transparency, Increase Contrast, landscape). Open: Task 10 offline (two close/reopen cycles, Settings shows 1.0.12, airplane mode opens all four tabs with data intact).
+Owner confirmed on 2026-10-09 that all earlier checks pass (zoom lock, timer seconds, measured red lines incl. Clear, Log time, Reduce Transparency, Increase Contrast, landscape). Task 10 offline: open (two close/reopen cycles, airplane mode opens all four tabs with data intact). Task 11: open (plan Step 2: largest Larger Text, Bold Text, Reduce Motion, Reduce Transparency, Increase Contrast, light/dark, portrait/landscape, VoiceOver through Today and the block sheet, sheet swipe-dismiss and Cancel, tab bar always visible; Settings shows 1.0.13).
 
 ## 7. Gotchas
 - **Release rule:** any change to a shipped file bumps `VERSION` (`src/version.js`, and `sw.js` once it exists). Two separate changes = two bumps.
@@ -50,3 +51,24 @@ Owner confirmed on 2026-10-09 that all earlier checks pass (zoom lock, timer sec
 - **Git author:** set in this repo's local config only (GitHub noreply address). Never commit with a personal email. Stage explicit paths, never `git add -A`.
 - **Gitignored:** `PROMPT.md`, `START-HERE.md`, root `*.png` screenshots, and `.superpowers/` (the work ledger is `.superpowers/sdd/2026-10-08-lockin-app/progress.md`, local only).
 - Local preview: `npx serve -l 5173`.
+
+## 8. Task 11 findings listed, not fixed (owner decides; same list in `docs/backlog.md`)
+Fixed in 1.0.13 (High): tab bar off screen at large text/zoom (wraps to a 2nd row) · Held|Slipped and Add|Replace clipped at large text (stack) · Large Title off screen at AX5 (`calc(1em + 17px)`) · sheet Cancel/action off screen at AX5 (title column gives way) · Log time on a moved original counted minutes on the old day · Settings overdue backup was red only (adds "Back up now.").
+
+| Sev | Where | Finding |
+|---|---|---|
+| Medium | all icons | Icons stay 24 px at AX5; HIG asks meaningful icons to grow with text (`typography.md › Supporting Dynamic Type`). |
+| Medium | `timeLog.js` | Add on a block ticked done without logged minutes starts from 0 (ledgered owner ruling); a ticked 60-min block + Add 30 = 30. |
+| Low | `#view` padding | At AX5 the last row sits 6 px under the 2-row tab bar at max scroll (Copy Day bottom 790, bar top 784). |
+| Low | sheet headers | At AX5 titles wrap in a ~100–130 px column and break mid-word ("Log Tim/e"). |
+| Low | tab bar glass | Theoretical worst case (no blur, solid black directly behind, light) selected label 4.03:1; blur and the scroll-edge fade raise it; opaque fallback 4.71 light / 5.06 dark. |
+| Low | 300 % zoom only | Zoom is locked on the phone: long words clip in block meta, Settings goal rows, Progress "Socializing"; Log Amount "Clear" off screen; large title breaks mid-word. AX5 emulation shows none of these. |
+| Low | `index.html:19` | Banner says "…Export a backup in Settings." vs spec §2 "Couldn't save. Export a backup." |
+| Low | `blockSheet.js:60` | Weekday chips have no checkmark (spec §3.6 chip rule); selection = fill + `aria-pressed`. |
+| Low | `blockSheet.js:49` | `aria-live` on the duration text announces every slider step (spec §3.9 limits live regions to the Now card). |
+| Low | `logic.js:122` | Unticking a block drops its logged `actualMin`. |
+| Low | `icons.js:36` / `store.js:34` | An imported goal with an unknown icon name renders the text "undefined". |
+| Low | `today.js:139` | Daily-check DOM id from the label with non-word chars stripped; near-identical labels collide (focus restore only). |
+| Low | `tests/export-1.0.7.json` | Holds weight 72.5 / target 70: confirm these are made up (no personal data rule). |
+| Low | history | `4fb8be5` changed `src/sheet.js` without a VERSION bump (HEAD consistent). |
+| Low | smells | Duplicated: backup text (`settings.js`/`progress.js`), weight parse, progress-bar builder, tag lookup, segmented control, en-GB formatters, form-row helper; `finishTimer` repeats `logTime`'s add rule; `occId.slice(-10)` bypasses `occDate`; measured-entry `typeof` check in 3 files; `whole` defined twice; views import helpers from other views; lines > 200 chars. |
