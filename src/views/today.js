@@ -56,7 +56,7 @@ export function renderToday(app) {
     isToday && nowCard(app, occs, nn, today),
     (occs.length > 0 || !isToday) && [
       h('h2', { class: 'section-header footnote' }, 'Blocks'),
-      h('div', { class: 'group' }, occs.length
+      h('div', { class: 'group rail' }, occs.length
         ? occs.map(o => blockRow(app, o, { missed: missed.has(o.occId), canLog: true }))
         : h('div', { class: 'row' }, h('p', { class: 'row-main subhead' }, 'Nothing was planned.')))],
     goals(app, date),
@@ -101,7 +101,7 @@ function nowCard(app, occs, nn, today) {
       h('p', { class: 'title3' }, o.title),
       o.desc && h('p', { class: 'subhead now-desc' }, o.desc),
       h('p', { class: 'subhead' }, `${o.start}–${o.end}`),
-      h('p', { class: 'title1' }, `${nn.minsLeft} min left`),
+      h('p', { class: 'now-hero' }, h('span', { class: 'hero-num' }, String(nn.minsLeft)), ' min left'),
       h('div', { class: 'bar', role: 'progressbar', 'aria-label': 'Block progress', 'aria-valuemin': '0', 'aria-valuemax': String(o.plannedMin),
         'aria-valuenow': String(spent), 'aria-valuetext': `${nn.minsLeft} min left` }, h('span', { style: `--p:${(100 * spent) / o.plannedMin}%` })),
       h('div', { class: 'card-actions' }, primary('Start', () => startTimer(app, o.occId), 'now-action')));
@@ -190,5 +190,5 @@ function redLines(app, date) {
     h('div', { class: 'group' }, s.redLines.map(l => l.limit !== undefined ? measuredRow(app, l, date) : h('div', { class: 'row red-row' }, h('p', { class: 'row-main' }, l.name),
       h('div', { class: 'seg', role: 'radiogroup', 'aria-label': l.name }, [['held', 'Held'], ['slipped', 'Slipped']].map(([v, text]) =>
         h('button', { type: 'button', role: 'radio', class: `seg-${v}`, id: `red-${l.id}-${v}`, 'aria-checked': String(day[l.id] === v), onClick: () => mark(l.id, v) }, text)))))),
-    s.redLines.some(l => day[l.id] && redStatus(day[l.id]) === 'slipped') && h('p', { class: 'footnote section-footer' }, SLIP)];
+    s.redLines.some(l => day[l.id] && redStatus(day[l.id]) === 'slipped') && h('p', { class: 'footnote section-footer slip' }, icon('xmark'), SLIP)];
 }
