@@ -10,7 +10,9 @@ from PIL import Image, ImageChops, ImageFilter
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / 'design-reference' / 'lockin-logo-gray.png'
 OUT = ROOT / 'icons'
-FULL = [1024, 512, 192, 180, 167, 152, 120, 60, 48]
+import sys
+# 1024 is not shipped (1 MB in the offline cache); pass --1024 to generate it on demand.
+FULL = ([1024] if '--1024' in sys.argv else []) + [512, 192, 180, 167, 152, 120, 60, 48]
 FAVICON = [32, 16]
 FIELD = (0x25, 0x25, 0x28)  # the logo's own gray field
 GOLD = (0xF4, 0xB6, 0x53)   # the logo's bright gold

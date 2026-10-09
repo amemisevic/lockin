@@ -1,5 +1,5 @@
 // Offline cache (plan Task 10). Any change to a shipped file bumps VERSION here and in src/version.js.
-const VERSION = '1.0.17';
+const VERSION = '1.0.18';
 const CACHE = `lockin-${VERSION}`;
 const ASSETS = [
   './',
@@ -33,7 +33,6 @@ const ASSETS = [
   'src/views/today.js',
   'icons/favicon-16.png',
   'icons/favicon-32.png',
-  'icons/icon-1024.png',
   'icons/icon-120.png',
   'icons/icon-152.png',
   'icons/icon-167.png',

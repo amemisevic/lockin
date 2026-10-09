@@ -3,7 +3,7 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.17** (`src/version.js` = `sw.js`). Last code commit: "feat: Spartan helmet app icons" (icon part of redesign step 5, done early at the owner's request). Before it: "style: dark only" (1.0.15), "copy: sentence case section names" (1.0.16).
+- Version **1.0.18** (icon-1024 dropped) (`src/version.js` = `sw.js`). Last code commit: "feat: Spartan helmet app icons" (icon part of redesign step 5, done early at the owner's request). Before it: "style: dark only" (1.0.15), "copy: sentence case section names" (1.0.16).
 - **Section names and headers are sentence case** ("Red lines", "Daily checks", "Limit (optional)"); buttons, tabs and sheet titles stay Title-style (spec §3.8).
 - **87 tests, 87 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland` (set `TZ` from PowerShell: Git Bash on Windows does not pass it to Node).
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
