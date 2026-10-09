@@ -17,7 +17,7 @@ Build nothing from this list without the owner's go-ahead. Critical/High were fi
 | Low | `logic.js:122` | Unticking a block drops its logged `actualMin`. |
 | Low | `icons.js:36` / `store.js:34` | An imported goal with an unknown icon name renders the text "undefined". |
 | Low | `today.js:139` | Daily-check DOM id from the label with non-word chars stripped; near-identical labels collide (focus restore only). |
-| Low | `tests/export-1.0.7.json` | Holds weight 72.5 / target 70: confirm these are made up (no personal data rule). |
+| Low | `tests/export-1.0.7.json` | Holds weight 72.5 / target 70. **Owner confirmed 2026-10-09: made up. Closed.** |
 | Low | history | `4fb8be5` changed `src/sheet.js` without a VERSION bump (HEAD consistent). |
 | Low | smells | Duplicated: backup text (`settings.js`/`progress.js`), weight parse, progress-bar builder, tag lookup, segmented control, en-GB formatters, form-row helper; `finishTimer` repeats `logTime`'s add rule; `occId.slice(-10)` bypasses `occDate`; measured-entry `typeof` check in 3 files; `whole` defined twice; views import helpers from other views; lines > 200 chars. |
 

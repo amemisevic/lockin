@@ -106,7 +106,6 @@
 }
 
 /* ---- Progress */
-.progress-head { display: grid; gap: 4px; }
 .progress-head p, .row-main p, .row-split p, .row.stack > p { margin: 0; }
 .stat { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
 .delta { display: inline-flex; align-items: center; gap: 2px; }
@@ -116,10 +115,29 @@
 .chart { width: 100%; height: auto; }
 .chart text { fill: var(--text-2); font-size: 11px; }
 .chart .axis { stroke: var(--outline); }
-.chart .target { stroke: var(--text-2); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.chart .target { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 6 4; }
 .chart .logged { fill: none; stroke: var(--g-body); stroke-width: 2.5; stroke-linejoin: round; }
 .chart .logged-dot { fill: var(--g-body); }
 .goal-label { display: inline-flex; align-items: center; gap: 6px; }
+/* Iron Progress (step 3): one hero figure (good days), gold limit/target lines, delta chips (arrow + sign, not color alone). */
+.progress-head { display: grid; gap: 6px; padding: 20px; background: radial-gradient(90% 75% at 100% 100%, rgba(201,145,57,.14), transparent 70%), var(--plate); }
+.hero-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; font-weight: 600; color: var(--text-2); } /* Body, so .hero-num is 64 pt as on Today */
+.hero-label { flex-basis: 100%; font: italic 700 calc(1em + 9px)/1.15 var(--serif-i); color: var(--text); } /* 26 pt, like section names */
+.progress-head .bar { position: relative; height: 8px; border-radius: 4px; margin: 10px 0 6px; overflow: visible; }
+.progress-head .bar > span { background: var(--gold-fill); }
+.progress-head .bar::after { content: ""; position: absolute; left: 90%; top: -5px; bottom: -5px; width: 2px; border-radius: 1px; background: var(--text); } /* target 27 of 30 */
+.delta { padding: 2px 8px 2px 6px; border-radius: 999px; font-weight: 600; }
+.delta.up { color: var(--accent); background: rgba(242,190,92,.12); }
+.delta.down, .delta.flat { color: var(--text-2); background: rgba(255,255,255,.07); }
+.delta.flat { padding-left: 8px; }
+.row:has(> .delta) { flex-wrap: wrap; } /* large text: the chip drops under the text instead of squeezing it to one word per line */
+.row:has(> .delta) .row-main { min-width: min(8em, 100%); }
+.row:has(> .delta) .delta { margin-left: auto; }
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .progress-head { background: var(--surface); }
+  .progress-head .bar > span { background: var(--gold-solid); }
+  .delta { background: none; box-shadow: inset 0 0 0 1px var(--outline); }
+}
 
 /* ---- Settings */
 .row-btn { width: 100%; text-align: left; color: var(--text); }

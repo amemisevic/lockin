@@ -21,6 +21,8 @@ const header = text => h('h2', { class: 'section-header footnote' }, text);
 const row = (main, value, cls = '') => h('div', { class: `row ${cls}` }, h('p', { class: 'row-main' }, main), value != null && h('p', { class: 'subhead stat' }, value));
 const signed = (n, fmt) => n > 0 ? `+${fmt(n)}` : n < 0 ? `−${fmt(-n)}` : '±0';
 const kgText = kg => kg.toFixed(1);
+// Held/Slipped counts with the check and cross icons (spec §3.10); the text is unchanged.
+const heldSlipped = (held, slipped) => [h('span', { class: 'red-status' }, icon('check'), `Held ${held}`), ' · ', h('span', { class: 'red-status slipped' }, icon('xmark'), `Slipped ${slipped}`)];
 
 export function renderProgress(app) {
   const s = app.state, today = app.today();
@@ -33,8 +35,9 @@ export function renderProgress(app) {
 
 function headline(s, today) {
   const t30 = windowTotals(s, today, 30), t90 = windowTotals(s, today, 90);
-  return h('div', { class: 'card now-free progress-head' },
-    h('p', { class: 'title3' }, `Good days: ${t30.won} of last 30`),
+  return h('div', { class: 'card progress-head' },
+    h('p', { class: 'hero-line' }, h('span', { class: 'hero-label' }, 'Good days: '), h('span', { class: 'hero-num' }, String(t30.won)), ' of last 30'),
+    bar('Good days of last 30', t30.won, 30), // the CSS tick at 90% marks the target of 27
     h('p', { class: 'subhead' }, 'Target 27 (90%)'),
     h('p', { class: 'subhead' }, `Last 90 days: ${t90.won} of 90 (target 81)`),
     h('p', { class: 'subhead' }, `Partial: ${t30.partial}`));
@@ -43,13 +46,13 @@ function headline(s, today) {
 function sevenVsSeven(s, today) {
   const last = windowTotals(s, today, 7), prev = windowTotals(s, addDays(today, -7), 7);
   const items = s.goals.flatMap(g => [
-    g.minutes && [g.name, last.minutes[g.id], prev.minutes[g.id], formatDuration],
-    g.weeklyCount && [g.weeklyCount.label, last.counts[g.id], prev.counts[g.id], String]]).filter(Boolean);
-  return [header('Last 7 days vs the 7 before'), h('div', { class: 'group' }, items.map(([name, a, b, fmt]) => {
+    g.minutes && [g.name, last.minutes[g.id], prev.minutes[g.id], formatDuration, g],
+    g.weeklyCount && [g.weeklyCount.label, last.counts[g.id], prev.counts[g.id], String, g]]).filter(Boolean);
+  return [header('Last 7 days vs the 7 before'), h('div', { class: 'group' }, items.map(([name, a, b, fmt, g]) => {
     const d = a - b;
-    return h('div', { class: 'row' },
+    return h('div', { class: `row g-${g.id}` }, h('span', { class: 'badge' }, icon(g.icon)),
       h('div', { class: 'row-main' }, h('p', null, name), h('p', { class: 'subhead' }, `${fmt(a)} · before ${fmt(b)}`)),
-      h('p', { class: 'stat delta' }, d !== 0 && icon(d > 0 ? 'arrowUp' : 'arrowDown'), signed(d, fmt)));
+      h('p', { class: `stat delta ${d > 0 ? 'up' : d < 0 ? 'down' : 'flat'}` }, d !== 0 && icon(d > 0 ? 'arrowUp' : 'arrowDown'), signed(d, fmt)));
   }))];
 }
 
@@ -80,7 +83,7 @@ function allTime(s, today) {
 function redLines(s, today) {
   const r = redLineSummary(s, today, 30);
   return [header('Red lines, last 30 days'), h('div', { class: 'group' },
-    s.redLines.length ? row(`Held ${r.held} · Slipped ${r.slipped}`) : row('No red lines yet.', null, 'subhead'))];
+    s.redLines.length ? row(heldSlipped(r.held, r.slipped)) : row('No red lines yet.', null, 'subhead'))];
 }
 
 // One card per existing measured red line (spec §1.7). Counts by each day's frozen limit.
@@ -90,7 +93,7 @@ function measuredCard(s, line, today) {
   if (!st.days.some(d => d.amount !== null)) return [title, h('div', { class: 'group' }, row('Log an amount on Today to see this.', null, 'red-card-empty'))];
   const avg = n => (n === null ? 'no logs' : `${a(n)} a day`);
   return [title, h('div', { class: 'group' },
-    row(`Held ${st.held} · Slipped ${st.slipped} · Not logged ${st.unlogged}`),
+    row([heldSlipped(st.held, st.slipped), ` · Not logged ${st.unlogged}`]),
     row(`Used ${fmtAmount(st.used)} of ${a(st.allowed)} allowed`),
     st.slipped > 0 && st.worst && row(`Over the limit: ${a(st.totalOver)} in total, ${a(st.avgOver)} per slipped day`),
     st.worst && row(`Worst day: ${short(st.worst.date)}, ${a(st.worst.amount)} (${fmtAmount(st.worst.over)} over)`),

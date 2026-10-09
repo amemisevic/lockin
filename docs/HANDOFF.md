@@ -3,7 +3,7 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.19** (redesign step 2, Today; 1.0.18 dropped icon-1024) (`src/version.js` = `sw.js`). Last code commit: "feat: Spartan helmet app icons" (icon part of redesign step 5, done early at the owner's request). Before it: "style: dark only" (1.0.15), "copy: sentence case section names" (1.0.16).
+- Version **1.0.20** (redesign step 3, Progress; 1.0.19 Today; 1.0.18 dropped icon-1024) (`src/version.js` = `sw.js`). Last code commit: "feat: Spartan helmet app icons" (icon part of redesign step 5, done early at the owner's request). Before it: "style: dark only" (1.0.15), "copy: sentence case section names" (1.0.16).
 - **Section names and headers are sentence case** ("Red lines", "Daily checks", "Limit (optional)"); buttons, tabs and sheet titles stay Title-style (spec §3.8).
 - **87 tests, 87 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland` (set `TZ` from PowerShell: Git Bash on Windows does not pass it to Node).
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
@@ -26,7 +26,7 @@ Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpower
 ## 3. In progress
 **Visual redesign "Iron"** (owner-approved 2026-10-09; spec §3.1, §3.3, §3.4 updated). Visual only, no logic changes, copy unchanged. Five steps, one commit each, each version-bumped, ⛔ owner checks on the iPhone after each:
 1. [x] Tokens, self-hosted fonts (`src/fonts/`, OFL texts beside them), base type, materials, tab bar, sheet chrome, list/menu components (1.0.14).
-2. [x] Today (1.0.19). 3. [ ] Progress (dataviz rules), then Plan. 4. [ ] Settings and every remaining sheet. 5. [x] App icons (1.0.17): `python scripts/make-icons.py` (Pillow, dev-only) writes `icons/` from `design-reference/lockin-logo-gray.png` (never shipped); 32/16 favicons use the gold outline variant. [ ] In-app logo tile + wordmark go with step 4 (Settings).
+2. [x] Today (1.0.19). 3. [x] Progress (1.0.20) [ ] Plan. 4. [ ] Settings and every remaining sheet. 5. [x] App icons (1.0.17): `python scripts/make-icons.py` (Pillow, dev-only) writes `icons/` from `design-reference/lockin-logo-gray.png` (never shipped); 32/16 favicons use the gold outline variant. [ ] In-app logo tile + wordmark go with step 4 (Settings).
 **Dark only (1.0.15, owner decision 2026-10-09):** the light theme is removed for good: one token set after `/* tokens:dark */`, `color-scheme: dark`, no `prefers-color-scheme` anywhere (asserted by `tests/contrast.test.js`), dark PWA chrome (`#0A0A0B`, status bar `black-translucent`). Never re-add light tokens or appearance branches.
 Rules: gold text only via solid `--accent`; gradients only for fills/edges/bars; every change measured (contrast from rendered pixels, 44 pt targets, AX5, 147 px, landscape, dark, Reduce Transparency and Increase Contrast emulated). Shipped files must sit under `src/` or `icons/` (the ASSETS test only scans those). `design-prototypes/` and `design-reference/` are never committed.
 
@@ -74,6 +74,6 @@ Fixed in 1.0.13 (High): tab bar off screen at large text/zoom (wraps to a 2nd ro
 | Low | `logic.js:122` | Unticking a block drops its logged `actualMin`. |
 | Low | `icons.js:36` / `store.js:34` | An imported goal with an unknown icon name renders the text "undefined". |
 | Low | `today.js:139` | Daily-check DOM id from the label with non-word chars stripped; near-identical labels collide (focus restore only). |
-| Low | `tests/export-1.0.7.json` | Holds weight 72.5 / target 70: confirm these are made up (no personal data rule). |
+| Low | `tests/export-1.0.7.json` | Holds weight 72.5 / target 70. **Owner confirmed 2026-10-09: made up. Closed.** |
 | Low | history | `4fb8be5` changed `src/sheet.js` without a VERSION bump (HEAD consistent). |
 | Low | smells | Duplicated: backup text (`settings.js`/`progress.js`), weight parse, progress-bar builder, tag lookup, segmented control, en-GB formatters, form-row helper; `finishTimer` repeats `logTime`'s add rule; `occId.slice(-10)` bypasses `occDate`; measured-entry `typeof` check in 3 files; `whole` defined twice; views import helpers from other views; lines > 200 chars. |
