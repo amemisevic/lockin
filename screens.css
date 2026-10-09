@@ -64,7 +64,7 @@
 .red-row { flex-wrap: wrap; }
 .red-row .row-main { min-width: min(8em, 100%); overflow-wrap: anywhere; }
 .red-row .seg { flex: 0 1 200px; }
-.seg > .seg-slipped[aria-checked="true"] { background: var(--red); }
+.seg > .seg-slipped[aria-checked="true"] { background: var(--red); color: var(--on-accent); box-shadow: none; }
 .done-toggle[aria-disabled="true"] { cursor: default; }
 @media (max-width: 320px) { /* ~300% zoom: restack instead of squeezing controls below 44 pt */
   .goal > .sub-row { padding-left: 0; } .goal-bar { margin-left: 0; }

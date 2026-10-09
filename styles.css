@@ -1,56 +1,93 @@
-/* Lock In: tokens, text styles, components (spec §3). Pixel values are iOS points. */
+/* Lock In: tokens, text styles, materials, components (spec §3). Pixel values are iOS points.
+   Iron direction: blackened armor plates, steel edges, polished gold only where it matters. */
 
 :root {
   color-scheme: light dark;
+  /* Light: marble; deep bronze for text, gold only as fills. Dark: sampled from the logo. */
   /* tokens:light */
-  --bg: #F2F2F7;
+  --bg: #E9E9EC;
   --surface: #FFFFFF;
   --surface-2: #FFFFFF;
-  --text: #000000;
-  --text-2: #5C5C63;
-  --text-3: #6B6B72;
-  --accent: #0062CC;
+  --text: #121114;
+  --text-2: #57534C;
+  --text-3: #67625A;
+  --accent: #835511;
   --on-accent: #FFFFFF;
-  --red: #C4261D;
-  --outline: #767680;
-  --sep: rgba(60,60,67,.29);
-  --g-biz: #0062CC;
-  --g-uni: #5E4DC7;
-  --g-body: #1D7A3A;
-  --g-social: #B25000;
-  --g-unsorted: #6B6B72;
+  --red: #B11F2B;
+  --outline: #7A756C;
+  --sep: rgba(18,17,20,.14);
+  --g-biz: #9A5505;
+  --g-uni: #196EA9;
+  --g-body: #187C49;
+  --g-social: #954A7E;
+  --g-unsorted: #67625A;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     /* tokens:dark */
-    --bg: #000000;
-    --surface: #1C1C1E;
-    --surface-2: #2C2C2E;
-    --text: #FFFFFF;
-    --text-2: #AEAEB4;
-    --text-3: #98989F;
-    --accent: #4DA0FF;
-    --on-accent: #000000;
-    --red: #FF6961;
-    --outline: #8E8E93;
-    --sep: rgba(84,84,88,.6);
-    --g-biz: #4DA0FF;
-    --g-uni: #9A8CFF;
-    --g-body: #4CD27A;
-    --g-social: #FFA94D;
-    --g-unsorted: #98989F;
+    --bg: #0A0A0B;
+    --surface: #161519;
+    --surface-2: #252528;
+    --text: #F3EEE4;
+    --text-2: #B9B3A8;
+    --text-3: #A39D93;
+    --accent: #F2BE5C;
+    --on-accent: #1A1205;
+    --red: #F2606A;
+    --outline: #8A857C;
+    --sep: rgba(185,179,168,.16);
+    --g-biz: #C17A00;
+    --g-uni: #3093DB;
+    --g-body: #2FA465;
+    --g-social: #C367A7;
+    --g-unsorted: #A39D93;
   }
 }
 @media (prefers-contrast: more) {
   :root { --sep: var(--outline); }
 }
 
+/* Materials. Gradients are for fills, edges and bars only; text always uses the solid tokens above. */
 :root {
-  --font: -apple-system, "SF Pro Text", system-ui, sans-serif;
-  --radius: 20px;
+  --sans: "Archivo", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --serif-i: "Cormorant Garamond", Georgia, serif;
+  --caps: "Cinzel", "Times New Roman", serif;
+  --radius: 22px;
   --pad: 16px;
   --side-l: max(var(--pad), env(safe-area-inset-left));
   --side-r: max(var(--pad), env(safe-area-inset-right));
+  --gold-fill: linear-gradient(180deg, #FCE29A 0%, #F2BE5C 42%, #C99139 78%, #B08539 100%);
+  --gold-solid: #F2BE5C;
+  --on-gold: #1A1205;
+  --gold-rim: #9A6A1C;
+  --gold-emboss: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -1px 0 rgba(84,52,21,.35);
+  --plate: linear-gradient(180deg, #FFFFFF, #FBFAF8);
+  --plate-2: var(--plate);
+  --plate-edge: rgba(18,17,20,.09);
+  --emboss: inset 0 1px 0 #FFFFFF;
+  --drop: 0 1px 2px rgba(18,17,20,.06), 0 10px 24px -14px rgba(18,17,20,.28);
+  --track: #E4E2DD;
+  --glass: rgba(255,255,255,.8);
+  --glass-edge: rgba(18,17,20,.1);
+  --engrave: 0 1px 0 #FFFFFF;
+  --atmosphere: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gold-rim: #543415;
+    --plate: linear-gradient(180deg, #1C1B1F, #141317);
+    --plate-2: linear-gradient(180deg, #2A2A2D, #222225);
+    --plate-edge: #2B2A30;
+    --emboss: inset 0 1px 0 rgba(255,236,190,.09), inset 0 -1px 0 rgba(0,0,0,.6);
+    --drop: 0 2px 4px rgba(0,0,0,.4), 0 14px 30px -14px rgba(0,0,0,.9);
+    --track: rgba(255,255,255,.08);
+    --glass: rgba(18,17,21,.84);
+    --glass-edge: rgba(255,255,255,.09);
+    --engrave: 0 1px 0 rgba(0,0,0,.9), 0 -1px 0 rgba(255,236,190,.08);
+    /* fine grain + a warm glow from above; scrolls with the page (no fixed layer, no blend modes) */
+    --atmosphere: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .06 0 0 0 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+      radial-gradient(120% 480px at 50% -120px, #1C1812, transparent);
+  }
 }
 
 /* ---- Base */
@@ -58,8 +95,9 @@
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; background: var(--bg); touch-action: manipulation; }
 body {
-  margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
-  font: 17px/22px var(--font); font: -apple-system-body;
+  margin: 0; min-height: 100vh; background: var(--atmosphere), var(--bg); color: var(--text);
+  font: 17px/22px var(--sans); font: -apple-system-body; font-family: var(--sans); /* system size (Dynamic Type), our face */
+  font-variant-numeric: tabular-nums; /* times, minutes and amounts line up */
   -webkit-tap-highlight-color: transparent; touch-action: manipulation; /* no double-tap zoom (owner's choice, spec §2) */
 }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -70,16 +108,20 @@ button:disabled { opacity: .4; cursor: default; }
 svg { flex: none; width: 24px; height: 24px; }
 
 /* ---- Text styles (§3.4). Title sizes are em of Body so they follow Dynamic Type. */
-/* Body + 17: 34 pt at the default size, 70 pt at AX5 (2em would be 106 pt and run off screen). */
-.large-title { font: 700 calc(1em + 17px)/1.2 var(--font); margin: 12px 0 8px; letter-spacing: .01em; overflow-wrap: anywhere; }
-.title1 { font: 700 1.647em/1.214 var(--font); }
-.title3 { font: 600 1.176em/1.25 var(--font); }
-@supports (font: -apple-system-title1) { .title1 { font: -apple-system-title1; font-weight: 700; } }
-@supports (font: -apple-system-title3) { .title3 { font: -apple-system-title3; font-weight: 600; } }
-.headline { font: 600 17px/22px var(--font); font: -apple-system-headline; }
-.subhead { font: 15px/20px var(--font); font: -apple-system-subheadline; color: var(--text-2); }
-.footnote { font: 13px/18px var(--font); font: -apple-system-footnote; color: var(--text-2); }
-.caption2 { font: 500 11px/13px var(--font); font: -apple-system-caption2; font-weight: 500; }
+/* Screen titles: Roman capitals, wide tracking. Body + 17 (34 pt default), capped so the longest title
+   ("Settings", ~6.4 em wide) always fits the line; wide caps overflow first at AX5 and at 147 px. */
+.large-title {
+  font: 600 calc(1em + 17px)/1.15 var(--caps); font-size: min(calc(1em + 17px), calc((100vw - var(--side-l) - var(--side-r)) / 6.4));
+  margin: 12px 0 10px; letter-spacing: .1em; text-transform: uppercase; overflow-wrap: anywhere; text-shadow: var(--engrave);
+}
+.title1 { font: 700 1.647em/1.214 var(--sans); }
+.title3 { font: 600 1.176em/1.25 var(--sans); }
+@supports (font: -apple-system-title1) { .title1 { font: -apple-system-title1; font-weight: 700; font-family: var(--sans); } }
+@supports (font: -apple-system-title3) { .title3 { font: -apple-system-title3; font-weight: 600; font-family: var(--sans); } }
+.headline { font: 600 17px/22px var(--sans); font: -apple-system-headline; font-family: var(--sans); }
+.subhead { font: 15px/20px var(--sans); font: -apple-system-subheadline; font-family: var(--sans); color: var(--text-2); }
+.footnote { font: 13px/18px var(--sans); font: -apple-system-footnote; font-family: var(--sans); color: var(--text-2); }
+.caption2 { font: 600 11px/13px var(--sans); font: -apple-system-caption2; font-weight: 600; font-family: var(--sans); }
 
 /* ---- Layout (§3.5) */
 #view {
@@ -97,10 +139,14 @@ body::after { bottom: 0; height: calc(env(safe-area-inset-bottom) + 96px); backg
   background: var(--surface); color: var(--red); font-weight: 600; border-bottom: 1px solid var(--outline);
 }
 
-/* ---- Grouped list */
-.section-header { margin: 24px var(--pad) 6px; text-transform: uppercase; }
+/* ---- Grouped list: embossed plates; section names in an italic serif (Body + 9: 26 pt default, 62 pt at AX5;
+   the serif's small x-height needs the extra size to stay above body text) */
+.section-header.footnote { margin: 28px 4px 10px; font: italic 700 calc(1em + 9px)/1.15 var(--serif-i); color: var(--text); }
 .section-footer { margin: 6px var(--pad) 0; }
-.group { background: var(--surface); border-radius: var(--radius); overflow: hidden; }
+.group {
+  background: var(--plate); border: 1px solid var(--plate-edge); border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--emboss), var(--drop);
+}
 .row { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px var(--pad); }
 .row + .row::before { content: ""; position: absolute; top: 0; left: var(--pad); right: 0; border-top: .5px solid var(--sep); }
 .row-main { flex: 1; min-width: 0; }
@@ -116,16 +162,24 @@ body::after { bottom: 0; height: calc(env(safe-area-inset-bottom) + 96px); backg
   color: var(--g); background: color-mix(in srgb, var(--g) 14%, var(--surface));
 }
 .badge svg { width: 20px; height: 20px; }
-.card { background: color-mix(in srgb, var(--g, var(--accent)) 14%, var(--surface)); border-radius: var(--radius); padding: var(--pad); }
-.bar { height: 4px; border-radius: 2px; background: var(--sep); overflow: hidden; }
-.bar > span { display: block; height: 100%; width: var(--p, 0%); background: var(--g, var(--accent)); }
+.card {
+  background: color-mix(in srgb, var(--g, var(--accent)) 14%, var(--surface)); border: 1px solid var(--plate-edge);
+  border-radius: var(--radius); padding: var(--pad); box-shadow: var(--emboss), var(--drop);
+}
+/* Pill bars: brushed-metal fill in the goal color (gold when no goal); flat in light so the fill keeps 3:1. */
+.bar { height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.bar > span {
+  display: block; height: 100%; width: var(--p, 0%); border-radius: inherit;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--g, var(--accent)) 62%, #FFFFFF), var(--g, var(--accent)) 60%); /* no stop darker than the goal color: >= 3:1 on the track */
+}
+@media (prefers-color-scheme: light) { .bar > span { background: var(--g, var(--accent)); } }
 
 /* ---- Buttons (inset capsules, never full width) */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   min-height: 44px; min-width: 44px; padding: 0 20px; border-radius: 999px; font-weight: 600;
 }
-.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary { background: var(--gold-fill); color: var(--on-gold); font-weight: 700; box-shadow: var(--gold-emboss), 0 0 0 1px var(--gold-rim); }
 .btn-text { color: var(--accent); padding: 0 12px; font-weight: 400; }
 .icon-btn { display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 999px; color: var(--accent); }
 .btn { flex-shrink: 0; max-width: 100%; } /* never squeeze a control below 44 pt; long labels wrap */
@@ -137,37 +191,38 @@ body::after { bottom: 0; height: calc(env(safe-area-inset-bottom) + 96px); backg
   border: 1px solid var(--outline); border-radius: 999px; transition: background-color 120ms, color 120ms;
 }
 .chip-check { display: none; }
-.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip[aria-pressed="true"] { background: var(--gold-fill); border-color: var(--gold-rim); color: var(--on-gold); font-weight: 600; box-shadow: var(--gold-emboss); }
 .chip[aria-pressed="true"] .chip-check { display: inline; }
 
 /* ---- Segmented control (Held | Slipped): equal widths, text only; stacks instead of clipping at large text */
-.seg { display: flex; flex-wrap: wrap; min-width: min-content; border: 1px solid var(--outline); border-radius: 22px; overflow: hidden; }
-.seg > button { flex: 1 1 0; min-height: 44px; padding: 0 12px; }
-.seg > [aria-checked="true"] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+/* A sunken steel track; each segment is a full 44 pt; the selected one is a gold plate (Slipped: crimson, screens.css). */
+.seg { display: flex; flex-wrap: wrap; gap: 2px; min-width: min-content; padding: 2px; border: 1px solid var(--outline); border-radius: 25px; background: var(--track); }
+.seg > button { flex: 1 1 0; min-height: 44px; padding: 0 12px; border-radius: 22px; color: var(--text-2); font-weight: 600; }
+.seg > [aria-checked="true"] { background: var(--gold-fill); color: var(--on-gold); box-shadow: var(--gold-emboss), 0 0 0 1px var(--gold-rim); }
 
 /* ---- Tab bar: the only glass element (§3.6) */
 .tabbar {
   position: fixed; z-index: 10; margin: 0 auto; max-width: 640px;
   left: var(--side-l); right: var(--side-r); bottom: max(12px, env(safe-area-inset-bottom));
   display: flex; flex-wrap: wrap; gap: 2px; padding: 4px; /* wraps to a second row at large text or zoom instead of cutting a tab */
-  border: 1px solid var(--sep); border-radius: 30px;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4);
-  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  border: 1px solid var(--glass-edge); border-radius: 30px; background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3); backdrop-filter: blur(24px) saturate(1.3);
+  box-shadow: var(--emboss), var(--drop);
 }
 .tab {
   flex: 1 1 0; min-width: min-content; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  min-height: 52px; border-radius: 999px; color: var(--text-2);
+  min-height: 52px; padding: 0 8px; border-radius: 999px; color: var(--text-2); /* padding keeps a wrapped tab >= 44 pt wide */
 }
-.tab[aria-current="page"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+/* Selected: gold text + tinted plate + ring (not color alone). */
+.tab[aria-current="page"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent); }
 
 /* ---- Sheets (§3.6): large detent, grabber, Cancel + one action */
 dialog { padding: 0; border: 0; color: var(--text); max-width: none; max-height: none; }
-dialog::backdrop { background: rgba(0,0,0,.35); }
+dialog::backdrop { background: rgba(10,10,11,.45); }
 .sheet, .action-sheet { position: fixed; inset: auto 0 0; margin: 0 auto; width: 100%; max-width: 672px; }
 .sheet[open] {
   display: flex; flex-direction: column; height: calc(100% - env(safe-area-inset-top) - 12px);
-  background: var(--bg); border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--atmosphere), var(--bg); border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--emboss);
   animation: sheet-in 320ms cubic-bezier(.2,.8,.2,1); transition: transform 320ms cubic-bezier(.2,.8,.2,1);
 }
 /* The title column gives way at large text so Cancel and the action never leave the screen. */
@@ -181,7 +236,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
   display: flex; flex-direction: column; gap: 8px; background: transparent;
   padding: 0 8px calc(env(safe-area-inset-bottom) + 8px); animation: sheet-in 320ms cubic-bezier(.2,.8,.2,1);
 }
-.action-sheet .group { background: var(--surface-2); }
+.action-sheet .group { background: var(--plate-2); }
 .action-message { margin: 0; padding: 12px var(--pad); text-align: center; border-bottom: .5px solid var(--sep); }
 .action-row { display: block; width: 100%; min-height: 56px; padding: 0 var(--pad); color: var(--accent); }
 .action-row + .action-row { border-top: .5px solid var(--sep); }
@@ -211,13 +266,23 @@ input[type="checkbox"] { margin: 0; } /* the whole row is the 52 pt target */
 .day-chip { min-width: 44px; justify-content: center; padding: 0; }
 
 @media (prefers-color-scheme: dark) {
-  .sheet[open] { background: var(--surface); }
-  .sheet .group { background: var(--surface-2); }
+  .sheet[open] { background: var(--atmosphere), var(--surface); }
+  .sheet .group { background: var(--plate-2); }
 }
 
-/* ---- Accessibility preferences */
+/* ---- Accessibility preferences: flat, opaque, outlined; no grain, glow, glass or metal gradients. */
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .tabbar { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; border-color: var(--outline); }
+  body, .sheet[open] { background: var(--bg); }
+  .group, .card { background-image: none; background-color: var(--surface); box-shadow: none; border-color: var(--outline); }
+  .card { background-color: color-mix(in srgb, var(--g, var(--accent)) 14%, var(--surface)); }
+  .sheet .group, .action-sheet .group { background: var(--surface-2); }
+  .tabbar { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; border-color: var(--outline); box-shadow: none; }
+  .btn-primary, .chip[aria-pressed="true"], .seg > [aria-checked="true"] { background: var(--gold-solid); box-shadow: 0 0 0 1px var(--gold-rim); }
+  .bar > span { background: var(--g, var(--accent)); }
+  .large-title { text-shadow: none; }
+}
+@media (prefers-color-scheme: dark) and (prefers-reduced-transparency: reduce), (prefers-color-scheme: dark) and (prefers-contrast: more) {
+  .sheet[open] { background: var(--surface); }
 }
 @media (prefers-contrast: more) {
   .chip, .seg { border-width: 2px; }

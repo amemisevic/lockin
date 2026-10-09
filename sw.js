@@ -1,5 +1,5 @@
 // Offline cache (plan Task 10). Any change to a shipped file bumps VERSION here and in src/version.js.
-const VERSION = '1.0.13';
+const VERSION = '1.0.14';
 const CACHE = `lockin-${VERSION}`;
 const ASSETS = [
   './',
@@ -9,6 +9,13 @@ const ASSETS = [
   'manifest.webmanifest',
   'src/app.js',
   'src/dom.js',
+  'src/fonts/OFL-Archivo.txt',
+  'src/fonts/OFL-Cinzel.txt',
+  'src/fonts/OFL-CormorantGaramond.txt',
+  'src/fonts/archivo-latin.woff2',
+  'src/fonts/cinzel-600-latin.woff2',
+  'src/fonts/cormorant-garamond-700i-latin.woff2',
+  'src/fonts/fonts.css',
   'src/icons.js',
   'src/logic.js',
   'src/redlines.js',

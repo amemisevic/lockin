@@ -101,8 +101,9 @@ References read: `accessibility.md`, `layout.md`, `typography.md`, `color.md`, `
 ### 3.1 Thesis
 
 - **Single job:** tell the user what to do *right now* and show that the day is moving.
-- **Remembered by:** the Now card, the only large, goal-colored element on Today. Everything else is quiet system-style grouped lists. This is a deliberately quiet utility; identity comes from the Now card and the color+icon pairing per goal, not from decoration.
-- **Not a template:** it follows the iOS platform look on purpose (`design-principles` Familiarity); no cream/serif, no neon-on-black, no hero stat.
+- **Remembered by (redesign 2026-10-09, owner chose direction "Iron"):** blackened armor plates in a dark hall, lit from above, where only what matters catches the gold. Palette sampled from the logo (helmet black, field gray `#252528`, polished gold, bronze); steel edges; polished gold only on the hero number, the primary action, checks and selected states; crimson only for slips and red lines.
+- **One hero figure per screen:** Today = minutes left on the Now card (gold-rimmed, the only rimmed card); Progress = good days of the last 30. Settings carries the logo tile and "Lock In" wordmark, the only place the logo appears in the app.
+- **Structure stays familiar:** grouped plates, bottom tab bar, sheets (`design-principles` Familiarity); identity lives in materials, type and the logo. No motifs (no Lambda, no Greek key), no photos, no gamification. If a decoration competes with data, the decoration goes.
 
 ### 3.2 Principles → decisions
 
@@ -121,60 +122,69 @@ Defined once in `styles.css` between the markers `/* tokens:light */ … /* toke
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `--bg` | `#F2F2F7` | `#000000` | screen background (grouped) |
-| `--surface` | `#FFFFFF` | `#1C1C1E` | list/card cells |
-| `--surface-2` | `#FFFFFF` | `#2C2C2E` | cells inside sheets (elevated) |
-| `--text` | `#000000` | `#FFFFFF` | primary text (21.00 / 17.01 vs surface) |
-| `--text-2` | `#5C5C63` | `#AEAEB4` | secondary (6.63 / 7.71 vs surface) |
-| `--text-3` | `#6B6B72` | `#98989F` | hints, placeholder (5.29 / 5.94 vs surface) |
-| `--accent` | `#0062CC` | `#4DA0FF` | links, primary buttons (5.80 / 6.31 vs surface) |
-| `--on-accent` | `#FFFFFF` | `#000000` | label on accent fill (5.80 / 7.79) |
-| `--red` | `#C4261D` | `#FF6961` | slip, missed, destructive (5.77 / 6.03) |
-| `--outline` | `#767680` | `#8E8E93` | control borders (4.49 / 5.22 vs surface) |
-| `--sep` | `rgba(60,60,67,.29)` | `rgba(84,84,88,.6)` | hairlines |
-| `--g-biz` | `#0062CC` | `#4DA0FF` | Business (5.80 / 6.31 vs surface) |
-| `--g-uni` | `#5E4DC7` | `#9A8CFF` | Uni (6.25 / 6.13) |
-| `--g-body` | `#1D7A3A` | `#4CD27A` | Body & Health (5.39 / 8.76) |
-| `--g-social` | `#B25000` | `#FFA94D` | Socializing (5.20 / 8.94) |
-| `--g-unsorted` | `#6B6B72` | `#98989F` | Unsorted (5.29 / 5.94) |
+| `--bg` | `#E9E9EC` marble | `#0A0A0B` helmet black | screen background |
+| `--surface` | `#FFFFFF` | `#161519` armor plate | list/card cells |
+| `--surface-2` | `#FFFFFF` | `#252528` logo field gray | cells inside sheets (elevated) |
+| `--text` | `#121114` | `#F3EEE4` bone | primary text (18.82 / 15.72 vs surface) |
+| `--text-2` | `#57534C` | `#B9B3A8` | secondary (7.64 / 8.72) |
+| `--text-3` | `#67625A` | `#A39D93` | hints, placeholder (6.05 / 6.75) |
+| `--accent` | `#835511` deep bronze | `#F2BE5C` polished gold | links, interactive text, selected (6.42 / 10.64) |
+| `--on-accent` | `#FFFFFF` | `#1A1205` | label on a solid accent fill (6.42 / 10.86) |
+| `--red` | `#B11F2B` | `#F2606A` crimson | slip, missed, destructive (6.77 / 5.76) |
+| `--outline` | `#7A756C` | `#8A857C` | control borders (4.58 / 4.96 vs surface) |
+| `--sep` | `rgba(18,17,20,.14)` | `rgba(185,179,168,.16)` | hairlines |
+| `--g-biz` | `#9A5505` | `#C17A00` | Business (5.71 / 5.24 vs surface) |
+| `--g-uni` | `#196EA9` | `#3093DB` | Uni (5.46 / 5.47) |
+| `--g-body` | `#187C49` | `#2FA465` | Body & Health (5.23 / 5.73) |
+| `--g-social` | `#954A7E` | `#C367A7` | Socializing (5.90 / 5.04) |
+| `--g-unsorted` | `#67625A` | `#A39D93` | Unsorted (6.05 / 6.75) |
 
-Ratios above were computed with a script, not estimated. Dark `--surface-2` (`#2C2C2E`) results: text-2 6.31, text-3 4.86, accent 5.17, red 4.94, uni 5.02, unsorted 4.86 (all ≥ 4.5). Goal tints (`color-mix(in srgb, var(--g-x) 14%, var(--surface))`) are asserted by the Task 5 test, not assumed.
+Ratios above were computed with a script, not estimated. Dark `--surface-2` (`#252528`) results: text-2 7.33, text-3 5.68, accent 8.95, red 4.85 (all ≥ 4.5). Goal tints (`color-mix(in srgb, var(--g-x) 14%, var(--surface))`) are asserted by the contrast test (goal on tint 4.26–4.84, text-2 on tint ≥ 6.2). Goal colors passed the dataviz CVD validator (dark: all pairs; light: 6–8 floor band, legal because every goal color is paired with an icon and its name). Business amber sits near gold in hue but far in lightness (OKLCH 0.64 vs 0.82); goal colors are graphics only, never text on their tint.
+
+**Materials** (non-hex tokens after the markers, `styles.css`): `--gold-fill` (#FCE29A → #F2BE5C → #C99139 → #B08539) for primary buttons, selected chips/segments, checks and the accent bar, always with `--on-gold` `#1A1205` text (5.53 on the darkest stop) and a 1 px `--gold-rim`; `--plate` (dark #1C1B1F → #141317) with `--emboss` (1 px warm top highlight, dark bottom edge) and `--drop`; fine grain + a warm glow from above as one non-fixed background (dark only). Light: plates are white, bars flat in the goal color (3:1), gold appears only as fills with a bronze rim. Gold text always uses the solid `--accent`. **Reduce Transparency / Increase Contrast:** opaque `--surface`, `--outline` borders, no shadows, grain, glow or glass, solid `--gold-solid` fills, flat bars.
 
 Rules (`color.md › Best practices`): one color = one meaning (accent = interactive only; goal colors = goal identity only; red = slip/missed only). **Color is never the only signal:** every goal color is paired with an icon and its name; Held/Slipped have text labels; selected chips show a checkmark.
 
 ### 3.4 Typography
 
-System font only: `font-family: -apple-system, "SF Pro Text", system-ui, sans-serif` (resolves to SF Pro on iPhone; never embed fonts, `typography.md › Using system fonts`). Weights Regular / Medium / Semibold / Bold only (`typography.md › Ensuring legibility`: no Light/Thin).
+Three self-hosted OFL families (redesign 2026-10-09, owner's choice; replaces "system font only"), Latin subset woff2 from Google Fonts in `src/fonts/` with each family's `OFL-*.txt` beside it, `font-display: swap`, system fallback in every stack, all listed in `ASSETS` (72.5 KB total, cached offline):
+
+- **Archivo** (variable, 400–700): body, controls and all numerals; `font-variant-numeric: tabular-nums` so times, minutes and amounts line up.
+- **Cinzel** 600: screen titles and the wordmark only; uppercase via CSS (VoiceOver reads the DOM text), tracking .1 em.
+- **Cormorant Garamond** Italic 700: section names (`.section-header`) only.
+
+Weights Regular / Medium / Semibold / Bold only (`typography.md › Ensuring legibility`: no Light/Thin).
 
 Text styles (Large default sizes from `typography.md › iOS Dynamic Type sizes`):
 
-| Style | pt / leading | Weight | Used for |
+| Style | pt / leading | Face, weight | Used for |
 |---|---|---|---|
-| Large Title | 34 / 41 | Bold | screen titles (Today, Plan…) |
-| Title 1 | 28 / 34 | Bold | Now card "42 min" |
-| Title 3 | 20 / 25 | Semibold | Now card block title, sheet title |
-| Headline / Body | 17 / 22 | Semibold / Regular | row titles, inputs, buttons |
-| Subhead | 15 / 20 | Regular, `--text-2` | row secondary lines |
-| Footnote | 13 / 18 | Regular, `--text-2` | section headers, footers |
-| Caption 2 | 11 / 13 | Medium | tab labels (minimum size) |
+| Large Title | 34 / 39 | Cinzel 600, caps | screen titles (Today, Plan…) |
+| Section | 26 / 30 | Cormorant Garamond Italic 700, `--text` | section headers |
+| Title 1 | 28 / 34 | Archivo Bold | Now card "42 min" |
+| Title 3 | 20 / 25 | Archivo Semibold | Now card block title, sheet title |
+| Headline / Body | 17 / 22 | Archivo Semibold / Regular | row titles, inputs, buttons |
+| Subhead | 15 / 20 | Archivo Regular, `--text-2` | row secondary lines |
+| Footnote | 13 / 18 | Archivo Regular, `--text-2` | footers |
+| Caption 2 | 11 / 13 | Archivo Semibold | tab labels (minimum size) |
 
-Dynamic Type on web: use `font: -apple-system-body` (and `-apple-system-headline`, `-subheadline`, `-footnote`, `-caption2`; title styles only if `CSS.supports('font','-apple-system-title1')`), with the fixed pt values above as fallbacks. Verify on the device which keywords resolve. At accessibility sizes, rows restack vertically instead of truncating (`typography.md › Supporting Dynamic Type`). Large Title is `calc(1em + 17px)` of Body (34 pt at the default size, 70 pt at AX5; `2em` gave 106 pt and ran off screen, Task 11).
+Dynamic Type on web: each style keeps its `-apple-system-*` keyword for the **size** (`font: -apple-system-body` etc.; title styles only if `CSS.supports('font','-apple-system-title1')`) and then sets `font-family` to our face, so Larger Text still scales every style. Fixed pt values above are the fallbacks. At accessibility sizes, rows restack vertically instead of truncating (`typography.md › Supporting Dynamic Type`). Large Title is `calc(1em + 17px)` of Body (34 pt default) **capped at (line width) / 6.4** because wide-tracked capitals overflow first: the longest title, "Settings", always fits (≈ 64 pt at AX5 on 440 pt, ≈ 18 pt at 147 px). Section names are `calc(1em + 9px)` of Body (26 pt default, 62 pt at AX5; the serif's small x-height needs the extra size to stay visibly above 53 pt body text).
 
 ### 3.5 Layout
 
-- Side margins 16 pt; inset grouped cards, radius 20 pt; row min-height 52 pt (≥ 44); 12 pt padding around bezeled controls, 24 pt around unbordered ones (`accessibility.md › Mobility`).
+- Side margins 16 pt; inset grouped cards (embossed plates), radius 22 pt; row min-height 52 pt (≥ 44); 12 pt padding around bezeled controls, 24 pt around unbordered ones (`accessibility.md › Mobility`).
 - `viewport-fit=cover`; use `env(safe-area-inset-*)`; content extends under the status bar and above the tab bar (`layout.md › Best practices`); max content width 640 pt, centered.
 - No full-width buttons; primary buttons are inset capsules (`layout.md › Phone (iOS)`).
 - Scrolling content continues behind the tab bar with a small fade overlay (scroll-edge effect).
 
 ### 3.6 Components
 
-- **Tab bar** (Today, Plan, Progress, Settings): single-word labels, filled icons, always visible, none disabled (`tab-bars.md › Best practices`). **The only glass element** in the app: `backdrop-filter: blur(24px) saturate(1.4)`, ~70% translucent fill, 1 px translucent border, floating capsule 16 pt from the sides. When the labels do not fit in one row (large text or zoom), the tabs wrap to a second row inside the bar instead of leaving the screen (Task 11). Fallback to opaque `--surface` under `prefers-reduced-transparency: reduce` and `prefers-contrast: more` (support varies by browser; check on the device). No glass in content (`liquid-glass.md › Review checklist`).
+- **Tab bar** (Today, Plan, Progress, Settings): single-word labels, filled icons, always visible, none disabled (`tab-bars.md › Best practices`). **The only glass element** in the app: `backdrop-filter: blur(24px) saturate(1.3)`, 84% (dark) / 80% (light) fill, 1 px translucent border, emboss, floating capsule 16 pt from the sides. Selected tab = accent text + tinted plate + 1 px accent ring; tabs keep 8 pt side padding so a wrapped tab stays ≥ 44 pt wide. When the labels do not fit in one row (large text or zoom), the tabs wrap to a second row inside the bar instead of leaving the screen (Task 11). Fallback to opaque `--surface` under `prefers-reduced-transparency: reduce` and `prefers-contrast: more` (support varies by browser; check on the device). No glass in content (`liquid-glass.md › Review checklist`).
 - **Icons:** inline SVG, 24 px, stroke/weight matched to text, `aria-hidden` when paired with text, `aria-label` when alone. Do not copy SF Symbols into the web app (licensed for Apple-platform use).
-- **Now card:** goal-tinted surface, goal icon + goal name label, block title, 2-line description, time range, minutes left in Title 1, thin progress bar (`role="progressbar"` + text), one primary button (capsule, `--accent` fill). Boldness is spent here only.
+- **Now card:** goal-tinted surface, goal icon + goal name label, block title, 2-line description, time range, minutes left in Title 1, thin progress bar (`role="progressbar"` + text), one primary button (capsule, `--gold-fill` with `--on-gold` label and bronze rim). Boldness is spent here only.
 - **Goal row:** 32 pt tinted badge (icon), name, progress text ("45 / 60 min"), 44×44 check button (`aria-pressed`). Body & Health expands to sub-rows (Calories, Gym − n +). A thin progress bar sits under each goal row.
-- **Red line row:** name + two-segment control **Held | Slipped** (`role="radiogroup"`, equal widths, text only, `segmented-controls.md › Content`). Segments stack when their labels do not fit side by side (large text), never clip (Task 11). Unmarked = neither selected.
-- **Chip** (duration, tag, weekday): ≥ 44 pt tall, capsule, `aria-pressed`, selected = filled + checkmark.
+- **Red line row:** name + two-segment control **Held | Slipped** (`role="radiogroup"`, equal widths, text only, `segmented-controls.md › Content`), each segment a full 44 pt inside a sunken track; selected Held = gold plate with `--on-gold` text, selected Slipped = `--red` fill. Segments stack when their labels do not fit side by side (large text), never clip (Task 11). Unmarked = neither selected.
+- **Chip** (duration, tag, weekday): ≥ 44 pt tall, capsule, `aria-pressed`, selected = gold plate (`--gold-fill`, `--on-gold`) + checkmark.
 - **Switch** ("Custom end time"): native `<input type="checkbox" switch>` (Safari 17.4+), switch only inside a list row (`toggles.md › Mobile`).
 - **Date / time / repeat:** native `<input type="date">`, `<input type="time">`, `<select>` (iOS shows system pickers; `entering-data.md › Best practices`: offer choices over typing).
 - **Slider:** native `<input type="range">`, min on the leading side, shows the live value as text next to the chips (`sliders.md › Best practices`).
