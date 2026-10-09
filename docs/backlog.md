@@ -8,7 +8,7 @@ Build nothing from this list without the owner's go-ahead. Critical/High were fi
 | Medium | all icons | Icons stay 24 px at AX5; HIG asks meaningful icons to grow with text (`typography.md › Supporting Dynamic Type`). |
 | Medium | `timeLog.js` | Add on a block ticked done without logged minutes starts from 0 (ledgered owner ruling); a ticked 60-min block + Add 30 = 30. |
 | Low | `#view` padding | At AX5 the last row sits 6 px under the 2-row tab bar at max scroll (Copy Day bottom 790, bar top 784). |
-| Low | sheet headers | At AX5 titles wrap in a ~100–130 px column and break mid-word ("Log Tim/e"). |
+| Low | sheet headers | At AX5 titles wrap in a ~100–130 px column and break mid-word ("Log Tim/e"). **Fixed 1.0.23:** the sheet header (title and buttons) stops growing at 28 pt, as iOS bars do. |
 | Low | tab bar glass | Theoretical worst case (no blur, solid black directly behind, light) selected label 4.03:1; blur and the scroll-edge fade raise it; opaque fallback 4.71 light / 5.06 dark. **Obsolete since 1.0.15 (dark only); dark measured by the harness.** |
 | Low | 300 % zoom only | Zoom is locked on the phone: long words clip in block meta, Settings goal rows, Progress "Socializing"; Log Amount "Clear" off screen; large title breaks mid-word. AX5 emulation shows none of these. |
 | Low | `index.html:19` | Banner says "…Export a backup in Settings." vs spec §2 "Couldn't save. Export a backup." |
@@ -18,6 +18,7 @@ Build nothing from this list without the owner's go-ahead. Critical/High were fi
 | Low | `icons.js:36` / `store.js:34` | An imported goal with an unknown icon name renders the text "undefined". |
 | Low | `today.js:139` | Daily-check DOM id from the label with non-word chars stripped; near-identical labels collide (focus restore only). |
 | Low | `tests/export-1.0.7.json` | Holds weight 72.5 / target 70. **Owner confirmed 2026-10-09: made up. Closed.** |
+| Low | sheets at 147 px (zoom only) | Owner: leave it (zoom is locked). Block form Date/Start/End/Custom end time rows +4 px and chips +5 px past the sheet edge; Log Amount label/None row +12 to +29 px; Edit Goal daily-check field 25 px wide. Measured 1.0.23. |
 | Low | history | `4fb8be5` changed `src/sheet.js` without a VERSION bump (HEAD consistent). |
 | Low | smells | Duplicated: backup text (`settings.js`/`progress.js`), weight parse, progress-bar builder, tag lookup, segmented control, en-GB formatters, form-row helper; `finishTimer` repeats `logTime`'s add rule; `occId.slice(-10)` bypasses `occDate`; measured-entry `typeof` check in 3 files; `whole` defined twice; views import helpers from other views; lines > 200 chars. |
 
