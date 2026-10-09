@@ -15,7 +15,7 @@ Single-user iPhone web app (PWA): a time-block planner + four goals + daily Won/
 - **No personal data anywhere in the repo** (public): no weights, no red-line names, no schedules, no real names. Red lines and weight target are typed into the app at runtime.
 - Exact copy that must not change: slip message `Costs one day, not the month.`; the three reminder texts in the plan's Global Constraints.
 - No streaks, no stars, no gamification, no in-app notifications, no wake-time setting, no panic button, no Top G/Bottom G lines, no morning/night screens.
-- Design: Apple HIG as written in spec §3. Inline SVG icons of our own (do not copy SF Symbols). Color is never the only signal. Tap targets ≥ 44 pt, text ≥ 11 pt, contrast ≥ 4.5:1 text / 3:1 graphics, both appearances, no appearance toggle.
+- Design: Apple HIG as written in spec §3. Inline SVG icons of our own (do not copy SF Symbols). Color is never the only signal. Tap targets ≥ 44 pt, text ≥ 11 pt, contrast ≥ 4.5:1 text / 3:1 graphics. Dark appearance only (owner decision 2026-10-09): no light theme, no `prefers-color-scheme` branches, no appearance toggle.
 - Files stay small and single-purpose (target < 300 lines).
 
 ## Commands

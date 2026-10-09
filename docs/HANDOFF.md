@@ -3,7 +3,7 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.14** (`src/version.js` = `sw.js`). Last code commit: "style: Iron tokens, fonts, materials and shared components" (redesign step 1 of 5).
+- Version **1.0.15** (`src/version.js` = `sw.js`). Last code commit: "style: dark only" (owner decision between redesign steps 1 and 2).
 - **87 tests, 87 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland` (set `TZ` from PowerShell: Git Bash on Windows does not pass it to Node).
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
 
@@ -26,7 +26,8 @@ Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpower
 **Visual redesign "Iron"** (owner-approved 2026-10-09; spec §3.1, §3.3, §3.4 updated). Visual only, no logic changes, copy unchanged. Five steps, one commit each, each version-bumped, ⛔ owner checks on the iPhone after each:
 1. [x] Tokens, self-hosted fonts (`src/fonts/`, OFL texts beside them), base type, materials, tab bar, sheet chrome, list/menu components (1.0.14).
 2. [ ] Today. 3. [ ] Progress (dataviz rules), then Plan. 4. [ ] Settings and every remaining sheet. 5. [ ] Logo and icons (Pillow script; 1254 px source stays in `design-reference/`, not shipped; 32/16 favicons use the gold outline variant).
-Rules: gold text only via solid `--accent`; gradients only for fills/edges/bars; every change measured (contrast from rendered pixels, 44 pt targets, AX5, 147 px, landscape, light/dark, Reduce Transparency and Increase Contrast emulated). Shipped files must sit under `src/` or `icons/` (the ASSETS test only scans those). `design-prototypes/` and `design-reference/` are never committed.
+**Dark only (1.0.15, owner decision 2026-10-09):** the light theme is removed for good: one token set after `/* tokens:dark */`, `color-scheme: dark`, no `prefers-color-scheme` anywhere (asserted by `tests/contrast.test.js`), dark PWA chrome (`#0A0A0B`, status bar `black-translucent`). Never re-add light tokens or appearance branches.
+Rules: gold text only via solid `--accent`; gradients only for fills/edges/bars; every change measured (contrast from rendered pixels, 44 pt targets, AX5, 147 px, landscape, dark, Reduce Transparency and Increase Contrast emulated). Shipped files must sit under `src/` or `icons/` (the ASSETS test only scans those). `design-prototypes/` and `design-reference/` are never committed.
 
 ## 4. Next, in order
 - [x] **a. Clear a measured red-line log** — done (owner approved 2026-10-09; spec §3.10).

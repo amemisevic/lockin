@@ -9,7 +9,7 @@ Build nothing from this list without the owner's go-ahead. Critical/High were fi
 | Medium | `timeLog.js` | Add on a block ticked done without logged minutes starts from 0 (ledgered owner ruling); a ticked 60-min block + Add 30 = 30. |
 | Low | `#view` padding | At AX5 the last row sits 6 px under the 2-row tab bar at max scroll (Copy Day bottom 790, bar top 784). |
 | Low | sheet headers | At AX5 titles wrap in a ~100–130 px column and break mid-word ("Log Tim/e"). |
-| Low | tab bar glass | Theoretical worst case (no blur, solid black directly behind, light) selected label 4.03:1; blur and the scroll-edge fade raise it; opaque fallback 4.71 light / 5.06 dark. |
+| Low | tab bar glass | Theoretical worst case (no blur, solid black directly behind, light) selected label 4.03:1; blur and the scroll-edge fade raise it; opaque fallback 4.71 light / 5.06 dark. **Obsolete since 1.0.15 (dark only); dark measured by the harness.** |
 | Low | 300 % zoom only | Zoom is locked on the phone: long words clip in block meta, Settings goal rows, Progress "Socializing"; Log Amount "Clear" off screen; large title breaks mid-word. AX5 emulation shows none of these. |
 | Low | `index.html:19` | Banner says "…Export a backup in Settings." vs spec §2 "Couldn't save. Export a backup." |
 | Low | `blockSheet.js:60` | Weekday chips have no checkmark (spec §3.6 chip rule); selection = fill + `aria-pressed`. |

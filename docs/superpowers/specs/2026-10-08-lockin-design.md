@@ -113,35 +113,35 @@ References read: `accessibility.md`, `layout.md`, `typography.md`, `color.md`, `
 | Simplicity | 4 tabs, no wake-time/panic/ritual screens; reminders live in iOS Shortcuts. One primary action per screen. |
 | Agency | Everything editable; manual tick overrides; Move keeps your choice of time; nothing auto-dismisses. |
 | Familiarity | Large titles, inset grouped lists, bottom tab bar, bottom sheets with grabber, native date/time/select controls. |
-| Flexibility | Dynamic Type, Dark Mode, Reduce Motion/Transparency, Increase Contrast, portrait and landscape. |
+| Flexibility | Dynamic Type, Reduce Motion/Transparency, Increase Contrast, portrait and landscape. Dark appearance only (owner decision 2026-10-09). |
 | Craft | 44 pt targets, concentric corners, consistent copy, relative paths, offline. |
 
 ### 3.3 Color tokens (computed, WCAG 2.x)
 
-Defined once in `styles.css` between the markers `/* tokens:light */ … /* tokens:dark */` so a test can read them. Dark values apply under `@media (prefers-color-scheme: dark)`. No app appearance toggle (`dark-mode.md › Best practices`).
+**Dark only** (owner decision 2026-10-09, 1.0.15): one token set, no light theme, no `prefers-color-scheme` branches and no appearance toggle; `color-scheme: dark` so native pickers, inputs and scrollbars render dark; PWA chrome is dark (`theme-color` and manifest `background_color`/`theme_color` `#0A0A0B`, status bar `black-translucent` so content runs under the white status text with the safe-area padding and top fade). This knowingly departs from the HIG advice to support both appearances (`dark-mode.md`); the contrast test asserts there is no appearance branch. Tokens are defined once in `styles.css` after the marker `/* tokens:dark */` so a test can read them.
 
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| `--bg` | `#E9E9EC` marble | `#0A0A0B` helmet black | screen background |
-| `--surface` | `#FFFFFF` | `#161519` armor plate | list/card cells |
-| `--surface-2` | `#FFFFFF` | `#252528` logo field gray | cells inside sheets (elevated) |
-| `--text` | `#121114` | `#F3EEE4` bone | primary text (18.82 / 15.72 vs surface) |
-| `--text-2` | `#57534C` | `#B9B3A8` | secondary (7.64 / 8.72) |
-| `--text-3` | `#67625A` | `#A39D93` | hints, placeholder (6.05 / 6.75) |
-| `--accent` | `#835511` deep bronze | `#F2BE5C` polished gold | links, interactive text, selected (6.42 / 10.64) |
-| `--on-accent` | `#FFFFFF` | `#1A1205` | label on a solid accent fill (6.42 / 10.86) |
-| `--red` | `#B11F2B` | `#F2606A` crimson | slip, missed, destructive (6.77 / 5.76) |
-| `--outline` | `#7A756C` | `#8A857C` | control borders (4.58 / 4.96 vs surface) |
-| `--sep` | `rgba(18,17,20,.14)` | `rgba(185,179,168,.16)` | hairlines |
-| `--g-biz` | `#9A5505` | `#C17A00` | Business (5.71 / 5.24 vs surface) |
-| `--g-uni` | `#196EA9` | `#3093DB` | Uni (5.46 / 5.47) |
-| `--g-body` | `#187C49` | `#2FA465` | Body & Health (5.23 / 5.73) |
-| `--g-social` | `#954A7E` | `#C367A7` | Socializing (5.90 / 5.04) |
-| `--g-unsorted` | `#67625A` | `#A39D93` | Unsorted (6.05 / 6.75) |
+| Token | Value | Use |
+|---|---|---|
+| `--bg` | `#0A0A0B` helmet black | screen background |
+| `--surface` | `#161519` armor plate | list/card cells |
+| `--surface-2` | `#252528` logo field gray | cells inside sheets (elevated) |
+| `--text` | `#F3EEE4` bone | primary text (15.72 vs surface) |
+| `--text-2` | `#B9B3A8` | secondary (8.72) |
+| `--text-3` | `#A39D93` | hints, placeholder (6.75) |
+| `--accent` | `#F2BE5C` polished gold | links, interactive text, selected (10.64) |
+| `--on-accent` | `#1A1205` | label on a solid accent fill (10.86) |
+| `--red` | `#F2606A` crimson | slip, missed, destructive (5.76) |
+| `--outline` | `#8A857C` | control borders (4.96 vs surface) |
+| `--sep` | `rgba(185,179,168,.16)` | hairlines |
+| `--g-biz` | `#C17A00` | Business (5.24 vs surface) |
+| `--g-uni` | `#3093DB` | Uni (5.47) |
+| `--g-body` | `#2FA465` | Body & Health (5.73) |
+| `--g-social` | `#C367A7` | Socializing (5.04) |
+| `--g-unsorted` | `#A39D93` | Unsorted (6.75) |
 
-Ratios above were computed with a script, not estimated. Dark `--surface-2` (`#252528`) results: text-2 7.33, text-3 5.68, accent 8.95, red 4.85 (all ≥ 4.5). Goal tints (`color-mix(in srgb, var(--g-x) 14%, var(--surface))`) are asserted by the contrast test (goal on tint 4.26–4.84, text-2 on tint ≥ 6.2). Goal colors passed the dataviz CVD validator (dark: all pairs; light: 6–8 floor band, legal because every goal color is paired with an icon and its name). Business amber sits near gold in hue but far in lightness (OKLCH 0.64 vs 0.82); goal colors are graphics only, never text on their tint.
+Ratios above were computed with a script, not estimated. Dark `--surface-2` (`#252528`) results: text-2 7.33, text-3 5.68, accent 8.95, red 4.85 (all ≥ 4.5). Goal tints (`color-mix(in srgb, var(--g-x) 14%, var(--surface))`) are asserted by the contrast test (goal on tint 4.26–4.78, text-2 on tint ≥ 6.7). Goal colors passed the dataviz CVD validator on all pairs, and every goal color is also paired with an icon and its name. Business amber sits near gold in hue but far in lightness (OKLCH 0.64 vs 0.82); goal colors are graphics only, never text on their tint.
 
-**Materials** (non-hex tokens after the markers, `styles.css`): `--gold-fill` (#FCE29A → #F2BE5C → #C99139 → #B08539) for primary buttons, selected chips/segments, checks and the accent bar, always with `--on-gold` `#1A1205` text (5.53 on the darkest stop) and a 1 px `--gold-rim`; `--plate` (dark #1C1B1F → #141317) with `--emboss` (1 px warm top highlight, dark bottom edge) and `--drop`; fine grain + a warm glow from above as one non-fixed background (dark only). Light: plates are white, bars flat in the goal color (3:1), gold appears only as fills with a bronze rim. Gold text always uses the solid `--accent`. **Reduce Transparency / Increase Contrast:** opaque `--surface`, `--outline` borders, no shadows, grain, glow or glass, solid `--gold-solid` fills, flat bars.
+**Materials** (non-hex tokens after the token block, `styles.css`): `--gold-fill` (#FCE29A → #F2BE5C → #C99139 → #B08539) for primary buttons, selected chips/segments, checks and the accent bar, always with `--on-gold` `#1A1205` text (5.53 on the darkest stop) and a 1 px `--gold-rim`; `--plate` (#1C1B1F → #141317) with `--emboss` (1 px warm top highlight, dark bottom edge) and `--drop`; fine grain + a warm glow from above as one non-fixed background. Gold text always uses the solid `--accent`. **Reduce Transparency / Increase Contrast:** opaque `--surface`, `--outline` borders, no shadows, grain, glow or glass, solid `--gold-solid` fills, flat bars.
 
 Rules (`color.md › Best practices`): one color = one meaning (accent = interactive only; goal colors = goal identity only; red = slip/missed only). **Color is never the only signal:** every goal color is paired with an icon and its name; Held/Slipped have text labels; selected chips show a checkmark.
 
@@ -179,7 +179,7 @@ Dynamic Type on web: each style keeps its `-apple-system-*` keyword for the **si
 
 ### 3.6 Components
 
-- **Tab bar** (Today, Plan, Progress, Settings): single-word labels, filled icons, always visible, none disabled (`tab-bars.md › Best practices`). **The only glass element** in the app: `backdrop-filter: blur(24px) saturate(1.3)`, 84% (dark) / 80% (light) fill, 1 px translucent border, emboss, floating capsule 16 pt from the sides. Selected tab = accent text + tinted plate + 1 px accent ring; tabs keep 8 pt side padding so a wrapped tab stays ≥ 44 pt wide. When the labels do not fit in one row (large text or zoom), the tabs wrap to a second row inside the bar instead of leaving the screen (Task 11). Fallback to opaque `--surface` under `prefers-reduced-transparency: reduce` and `prefers-contrast: more` (support varies by browser; check on the device). No glass in content (`liquid-glass.md › Review checklist`).
+- **Tab bar** (Today, Plan, Progress, Settings): single-word labels, filled icons, always visible, none disabled (`tab-bars.md › Best practices`). **The only glass element** in the app: `backdrop-filter: blur(24px) saturate(1.3)`, 84% fill, 1 px translucent border, emboss, floating capsule 16 pt from the sides. Selected tab = accent text + tinted plate + 1 px accent ring; tabs keep 8 pt side padding so a wrapped tab stays ≥ 44 pt wide. When the labels do not fit in one row (large text or zoom), the tabs wrap to a second row inside the bar instead of leaving the screen (Task 11). Fallback to opaque `--surface` under `prefers-reduced-transparency: reduce` and `prefers-contrast: more` (support varies by browser; check on the device). No glass in content (`liquid-glass.md › Review checklist`).
 - **Icons:** inline SVG, 24 px, stroke/weight matched to text, `aria-hidden` when paired with text, `aria-label` when alone. Do not copy SF Symbols into the web app (licensed for Apple-platform use).
 - **Now card:** goal-tinted surface, goal icon + goal name label, block title, 2-line description, time range, minutes left in Title 1, thin progress bar (`role="progressbar"` + text), one primary button (capsule, `--gold-fill` with `--on-gold` label and bronze rim). Boldness is spent here only.
 - **Goal row:** 32 pt tinted badge (icon), name, progress text ("45 / 60 min"), 44×44 check button (`aria-pressed`). Body & Health expands to sub-rows (Calories, Gym − n +). A thin progress bar sits under each goal row.
@@ -228,7 +228,7 @@ RED LINES
 
 - Every icon-only control has an accessible name. `aria-live="polite"` only on Now-card *state changes* (start/end of a block), not on each minute tick.
 - Sheet: focus moves in, is trapped, and returns to the opener on close; Esc closes.
-- Test with iOS Larger Text at the largest accessibility size, Bold Text, Reduce Motion, Reduce Transparency, Increase Contrast, light and dark.
+- Test with iOS Larger Text at the largest accessibility size, Bold Text, Reduce Motion, Reduce Transparency, Increase Contrast, portrait and landscape (dark appearance only).
 - VoiceOver pass on Today and the block sheet before Task 11 sign-off.
 
 

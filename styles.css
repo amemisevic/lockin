@@ -1,47 +1,26 @@
 /* Lock In: tokens, text styles, materials, components (spec §3). Pixel values are iOS points.
    Iron direction: blackened armor plates, steel edges, polished gold only where it matters. */
 
+/* Dark only (owner decision 2026-10-09): no light theme, no appearance branches. Palette sampled from the logo. */
 :root {
-  color-scheme: light dark;
-  /* Light: marble; deep bronze for text, gold only as fills. Dark: sampled from the logo. */
-  /* tokens:light */
-  --bg: #E9E9EC;
-  --surface: #FFFFFF;
-  --surface-2: #FFFFFF;
-  --text: #121114;
-  --text-2: #57534C;
-  --text-3: #67625A;
-  --accent: #835511;
-  --on-accent: #FFFFFF;
-  --red: #B11F2B;
-  --outline: #7A756C;
-  --sep: rgba(18,17,20,.14);
-  --g-biz: #9A5505;
-  --g-uni: #196EA9;
-  --g-body: #187C49;
-  --g-social: #954A7E;
-  --g-unsorted: #67625A;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* tokens:dark */
-    --bg: #0A0A0B;
-    --surface: #161519;
-    --surface-2: #252528;
-    --text: #F3EEE4;
-    --text-2: #B9B3A8;
-    --text-3: #A39D93;
-    --accent: #F2BE5C;
-    --on-accent: #1A1205;
-    --red: #F2606A;
-    --outline: #8A857C;
-    --sep: rgba(185,179,168,.16);
-    --g-biz: #C17A00;
-    --g-uni: #3093DB;
-    --g-body: #2FA465;
-    --g-social: #C367A7;
-    --g-unsorted: #A39D93;
-  }
+  color-scheme: dark; /* native pickers, inputs and scrollbars render dark */
+  /* tokens:dark */
+  --bg: #0A0A0B;
+  --surface: #161519;
+  --surface-2: #252528;
+  --text: #F3EEE4;
+  --text-2: #B9B3A8;
+  --text-3: #A39D93;
+  --accent: #F2BE5C;
+  --on-accent: #1A1205;
+  --red: #F2606A;
+  --outline: #8A857C;
+  --sep: rgba(185,179,168,.16);
+  --g-biz: #C17A00;
+  --g-uni: #3093DB;
+  --g-body: #2FA465;
+  --g-social: #C367A7;
+  --g-unsorted: #A39D93;
 }
 @media (prefers-contrast: more) {
   :root { --sep: var(--outline); }
@@ -59,35 +38,20 @@
   --gold-fill: linear-gradient(180deg, #FCE29A 0%, #F2BE5C 42%, #C99139 78%, #B08539 100%);
   --gold-solid: #F2BE5C;
   --on-gold: #1A1205;
-  --gold-rim: #9A6A1C;
+  --gold-rim: #543415;
   --gold-emboss: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -1px 0 rgba(84,52,21,.35);
-  --plate: linear-gradient(180deg, #FFFFFF, #FBFAF8);
-  --plate-2: var(--plate);
-  --plate-edge: rgba(18,17,20,.09);
-  --emboss: inset 0 1px 0 #FFFFFF;
-  --drop: 0 1px 2px rgba(18,17,20,.06), 0 10px 24px -14px rgba(18,17,20,.28);
-  --track: #E4E2DD;
-  --glass: rgba(255,255,255,.8);
-  --glass-edge: rgba(18,17,20,.1);
-  --engrave: 0 1px 0 #FFFFFF;
-  --atmosphere: none;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --gold-rim: #543415;
-    --plate: linear-gradient(180deg, #1C1B1F, #141317);
-    --plate-2: linear-gradient(180deg, #2A2A2D, #222225);
-    --plate-edge: #2B2A30;
-    --emboss: inset 0 1px 0 rgba(255,236,190,.09), inset 0 -1px 0 rgba(0,0,0,.6);
-    --drop: 0 2px 4px rgba(0,0,0,.4), 0 14px 30px -14px rgba(0,0,0,.9);
-    --track: rgba(255,255,255,.08);
-    --glass: rgba(18,17,21,.84);
-    --glass-edge: rgba(255,255,255,.09);
-    --engrave: 0 1px 0 rgba(0,0,0,.9), 0 -1px 0 rgba(255,236,190,.08);
-    /* fine grain + a warm glow from above; scrolls with the page (no fixed layer, no blend modes) */
-    --atmosphere: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .06 0 0 0 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
-      radial-gradient(120% 480px at 50% -120px, #1C1812, transparent);
-  }
+  --plate: linear-gradient(180deg, #1C1B1F, #141317);
+  --plate-2: linear-gradient(180deg, #2A2A2D, #222225);
+  --plate-edge: #2B2A30;
+  --emboss: inset 0 1px 0 rgba(255,236,190,.09), inset 0 -1px 0 rgba(0,0,0,.6);
+  --drop: 0 2px 4px rgba(0,0,0,.4), 0 14px 30px -14px rgba(0,0,0,.9);
+  --track: rgba(255,255,255,.08);
+  --glass: rgba(18,17,21,.84);
+  --glass-edge: rgba(255,255,255,.09);
+  --engrave: 0 1px 0 rgba(0,0,0,.9), 0 -1px 0 rgba(255,236,190,.08);
+  /* fine grain + a warm glow from above; scrolls with the page (no fixed layer, no blend modes) */
+  --atmosphere: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .06 0 0 0 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    radial-gradient(120% 480px at 50% -120px, #1C1812, transparent);
 }
 
 /* ---- Base */
@@ -166,13 +130,12 @@ body::after { bottom: 0; height: calc(env(safe-area-inset-bottom) + 96px); backg
   background: color-mix(in srgb, var(--g, var(--accent)) 14%, var(--surface)); border: 1px solid var(--plate-edge);
   border-radius: var(--radius); padding: var(--pad); box-shadow: var(--emboss), var(--drop);
 }
-/* Pill bars: brushed-metal fill in the goal color (gold when no goal); flat in light so the fill keeps 3:1. */
+/* Pill bars: brushed-metal fill in the goal color (gold when no goal). */
 .bar { height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
 .bar > span {
   display: block; height: 100%; width: var(--p, 0%); border-radius: inherit;
   background: linear-gradient(180deg, color-mix(in srgb, var(--g, var(--accent)) 62%, #FFFFFF), var(--g, var(--accent)) 60%); /* no stop darker than the goal color: >= 3:1 on the track */
 }
-@media (prefers-color-scheme: light) { .bar > span { background: var(--g, var(--accent)); } }
 
 /* ---- Buttons (inset capsules, never full width) */
 .btn {
@@ -222,7 +185,7 @@ dialog::backdrop { background: rgba(10,10,11,.45); }
 .sheet, .action-sheet { position: fixed; inset: auto 0 0; margin: 0 auto; width: 100%; max-width: 672px; }
 .sheet[open] {
   display: flex; flex-direction: column; height: calc(100% - env(safe-area-inset-top) - 12px);
-  background: var(--atmosphere), var(--bg); border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--emboss);
+  background: var(--atmosphere), var(--surface); border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--emboss);
   animation: sheet-in 320ms cubic-bezier(.2,.8,.2,1); transition: transform 320ms cubic-bezier(.2,.8,.2,1);
 }
 /* The title column gives way at large text so Cancel and the action never leave the screen. */
@@ -265,14 +228,12 @@ input[type="checkbox"] { margin: 0; } /* the whole row is the 52 pt target */
 .day-chips { padding: 0 var(--pad) 12px; }
 .day-chip { min-width: 44px; justify-content: center; padding: 0; }
 
-@media (prefers-color-scheme: dark) {
-  .sheet[open] { background: var(--atmosphere), var(--surface); }
-  .sheet .group { background: var(--plate-2); }
-}
+.sheet .group { background: var(--plate-2); }
 
 /* ---- Accessibility preferences: flat, opaque, outlined; no grain, glow, glass or metal gradients. */
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  body, .sheet[open] { background: var(--bg); }
+  body { background: var(--bg); }
+  .sheet[open] { background: var(--surface); }
   .group, .card { background-image: none; background-color: var(--surface); box-shadow: none; border-color: var(--outline); }
   .card { background-color: color-mix(in srgb, var(--g, var(--accent)) 14%, var(--surface)); }
   .sheet .group, .action-sheet .group { background: var(--surface-2); }
@@ -280,9 +241,6 @@ input[type="checkbox"] { margin: 0; } /* the whole row is the 52 pt target */
   .btn-primary, .chip[aria-pressed="true"], .seg > [aria-checked="true"] { background: var(--gold-solid); box-shadow: 0 0 0 1px var(--gold-rim); }
   .bar > span { background: var(--g, var(--accent)); }
   .large-title { text-shadow: none; }
-}
-@media (prefers-color-scheme: dark) and (prefers-reduced-transparency: reduce), (prefers-color-scheme: dark) and (prefers-contrast: more) {
-  .sheet[open] { background: var(--surface); }
 }
 @media (prefers-contrast: more) {
   .chip, .seg { border-width: 2px; }
