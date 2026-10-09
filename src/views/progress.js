@@ -45,7 +45,7 @@ function sevenVsSeven(s, today) {
   const items = s.goals.flatMap(g => [
     g.minutes && [g.name, last.minutes[g.id], prev.minutes[g.id], formatDuration],
     g.weeklyCount && [g.weeklyCount.label, last.counts[g.id], prev.counts[g.id], String]]).filter(Boolean);
-  return [header('Last 7 Days vs the 7 Before'), h('div', { class: 'group' }, items.map(([name, a, b, fmt]) => {
+  return [header('Last 7 days vs the 7 before'), h('div', { class: 'group' }, items.map(([name, a, b, fmt]) => {
     const d = a - b;
     return h('div', { class: 'row' },
       h('div', { class: 'row-main' }, h('p', null, name), h('p', { class: 'subhead' }, `${fmt(a)} · before ${fmt(b)}`)),
@@ -61,7 +61,7 @@ function bar(label, done, target) {
 function thisWeek(s, today) {
   const week = weekSummary(s, today), monday = weekStart(today);
   const unsorted = Array.from({ length: 7 }, (_, i) => unsortedMinutes(s, addDays(monday, i))).reduce((a, b) => a + b, 0);
-  return [header('This Week'), h('div', { class: 'group' },
+  return [header('This week'), h('div', { class: 'group' },
     s.goals.filter(g => week[g.id]).map(g => {
       const { done, target, unit } = week[g.id];
       const text = unit === 'min' ? `${formatDuration(done)} / ${formatDuration(target)}` : `${done} of ${target} ${g.weeklyCount.label.toLowerCase()}`;
@@ -72,21 +72,21 @@ function thisWeek(s, today) {
 
 function allTime(s, today) {
   const l = lifetime(s, today), hours = m => `${(m / 60).toFixed(1)} h`;
-  return [header('All Time'), h('div', { class: 'group' },
+  return [header('All time'), h('div', { class: 'group' },
     s.goals.flatMap(g => [g.minutes && row(g.name, hours(l.minutes[g.id])), g.weeklyCount && row(g.weeklyCount.label, String(l.counts[g.id]))]),
     row('Unsorted', hours(l.unsorted)))];
 }
 
 function redLines(s, today) {
   const r = redLineSummary(s, today, 30);
-  return [header('Red Lines, Last 30 Days'), h('div', { class: 'group' },
+  return [header('Red lines, last 30 days'), h('div', { class: 'group' },
     s.redLines.length ? row(`Held ${r.held} · Slipped ${r.slipped}`) : row('No red lines yet.', null, 'subhead'))];
 }
 
 // One card per existing measured red line (spec §1.7). Counts by each day's frozen limit.
 function measuredCard(s, line, today) {
   const st = redLineStats(s, line.id, today, 30), u = line.unit, a = n => `${fmtAmount(n)} ${u}`;
-  const title = header(`${line.name}, Last 30 Days`);
+  const title = header(`${line.name}, last 30 days`);
   if (!st.days.some(d => d.amount !== null)) return [title, h('div', { class: 'group' }, row('Log an amount on Today to see this.', null, 'red-card-empty'))];
   const avg = n => (n === null ? 'no logs' : `${a(n)} a day`);
   return [title, h('div', { class: 'group' },
@@ -136,9 +136,9 @@ function backup(app, today) {
 function weighIn(app, today) {
   const { weights, targetWeightKg: target } = app.state;
   const add = h('button', { type: 'button', class: 'btn btn-text', id: 'add-weigh-in', onClick: () => openWeighIn(app, today) }, 'Add Weigh-In');
-  if (!weights.length) return [header('Weigh-In'), h('div', { class: 'group' }, h('div', { class: 'row' }, h('p', { class: 'row-main subhead' }, 'No weigh-ins yet. Add your first one.'), add))];
+  if (!weights.length) return [header('Weigh-in'), h('div', { class: 'group' }, h('div', { class: 'row' }, h('p', { class: 'row-main subhead' }, 'No weigh-ins yet. Add your first one.'), add))];
   const summary = `${kgText(weights[0].kg)} → ${kgText(weights.at(-1).kg)} kg${target != null ? `, target ${kgText(target)}` : ''}`;
-  return [header('Weigh-In'), h('div', { class: 'group' },
+  return [header('Weigh-in'), h('div', { class: 'group' },
     h('div', { class: 'row stack' }, chart(weights, target, summary), h('p', { class: 'subhead' }, summary),
       h('p', { class: 'footnote' }, target != null ? 'Solid line: weigh-ins. Dashed line: target.' : 'Line: weigh-ins. Set a target in Settings.')),
     h('div', { class: 'row' }, h('p', { class: 'row-main' }), add))];

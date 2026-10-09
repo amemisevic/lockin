@@ -49,7 +49,7 @@ export function renderSettings(app) {
         h('span', null, h('span', { class: 'goal-name' }, g.name), h('span', { class: 'subhead block' }, goalSummary(g)))),
       null, () => openGoalSheet(app, g)))),
 
-    header('Red Lines'),
+    header('Red lines'),
     h('div', { class: 'group' },
       s.redLines.map(l => h('div', { class: 'row' }, h('div', { class: 'row-main' }, h('p', null, l.name), l.limit !== undefined && h('p', { class: 'subhead' }, `Limit ${l.limit} ${l.unit} a day`)),
         h('button', { type: 'button', class: 'icon-btn', id: `red-more-${l.id}`, 'aria-label': `Actions for ${l.name}`, onClick: () => openActionSheet([

@@ -181,7 +181,7 @@ function goals(app, date) {
 
 function redLines(app, date) {
   const s = app.state, day = s.red[date] ?? {};
-  const header = h('h2', { class: 'section-header footnote' }, 'Red Lines');
+  const header = h('h2', { class: 'section-header footnote' }, 'Red lines');
   if (!s.redLines.length) return [header, h('div', { class: 'group' }, h('div', { class: 'row' },
     h('p', { class: 'row-main subhead' }, 'None set yet.'),
     h('button', { type: 'button', class: 'btn btn-text', onClick: () => { location.hash = 'settings'; } }, 'Add your red lines')))];

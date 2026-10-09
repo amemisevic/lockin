@@ -3,7 +3,8 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.15** (`src/version.js` = `sw.js`). Last code commit: "style: dark only" (owner decision between redesign steps 1 and 2).
+- Version **1.0.16** (`src/version.js` = `sw.js`). Last code commits: "style: dark only" (1.0.15) and "copy: sentence case section names" (1.0.16), owner decisions between redesign steps 1 and 2.
+- **Section names and headers are sentence case** ("Red lines", "Daily checks", "Limit (optional)"); buttons, tabs and sheet titles stay Title-style (spec §3.8).
 - **87 tests, 87 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland` (set `TZ` from PowerShell: Git Bash on Windows does not pass it to Node).
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
 
