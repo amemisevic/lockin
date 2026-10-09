@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {logAmount,redLineStats,parseAmount} from '../src/redlines.js';
+import {logAmount,clearAmount,redLineStats,parseAmount} from '../src/redlines.js';
 import {redLineSummary} from '../src/logic.js';import {S} from './fixtures.js';
 const line={id:'r',name:'Screen time',limit:30,unit:'min'};
 const log=(s,entries,l=line)=>entries.reduce((t,[d,a])=>logAmount(t,d,l,a),s);
@@ -37,3 +37,21 @@ test('last 7 vs the 7 before: average per logged day',()=>{
  assert.equal(st.last7Avg,15);assert.equal(st.prev7Avg,30)});
 test('logAmount is pure',()=>{
  const s=S({redLines:[line]});const snap=JSON.stringify(s);logAmount(s,END,line,5);assert.equal(JSON.stringify(s),snap)});
+test('log then clear equals never logged (a past day; not-logged is not held)',()=>{
+ const base=log(S({redLines:[line]}),[['2026-10-06',10]]);
+ const cleared=clearAmount(log(base,[['2026-10-02',0]]),'2026-10-02','r');
+ assert.deepEqual(cleared,base);assert.equal('2026-10-02' in cleared.red,false);
+ assert.deepEqual(redLineStats(cleared,'r',END),redLineStats(base,'r',END));
+ assert.deepEqual(redLineSummary(cleared,END,30),redLineSummary(base,END,30));
+ assert.deepEqual(redLineSummary(cleared,END,30),{held:1,slipped:0})});
+test('clearing works after the limit changed and keeps other entries on that day',()=>{
+ const other={id:'o',name:'Sugar',limit:2,unit:'g'};
+ let s=log(log(S({redLines:[line,other]}),[['2026-10-07',45]]),[['2026-10-07',1]],other);
+ s={...s,redLines:[{...line,limit:60},other]};
+ const c=clearAmount(s,'2026-10-07','r');
+ assert.deepEqual(c.red['2026-10-07'],{o:{amount:1,limit:2,unit:'g',name:'Sugar'}});
+ const st=redLineStats(c,'r',END);assert.deepEqual([st.logged,st.held,st.slipped,st.unlogged],[0,0,0,30]);
+ assert.deepEqual(redLineSummary(c,END,30),{held:1,slipped:0})});
+test('clearAmount is pure and a no-op when nothing is logged',()=>{
+ const s=log(S({redLines:[line]}),[[END,5]]);const snap=JSON.stringify(s);clearAmount(s,END,'r');assert.equal(JSON.stringify(s),snap);
+ const e=S({redLines:[line]});assert.deepEqual(clearAmount(e,END,'r'),e)});

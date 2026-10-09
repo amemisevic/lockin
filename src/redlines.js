@@ -12,6 +12,14 @@ export function parseAmount(v) {
 export const logAmount = (state, date, line, amount) => ({ ...state, red: { ...state.red,
   [date]: { ...state.red[date], [line.id]: { amount, limit: line.limit, unit: line.unit, name: line.name } } } });
 
+// Removes one day's entry so the day is "not logged" again (never Held); drops the day when it empties.
+export function clearAmount(state, date, id) {
+  if (!state.red[date] || !(id in state.red[date])) return state;
+  const { [id]: _, ...day } = state.red[date];
+  const { [date]: __, ...red } = state.red;
+  return { ...state, red: Object.keys(day).length ? { ...red, [date]: day } : red };
+}
+
 const sum = xs => xs.reduce((a, b) => a + b, 0);
 const avg = xs => (xs.length ? sum(xs) / xs.length : null);
 

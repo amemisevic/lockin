@@ -105,7 +105,7 @@
 .red-status { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; color: var(--text); vertical-align: -4px; }
 .red-status svg { width: 18px; height: 18px; }
 .red-status.slipped { color: var(--red); }
-.none-row { display: flex; justify-content: center; }
+.none-row { display: flex; justify-content: center; gap: 12px; }
 .red-card-empty { color: var(--text-2); }
 .chart .held-bar { fill: var(--text-3); }
 .chart .slip-bar { fill: var(--red); }
