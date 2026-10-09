@@ -42,7 +42,7 @@ export function renderPlan(app) {
         h('span', { class: 'day-num' }, fmt(d, { day: 'numeric' }))))),
     h('h2', { class: 'section-header footnote' }, fmt(selected, { weekday: 'long', day: 'numeric', month: 'long' })),
     occs.length
-      ? h('div', { class: 'group' }, occs.map(o => blockRow(app, o, { missed: missed.has(o.occId) })))
+      ? h('div', { class: 'group rail' }, occs.map(o => blockRow(app, o, { missed: missed.has(o.occId) })))
       : h('div', { class: 'group' }, h('div', { class: 'row empty' }, h('p', { class: 'row-main subhead' }, 'Nothing planned. Add a block.'),
         h('button', { type: 'button', class: 'btn btn-text', onClick: () => openBlockSheet(app, { mode: 'new', date: selected }) }, 'Add Block'))),
     occs.length > 0 && h('div', { class: 'section-actions' },
