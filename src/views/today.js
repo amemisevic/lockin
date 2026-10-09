@@ -21,7 +21,8 @@ export function finishTimer(app) {
   if (!t) return;
   app.set(s => {
     const occ = occById(s, t.occId);
-    return { ...(occ ? completeOcc(s, occ, elapsedMin(t.startedAt, Date.now())) : s), timer: null };
+    // Adds to the stored total, so time logged while the timer ran is kept.
+    return { ...(occ ? completeOcc(s, occ, (occ.actualMin ?? 0) + elapsedMin(t.startedAt, Date.now())) : s), timer: null };
   });
 }
 
@@ -56,7 +57,7 @@ export function renderToday(app) {
     (occs.length > 0 || !isToday) && [
       h('h2', { class: 'section-header footnote' }, 'Blocks'),
       h('div', { class: 'group' }, occs.length
-        ? occs.map(o => blockRow(app, o, { missed: missed.has(o.occId) }))
+        ? occs.map(o => blockRow(app, o, { missed: missed.has(o.occId), canLog: true }))
         : h('div', { class: 'row' }, h('p', { class: 'row-main subhead' }, 'Nothing was planned.')))],
     goals(app, date),
     redLines(app, date));

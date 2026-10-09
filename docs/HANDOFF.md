@@ -3,8 +3,8 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.10** (`src/version.js`). Last code commit: "feat: clear a measured red-line log".
-- **74 tests, 74 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland`.
+- Version **1.0.11** (`src/version.js`). Last code commit: "feat: log time on Today blocks".
+- **82 tests, 82 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland`.
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
 
 ## 2. Done
@@ -17,14 +17,15 @@ Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpower
 | Zoom lock · timer seconds | `9b92022` · `1f89ea3` |
 | Task 8 Progress · Task 9 Settings | `a325d02` · `5e101f9` |
 | Measured red lines (data/logic/tests · UI) | `054c121` · `d5b8ecc` |
-| Clear a measured red-line log | feat: clear a measured red-line log |
+| Clear a measured red-line log | `443182d` |
+| Log time on Today blocks (replaces Log Minutes) | feat: log time on Today blocks |
 
 ## 3. In progress
 Nothing.
 
 ## 4. Next, in order
 - [x] **a. Clear a measured red-line log** — done (owner approved 2026-10-09; spec §3.10).
-- [ ] **b. Task 10** service worker (plan). `sw.js` VERSION must equal `src/version.js` (currently 1.0.10, not the plan's 1.0.0); `ASSETS` must also list `screens.css` and every file in `src/` (incl. `redlines.js`, `views/redLineLog.js`, `views/settingsSheets.js`).
+- [ ] **b. Task 10** service worker (plan). `sw.js` VERSION must equal `src/version.js` (currently 1.0.11, not the plan's 1.0.0); `ASSETS` must also list `screens.css` and every file in `src/` (incl. `redlines.js`, `views/redLineLog.js`, `views/settingsSheets.js`, `timeLog.js`).
 - [ ] **c. Task 11** HIG audit + code review (backlog item: at ~300 % browser zoom the 4-tab bar clips "Settings").
 - [ ] **d. 14-day trial** (plan Checkpoint D).
 
@@ -36,9 +37,10 @@ Nothing.
 - **Unlogged days are not Held**; they count as "not logged".
 - **A deleted red line stays hidden on Progress** (owner confirmed); its history stays in the data with its frozen name.
 - **Editing a past measured day keeps that day's frozen limit**; only a new log uses the current limit.
+- **Tracked time is whole minutes** (`actualMin`), never seconds (owner). **Finish adds** elapsed minutes to the stored total (owner). Log Minutes is gone; Log time on Today rows replaces it.
 
 ## 6. Open phone checks (untested on the iPhone)
-Pinch zoom · double-tap zoom · ticking timer seconds · measured red lines (add, log, None, slip, edit a past day, Clear, read the Progress card) · Reduce Transparency · Increase Contrast · landscape.
+Pinch zoom · double-tap zoom · ticking timer seconds · measured red lines (add, log, None, slip, edit a past day, Clear, read the Progress card) · Log time (add, replace 0, add while the timer runs, a past day) · Reduce Transparency · Increase Contrast · landscape.
 
 ## 7. Gotchas
 - **Release rule:** any change to a shipped file bumps `VERSION` (`src/version.js`, and `sw.js` once it exists). Two separate changes = two bumps.

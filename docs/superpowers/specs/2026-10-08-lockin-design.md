@@ -32,13 +32,14 @@ Plus tag `unsorted` (never feeds any goal; its minutes are shown on their own li
 - Weekend minimums total 8 h (4 + 4). User chose to keep them from day 1. At 90% of 30 days, about 3 non-won days a month are allowed; Progress shows the count so the user can lower them later.
 
 ### 1.4 Minutes counting
-An occurrence's minutes = `actualMin` if a timer or manual log set it (even 0), else its planned minutes if it is ticked done, else 0. **Minutes and tag are frozen on the day when the occurrence is completed** (snapshot), so later edits to a block never rewrite history.
+An occurrence's minutes = `actualMin` (whole minutes, no seconds) if a timer or **Log time** set it (even 0), else its planned minutes if it is ticked done, else 0. **Minutes and tag are frozen on the day when the occurrence is completed** (snapshot), so later edits to a block never rewrite history.
 
 ### 1.5 Today
 - **Date switcher** under the title: previous/next day and a "Today" button. Any **past** day is fully editable (so forgotten logging can be fixed after midnight); **future** days cannot be viewed on Today (use Plan). The ephemeral viewed date is not saved.
 - **Today (viewed date = today):** *Now card* reads the clock and the Plan: inside a block → title, description, time range, minutes left, **Start**; between blocks → "Free until HH:MM" + next block; unfinished past blocks → "Missed" with **Move**; no blocks → "Nothing planned." with **Add Block** and **Copy Yesterday's Plan**.
 - **Past day:** no Now card and no timer. A banner "Editing Tue 6 Oct" with **Back to Today**. Everything else works, and unfinished blocks show "Missed".
-- **Blocks group** (any viewed day): that day's blocks as rows with a done toggle, time, title, and a "…" menu (Log Minutes, Move, Delete).
+- **Blocks group** (any viewed day): that day's blocks as rows with a done toggle, time, title, a **Log time** text button with its own stopwatch icon on a line under the title (44 pt; beside the title the row is too narrow at 375 px), and a "…" menu (Edit, Move, Delete).
+- **Log time** (added 2026-10-09, owner request; replaces Log Minutes): a sheet like Log Amount with **Hours** and **Minutes** text fields (`inputmode="numeric"`, blank = 0, minutes over 59 are fine and are normalized), a segmented control **Add to total** (default) | **Replace total**, and Cancel / **Save**. Whole numbers ≥ 0 only; anything else shows inline text "Enter whole hours and minutes, like 1 and 30." Save is disabled for 0 with Add; Replace with 0 resets the block to 0. Add = `actualMin` (or 0) + entered; Replace = entered. Saving marks the block done (snapshot as in §1.4) and counts on the viewed day. A running timer is left running.
 - **Goals group:** the four goals with a thin progress bar and text ("45 / 60 min"). Business/Uni auto-show met when minutes reach the minimum, and also allow a manual tick. Body & Health: Calories toggle and a gym stepper "n of 4 this week". Socializing: stepper "n of 3 this week".
 - **Day status line** at the top of the Goals group: "Won", "Partial" or nothing.
 - **Red lines:** none ship in the code (public repo). First launch shows "Add your red lines" linking to Settings. Each plain line has a **Held | Slipped** control; a slip shows exactly `Costs one day, not the month.` once under the list.
@@ -47,7 +48,7 @@ An occurrence's minutes = `actualMin` if a timer or manual log set it (even 0), 
 ### 1.6 Plan (time-block list)
 - Day strip Mon–Sun with previous/next week, and the selected day's blocks. Any date, past or future, can be selected and edited.
 - Block fields: title, description, date, start, duration (chips **15, 30, 45, 60, 90, 120, 180** + slider 5–240 step 5), optional custom end time, repeat (Never / Daily / Weekdays / Weekends / Custom days), tag (Business, Uni, Body & Health, Socializing, Unsorted).
-- **Start/Finish timer** lives on the Today Now card (today only) and logs real minutes. **Log Minutes** (any day) sets actual minutes manually.
+- **Start/Finish timer** lives on the Today Now card (today only). **Finish adds** the elapsed whole minutes to the block's stored total, so time logged with **Log time** while the timer ran is kept (Replace sets the base the timer adds to). **Log time** on Today (any day) enters time manually; Plan rows have no Log time.
 - **Move** (unfinished blocks): opens the full block form with title, description, tag and duration kept, date = tomorrow, time empty for the user to choose. Original shows persistent text "Moved to Fri 9 Oct, 18:00" and counts as neither missed nor done.
 - **Copy Day:** copies the day's blocks (except moved ones) to a chosen date as separate one-off, not-done blocks.
 - **Edit** a repeating block edits the whole series (ceiling). **Delete** a repeating block offers **Delete This Day** and **Delete This and Future**; past days and their logs stay. Deleting a one-off block removes it and its log (confirmed).

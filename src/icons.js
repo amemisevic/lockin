@@ -22,6 +22,7 @@ export const icons = {
   arrowUp: svg('<path d="M12 19V5M6 11l6-6 6 6"/>'),
   arrowDown: svg('<path d="M12 5v14M6 13l6 6 6-6"/>'),
   ellipsis: svg('<circle cx="5.5" cy="12" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="18.5" cy="12" r="1.75"/>', true),
+  stopwatch: svg('<circle cx="12" cy="13.5" r="7.5"/><path d="M9.5 2.5h5M12 2.5V6M12 13.5V9.5M18.5 5.5l-1.5 1.5"/>'),
   check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
   xmark: svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
   chevronLeft: svg('<path d="M15 5l-7 7 7 7"/>'),
