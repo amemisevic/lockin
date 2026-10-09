@@ -90,6 +90,7 @@ Wake-time setting, `.ics`/Add to Calendar, in-app notifications, panic/Rut-Break
 - Request persistent storage at startup (`navigator.storage.persist?.()`); failure is ignored.
 - **Zoom is locked (deliberate deviation, owner's choice on 2026-10-09):** pinch and double-tap zoom are disabled (`maximum-scale=1, user-scalable=no`, `touch-action: manipulation`, `gesturestart` prevented). This departs from the HIG/WCAG advice to allow zoom; iPhone Larger Text (Dynamic Type) still scales the text. Form controls stay at ≥ 16 px so iOS never zooms on focus.
 - Service-worker updates apply after the app is fully closed and reopened. Each release bumps one version string; Settings shows it.
+- **Offline (Task 10, `sw.js`):** precaches every shipped file (`ASSETS`, checked against the directories by `tests/sw.test.js`) in cache `lockin-<VERSION>`; cache-first for same-origin GETs, navigations fall back to `index.html`; old caches deleted on activate; no `skipWaiting`, so a new version needs **two** full close/reopen cycles (the first installs it, the second runs it). `VERSION` in `sw.js` must equal `src/version.js` (test). No push, no background sync.
 - `localStorage` writes can fail (quota/private mode): the app must show a persistent banner "Couldn't save. Export a backup." and never silently drop data.
 - iOS has no web haptics and no background timers; the Now card is correct only while the app is open, and recomputes from the clock on open.
 

@@ -66,3 +66,6 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) rend
 window.addEventListener('focus', render);
 setInterval(render, 30_000); // "today" rolls over at midnight while the app is open
 render();
+
+// Offline (plan Task 10). Relative path: the app lives under a GitHub Pages sub-path.
+navigator.serviceWorker?.register('sw.js');

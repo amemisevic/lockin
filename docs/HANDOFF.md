@@ -3,8 +3,8 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.11** (`src/version.js`). Last code commit: "feat: log time on Today blocks".
-- **82 tests, 82 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland`.
+- Version **1.0.12** (`src/version.js` = `sw.js`). Last code commit: "feat: offline service worker" (Task 10).
+- **86 tests, 86 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland`.
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
 
 ## 2. Done
@@ -18,14 +18,15 @@ Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpower
 | Task 8 Progress · Task 9 Settings | `a325d02` · `5e101f9` |
 | Measured red lines (data/logic/tests · UI) | `054c121` · `d5b8ecc` |
 | Clear a measured red-line log | `443182d` |
-| Log time on Today blocks (replaces Log Minutes) | feat: log time on Today blocks |
+| Log time on Today blocks (replaces Log Minutes) | `126b050` |
+| Task 10 offline service worker | feat: offline service worker |
 
 ## 3. In progress
 Nothing.
 
 ## 4. Next, in order
 - [x] **a. Clear a measured red-line log** — done (owner approved 2026-10-09; spec §3.10).
-- [ ] **b. Task 10** service worker (plan). `sw.js` VERSION must equal `src/version.js` (currently 1.0.11, not the plan's 1.0.0); `ASSETS` must also list `screens.css` and every file in `src/` (incl. `redlines.js`, `views/redLineLog.js`, `views/settingsSheets.js`, `timeLog.js`).
+- [x] **b. Task 10** done (1.0.12). `tests/sw.test.js` keeps `ASSETS` equal to the shipped files: add a file → add it to `ASSETS`. ⛔ Checkpoint: owner tests airplane mode on the iPhone.
 - [ ] **c. Task 11** HIG audit + code review (backlog item: at ~300 % browser zoom the 4-tab bar clips "Settings").
 - [ ] **d. 14-day trial** (plan Checkpoint D).
 
@@ -40,11 +41,11 @@ Nothing.
 - **Tracked time is whole minutes** (`actualMin`), never seconds (owner). **Finish adds** elapsed minutes to the stored total (owner). Log Minutes is gone; Log time on Today rows replaces it.
 
 ## 6. Open phone checks (untested on the iPhone)
-Pinch zoom · double-tap zoom · ticking timer seconds · measured red lines (add, log, None, slip, edit a past day, Clear, read the Progress card) · Log time (add, replace 0, add while the timer runs, a past day) · Reduce Transparency · Increase Contrast · landscape.
+Owner confirmed on 2026-10-09 that all earlier checks pass (zoom lock, timer seconds, measured red lines incl. Clear, Log time, Reduce Transparency, Increase Contrast, landscape). Open: Task 10 offline (two close/reopen cycles, Settings shows 1.0.12, airplane mode opens all four tabs with data intact).
 
 ## 7. Gotchas
 - **Release rule:** any change to a shipped file bumps `VERSION` (`src/version.js`, and `sw.js` once it exists). Two separate changes = two bumps.
-- **Updating the phone:** fully close and reopen the Home Screen app. After Task 10 (service worker) it takes **two** close/reopen cycles.
+- **Updating the phone:** fully close and reopen the Home Screen app. Since Task 10 (service worker) it takes **two** close/reopen cycles (first installs, second runs).
 - **Files < 300 lines.** `logic.js` is at 241 → new logic goes in its own module (as `redlines.js` did). Styles: tokens/components in `styles.css`, screens in `screens.css`; the contrast test reads tokens from `styles.css` only.
 - **Git author:** set in this repo's local config only (GitHub noreply address). Never commit with a personal email. Stage explicit paths, never `git add -A`.
 - **Gitignored:** `PROMPT.md`, `START-HERE.md`, root `*.png` screenshots, and `.superpowers/` (the work ledger is `.superpowers/sdd/2026-10-08-lockin-app/progress.md`, local only).
