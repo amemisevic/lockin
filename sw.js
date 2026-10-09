@@ -1,5 +1,5 @@
 // Offline cache (plan Task 10). Any change to a shipped file bumps VERSION here and in src/version.js.
-const VERSION = '1.0.16';
+const VERSION = '1.0.17';
 const CACHE = `lockin-${VERSION}`;
 const ASSETS = [
   './',
@@ -31,8 +31,17 @@ const ASSETS = [
   'src/views/settings.js',
   'src/views/settingsSheets.js',
   'src/views/today.js',
+  'icons/favicon-16.png',
+  'icons/favicon-32.png',
+  'icons/icon-1024.png',
+  'icons/icon-120.png',
+  'icons/icon-152.png',
+  'icons/icon-167.png',
   'icons/icon-180.png',
+  'icons/icon-192.png',
+  'icons/icon-48.png',
   'icons/icon-512.png',
+  'icons/icon-60.png',
 ];
 
 // No skipWaiting: a new version waits until every window of the old one is closed (a full relaunch).

@@ -3,7 +3,7 @@
 Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpowers/`, then this page.
 
 ## 1. State (checked with `git status`, `git log -3`, `npm test`)
-- Version **1.0.16** (`src/version.js` = `sw.js`). Last code commits: "style: dark only" (1.0.15) and "copy: sentence case section names" (1.0.16), owner decisions between redesign steps 1 and 2.
+- Version **1.0.17** (`src/version.js` = `sw.js`). Last code commit: "feat: Spartan helmet app icons" (icon part of redesign step 5, done early at the owner's request). Before it: "style: dark only" (1.0.15), "copy: sentence case section names" (1.0.16).
 - **Section names and headers are sentence case** ("Red lines", "Daily checks", "Limit (optional)"); buttons, tabs and sheet titles stay Title-style (spec §3.8).
 - **87 tests, 87 pass, 0 fail** (`npm test`). Also passed under `TZ=America/Los_Angeles` and `TZ=Pacific/Auckland` (set `TZ` from PowerShell: Git Bash on Windows does not pass it to Node).
 - Working tree clean, `main` pushed (`origin/main` = `d5b8ecc` before this commit). Live on GitHub Pages.
@@ -26,7 +26,7 @@ Written 2026-10-09. Read `CLAUDE.md`, then the spec and plan in `docs/superpower
 ## 3. In progress
 **Visual redesign "Iron"** (owner-approved 2026-10-09; spec §3.1, §3.3, §3.4 updated). Visual only, no logic changes, copy unchanged. Five steps, one commit each, each version-bumped, ⛔ owner checks on the iPhone after each:
 1. [x] Tokens, self-hosted fonts (`src/fonts/`, OFL texts beside them), base type, materials, tab bar, sheet chrome, list/menu components (1.0.14).
-2. [ ] Today. 3. [ ] Progress (dataviz rules), then Plan. 4. [ ] Settings and every remaining sheet. 5. [ ] Logo and icons (Pillow script; 1254 px source stays in `design-reference/`, not shipped; 32/16 favicons use the gold outline variant).
+2. [ ] Today. 3. [ ] Progress (dataviz rules), then Plan. 4. [ ] Settings and every remaining sheet. 5. [x] App icons (1.0.17): `python scripts/make-icons.py` (Pillow, dev-only) writes `icons/` from `design-reference/lockin-logo-gray.png` (never shipped); 32/16 favicons use the gold outline variant. [ ] In-app logo tile + wordmark go with step 4 (Settings).
 **Dark only (1.0.15, owner decision 2026-10-09):** the light theme is removed for good: one token set after `/* tokens:dark */`, `color-scheme: dark`, no `prefers-color-scheme` anywhere (asserted by `tests/contrast.test.js`), dark PWA chrome (`#0A0A0B`, status bar `black-translucent`). Never re-add light tokens or appearance branches.
 Rules: gold text only via solid `--accent`; gradients only for fills/edges/bars; every change measured (contrast from rendered pixels, 44 pt targets, AX5, 147 px, landscape, dark, Reduce Transparency and Increase Contrast emulated). Shipped files must sit under `src/` or `icons/` (the ASSETS test only scans those). `design-prototypes/` and `design-reference/` are never committed.
 
