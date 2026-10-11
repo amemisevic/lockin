@@ -3,6 +3,7 @@
 Single-user iPhone web app (PWA): the 5-tab PM Challenge app (Today · Tasks · Challenge · Analytics · Settings) as specified in `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One user, phone only, hosted on GitHub Pages.
 
 ## Read first, in this order
+Read docs/superpowers/plans/PROGRESS.md first. At the end of every task, append an entry (task number, commit hash, commands run with exit codes, ambiguities and choices, next task) and commit it with the task.
 1. `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`
 2. `docs/design/lockin-v2/DESIGN-SPEC.md`
 
