@@ -68,6 +68,7 @@ An occurrence's minutes = `actualMin` (whole minutes, no seconds) if a timer or 
 Goals (rename; weekday/weekend minimums; weekly targets; daily check labels; color is fixed), Red Lines (add/rename/delete; optional limit + unit with chips **min, times, drinks** or free text; no commitment friction, red lines are not goals; deleting hides a line from summaries, stored history is kept), Weight target, **Reminders** (setup instructions, see 1.9), Data (Export / Import / last backup), app version text.
 
 ### 1.9 Reminders (iOS Shortcuts, no code in the app)
+Times and texts superseded by v2 plan Task 19 (Reminders); the Shortcuts mechanism still applies.
 A web app on iPhone cannot schedule its own notifications. Reminders are three **iOS Shortcuts personal automations** (Shortcuts › Automation › New › Time of Day › Daily › *Run Immediately* › action *Show Notification*). Settings › Reminders shows these steps and the texts with a Copy button each:
 
 | Time | Text |
@@ -102,6 +103,7 @@ Wake-time setting, `.ics`/Add to Calendar, in-app notifications, panic/Rut-Break
 - **Five tabs (deliberate deviation, owner's choice on 2026-10-12, v2):** five tabs replace the four in §1.1; see docs/design/lockin-v2/DESIGN-SPEC.md §1.
 
 ## 3. Design spec (Apple HIG)
+§3.1–3.8 and §3.10 superseded by docs/design/lockin-v2/DESIGN-SPEC.md (v2); §3.9 accessibility checklist still applies (v2 plan Task 21).
 
 References read: `accessibility.md`, `layout.md`, `typography.md`, `color.md`, `dark-mode.md`, `designing-for-ios.md`, `tab-bars.md`, `sheets.md`, `lists-and-tables.md`, `toggles.md`, `segmented-controls.md`, `sliders.md`, `entering-data.md`, `toolbars.md`, `motion.md`, `liquid-glass.md`. Framework translation: this is a web app, so SwiftUI/UIKit vocabulary maps to HTML/CSS (semantic colors → CSS custom properties, Dynamic Type → `-apple-system-*` fonts, Liquid Glass → `backdrop-filter`).
 
