@@ -1,0 +1,55 @@
+/* Exact <style> of Recovery.dc.html (cascade order preserved; background data-URIs replaced by a pointer) */
+
+body{margin:0;background:#0A0A0B}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+.scr{position:relative;width:390px;overflow:hidden;background:radial-gradient(110% 34% at 50% -4%,rgba(228,87,107,.16),rgba(228,87,107,0) 70%),radial-gradient(90% 30% at 100% 40%,rgba(242,190,92,.04),rgba(0,0,0,0) 70%),#0A0A0B;color:#F3EEE4;font-family:'Alegreya Sans',system-ui,sans-serif;font-size:15px;line-height:20px}
+.eyebrow{font-size:11px;line-height:14px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#D9A646}
+.sec{display:flex;align-items:center;margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:27px;line-height:30px;color:#F3EEE4}
+.sec::before{content:"";flex:none;display:block;width:46px;height:12px;margin-right:12px;vertical-align:middle;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='46' height='12' viewBox='0 0 46 12'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%23FCE29A'/><stop offset='1' stop-color='%23C99139' stop-opacity='.15'/></linearGradient></defs><path d='M11 4.2 L40 5.4 L45 6 L40 6.6 L11 7.8Z' fill='url(%23g)'/><path d='M11 6h28' stroke='%230A0A0B' stroke-opacity='.35' stroke-width='.6'/><rect x='7.6' y='1' width='2.6' height='10' rx='1.2' fill='%23F2BE5C'/><rect x='3' y='5' width='5' height='2' rx='1' fill='%23C99139'/><circle cx='2.4' cy='6' r='1.8' fill='%23FCE29A'/></svg>") no-repeat center/contain;filter:drop-shadow(0 0 3px rgba(242,190,92,.3))}
+.plate{border-radius:24px;background:linear-gradient(180deg,#1c1b20 0%,#141317 100%);border:1px solid rgba(242,190,92,.15);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 26px rgba(0,0,0,.5)}
+.warn{border-color:#7a2a38;background:linear-gradient(180deg,#26161a 0%,#141317 70%);box-shadow:inset 0 1px 0 rgba(240,104,124,.25),0 0 36px rgba(228,87,107,.12),0 14px 30px rgba(0,0,0,.55)}
+.btn-gold{display:flex;align-items:center;justify-content:center;gap:8px;height:54px;width:100%;border-radius:999px;font-weight:700;font-size:17px;color:#1a1205;background:linear-gradient(180deg,#FCE29A 0%,#F2BE5C 42%,#C99139 78%,#B08539 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(84,52,21,.35),0 0 0 1px #543415,0 6px 16px rgba(201,145,57,.28),0 0 22px rgba(242,190,92,.12)}
+.t2{color:#B9B3A8}.t3{color:#A39D93}
+.fq{margin-top:22px}
+.fq .n{display:flex;gap:10px;align-items:center;font-weight:600;font-size:16px}
+.fq .n i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:700;color:#F2BE5C;border:1px solid #5d4521;background:rgba(242,190,92,.08)}
+.chip{height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(242,190,92,.24);font-size:15px;font-weight:600;color:#E9E3D6;display:inline-flex;align-items:center}
+.chip.on{color:#1a1205;border-color:#543415;background:linear-gradient(180deg,#FCE29A,#F2BE5C 42%,#C99139 78%,#B08539)}
+.ta{width:100%;min-height:84px;border-radius:16px;border:1px solid rgba(242,190,92,.24);background:#111014;color:#F3EEE4;font:inherit;font-size:16px;line-height:22px;padding:12px 14px;resize:none;margin-top:10px}
+.ta.bad{border-color:#B8374B}
+.in{width:140px;height:48px;border-radius:14px;border:1px solid rgba(242,190,92,.24);background:#111014;color:#F3EEE4;font:inherit;font-size:18px;padding:0 14px;margin-top:10px;font-variant-numeric:tabular-nums}
+.plate:not(.rim):not(.warn){box-shadow:inset 0 1px 0 rgba(255,236,190,.10),inset 0 0 26px rgba(242,190,92,.03),0 12px 26px rgba(0,0,0,.5),0 0 24px rgba(242,190,92,.045)}
+path[stroke="#F2BE5C"][stroke-width="2.2"]{filter:drop-shadow(0 0 4px rgba(242,190,92,.6))}
+circle[fill="#FCE29A"]{filter:drop-shadow(0 0 4px rgba(242,190,92,.8))}
+circle[fill="#E4576B"]{filter:drop-shadow(0 0 4px rgba(228,87,107,.8))}
+.trk{box-shadow:inset 0 1px 2px rgba(0,0,0,.55)}
+.trk i{box-shadow:0 0 10px rgba(242,190,92,.40)}
+.trk i.lo{box-shadow:0 0 10px rgba(228,87,107,.40)}
+.col i{box-shadow:inset 0 1px 0 rgba(255,246,214,.45),0 0 14px rgba(242,190,92,.30)}
+.col i.lo{box-shadow:inset 0 1px 0 rgba(255,200,208,.35),0 0 14px rgba(228,87,107,.30)}
+.hm.l4{box-shadow:0 0 12px rgba(242,190,92,.5)}
+.hm.l3{box-shadow:0 0 8px rgba(242,190,92,.25)}
+.hm.l2{box-shadow:0 0 5px rgba(242,190,92,.12)}
+.hm.l0{box-shadow:inset 0 0 0 1px rgba(242,190,92,.20)}
+.px.P{box-shadow:0 0 6px rgba(242,190,92,.35)}
+.px.X{box-shadow:0 0 6px rgba(228,87,107,.4)}
+.px.R{box-shadow:inset 0 0 0 1.5px #E4576B,0 0 6px rgba(228,87,107,.3)}
+.tile{box-shadow:inset 0 1px 0 rgba(255,236,190,.08),0 0 18px rgba(242,190,92,.05)}
+.tile .n{text-shadow:0 0 16px rgba(242,190,92,.25)}
+.pill{box-shadow:0 0 10px rgba(242,190,92,.14)}
+.pill.dn{box-shadow:0 0 10px rgba(228,87,107,.16)}
+.seg{box-shadow:inset 0 2px 5px rgba(0,0,0,.5),0 0 14px rgba(242,190,92,.05)}
+.dy.p{box-shadow:0 0 9px rgba(242,190,92,.38)}
+.dy.m{box-shadow:0 0 6px rgba(184,138,58,.3)}
+.wk{box-shadow:inset 0 1px 0 rgba(255,236,190,.06)}
+.mini.on svg{filter:drop-shadow(0 0 4px rgba(242,190,92,.5))}
+.shield svg{filter:drop-shadow(0 0 3px rgba(242,190,92,.14))}
+.more{box-shadow:inset 0 1px 0 rgba(255,236,190,.07)}
+.btn-ghost{box-shadow:0 0 14px rgba(242,190,92,.07),inset 0 1px 0 rgba(255,236,190,.07)}
+.chip:not(.on){box-shadow:0 0 12px rgba(242,190,92,.05)}
+.stp button{box-shadow:0 0 12px rgba(242,190,92,.08)}
+.scr{isolation:isolate}
+/* BACKGROUND LAYER 1 (::before): see assets/bg/* and DESIGN-SPEC.md §6 — stack, top to bottom: dark overlay + 4 corner vignettes, steps.svg anchored bottom (390x142), frieze.svg top (390x34), wall-tile.svg repeat-y (390x720) */
+

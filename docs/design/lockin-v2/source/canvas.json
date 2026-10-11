@@ -1,0 +1,115 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Analytics.dc.html": {
+      "h": 2060,
+      "title": "4 · Analytics",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Challenge.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "title": "3 · Challenge",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "CheckIn.dc.html": {
+      "h": 1860,
+      "is_interactive": true,
+      "title": "Night check-in",
+      "w": 390,
+      "x": 470,
+      "y": 2420
+    },
+    "Kit.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "title": "Spartan kit · controls",
+      "w": 860,
+      "x": 1410,
+      "y": 2420
+    },
+    "Main.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "1 · Today",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "Onboarding.dc.html": {
+      "h": 1380,
+      "title": "Day 0 · before you start",
+      "w": 390,
+      "x": 0,
+      "y": 2420
+    },
+    "Recovery.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "title": "After a Reset · Recovery",
+      "w": 390,
+      "x": 940,
+      "y": 2420
+    },
+    "Settings.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "title": "5 · Settings",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "Tasks.dc.html": {
+      "h": 1280,
+      "is_interactive": true,
+      "title": "2 · Tasks & habits",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-11T21:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "r1": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Lock In v2 · the five tabs (tap the tab bar to move between screens)",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "r2": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Day 0, check-in, Reset, and the control kit",
+      "w": 240,
+      "x": 0,
+      "y": 2160
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Tasks.dc.html",
+    "Challenge.dc.html",
+    "Analytics.dc.html",
+    "Settings.dc.html",
+    "Onboarding.dc.html",
+    "CheckIn.dc.html",
+    "Recovery.dc.html",
+    "Kit.dc.html"
+  ],
+  "pages": [],
+  "title": "Lock In v2 Mockup"
+}

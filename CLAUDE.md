@@ -3,8 +3,8 @@
 Single-user iPhone web app (PWA): a time-block planner + four goals + daily Won/Partial status + red lines, built on Hamza's system (low daily bar, ~90% of days, no streaks, volume over time). One user, phone only, hosted on GitHub Pages.
 
 ## Read first, in this order
-1. `docs/superpowers/specs/2026-10-08-lockin-design.md` (what to build and the Apple HIG design)
-2. `docs/superpowers/plans/2026-10-08-lockin-app.md` (how, task by task)
+1. `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`
+2. `docs/design/lockin-v2/DESIGN-SPEC.md`
 
 ## Hard rules
 - Follow the plan task by task. Do not add features, screens, settings, abstractions or libraries that are not in the spec or plan. If something seems missing or ambiguous, ask the user.
@@ -14,9 +14,12 @@ Single-user iPhone web app (PWA): a time-block planner + four goals + daily Won/
 - All asset paths are relative (GitHub Pages sub-path). No leading `/`.
 - **No personal data anywhere in the repo** (public): no weights, no red-line names, no schedules, no real names. Red lines and weight target are typed into the app at runtime.
 - Exact copy that must not change: slip message `Costs one day, not the month.`; the three reminder texts in the plan's Global Constraints.
-- No streaks, no stars, no gamification, no in-app notifications, no wake-time setting, no panic button, no Top G/Bottom G lines, no morning/night screens.
-- Design: Apple HIG as written in spec §3. Inline SVG icons of our own (do not copy SF Symbols). Color is never the only signal. Tap targets ≥ 44 pt, text ≥ 11 pt, contrast ≥ 4.5:1 text / 3:1 graphics. Dark appearance only (owner decision 2026-10-09): no light theme, no `prefers-color-scheme` branches, no appearance toggle.
+- Streaks, check-ins, Top G / Bottom G, MED / Redo / Reset and the Recovery Protocol exist only as specified in docs/superpowers/plans/2026-10-12-lockin-v2-app.md (Rules). Still forbidden: XP, stars, accolades, in-app notifications, panic button, cloud sync, web push.
+- Design: the Iron/Spartan design in docs/design/lockin-v2/DESIGN-SPEC.md; HIG minimums (tap, text, contrast, dark only, zoom lock) still apply. Inline SVG icons of our own (do not copy SF Symbols). Color is never the only signal. Tap targets ≥ 44 pt, text ≥ 11 pt, contrast ≥ 4.5:1 text / 3:1 graphics. Dark appearance only (owner decision 2026-10-09): no light theme, no `prefers-color-scheme` branches, no appearance toggle.
 - Files stay small and single-purpose (target < 300 lines).
+
+## Design skills
+Design skills (design-taste-*, high-end-visual-design, redesign-existing-projects, gpt-taste, minimalist-ui, industrial-brutalist-ui, stitch-design-taste, image-to-code, frontend-design, web-artifacts-builder, apple-design, animate) are AUDIT-ONLY. Never apply their suggestions to code unless I explicitly approve each change. DESIGN-SPEC.md and the reference PNGs in docs/design/lockin-v2/ always win over any design skill. No React, no build step, no new dependencies.
 
 ## Commands
 - Test: `npm test` (runs `node --test`)
