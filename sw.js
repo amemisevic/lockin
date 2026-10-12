@@ -11,6 +11,7 @@ const ASSETS = [
   'src/core/model.js',
   'src/core/store.js',
   'src/core/tasks.js',
+  'src/core/challenge.js',
   'src/dom.js',
   'src/fonts/OFL-Archivo.txt',
   'src/fonts/OFL-Cinzel.txt',
