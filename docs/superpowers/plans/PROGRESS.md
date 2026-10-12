@@ -129,13 +129,31 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - `bottomG.archetype/tactic` null → `''` (model validator needs strings; Task 1 deferral settled for the core). `win`, `slipNote` default `''`.
   - `settleMissed` skips closed days (the plan's "while … no closedAt" read literally would stop at the first closed day); stops after day `length`; `closedAt` = that 04:00; keeps morning/afternoon/declaredRedo/slipNote; no Recovery; returns the same object when nothing changes.
   - `nightTargets` ascending (yesterday first). Streaks read closed days only, sorted by date; no calendar-gap check (plan: "only closed days").
-- Awaiting owner ruling (scoring, plan silent; code follows the plan literally until ruled):
-  - Closing today while yesterday is still open before 04:00 is allowed (`nightTargets` returns `[yesterday, today]` at 00:40; `closeNight(today)` succeeds, closing today as `redo` before it happened).
-  - Override can turn a red-line `reset` into `passed`/`redo`, which skips Recovery and the next day's forced full pass.
+- Owner rulings A and B resolved the two scoring questions this review raised (closing today while yesterday is open; overriding a red-line reset). See "Task 4 follow-up" below.
 - Deferred:
   - Skipped: `tests/scoring.test.js` is 417 lines (> 300 target); frozen, splitting is an owner call.
-  - Skipped: `nightTargets`/`closeNight` not exercised under DST, boundary tested to the minute, streak table rows lack per-row derivation, no test that a `struggling` afternoon keeps `passed` — Task 8 flow/tz tests cover; `scoring.test.js` frozen.
+  - Skipped: `nightTargets`/`closeNight` not exercised under DST, boundary tested to the minute, streak table rows lack per-row derivation — Task 8 flow/tz tests cover; `scoring.test.js` frozen. (The `struggling` afternoon and hand-derived streak cases are now in `tests/scoring-addenda.test.js`.)
   - Skipped: `closeNight` trusts the form's text field types (`win`, `slipNote`, `bottomG.*`); the Task 16 view controls input.
   - Skipped: the missed-protocol reason is listed once when both missed rules apply (text only).
   - Task 16: the night form must pass strings (never null) for `win`/`slipNote`, and route to yesterday while it is a night target.
-- Next: Task 5 (Recovery and War Log core), after the owner's rulings above.
+
+## Task 4 follow-up: owner rulings A and B
+- Commits: `497ed1e` test(core): red-line reset cannot be overridden (failing, WIP) - ruling B; `4a27a06` test(core): night-close ordering rulings (failing, WIP); "feat(core): night-close rulings A and B" (implementation and this entry; a commit cannot contain its own hash, see `git log`). Base `50084fb`.
+- Ruling A (owner): `closeNight(state, date, form, nowMs)` refuses `{ok:false, error:'yesterday-open'}` ("Close yesterday first.") when `date` is the local date of `nowMs`, local time < 04:00, and the previous calendar day is an active challenge day with no result. It reuses Task 3's predicate: `yesterdayOpen` in `src/core/challenge.js` gained only the word `export`, and `submitMorning` still calls the same function. Closing today stays allowed when yesterday is closed or not an active day.
+- Ruling B (owner): if any red line is answered crossed, an override with result `passed` or `redo` is refused `{ok:false, error:'red-line-override'}` ("A crossed red line cannot be overridden."). Override `reset` on a crossed red line stays allowed. Overrides in every other situation are unchanged. Intentionally still allowed: overriding a `missed >= zeroDay` reset (owner may revisit).
+- Message texts are exported as `NIGHT_TEXT` from `src/core/scoring.js` (controller choice); the result shape stays `{ok:false, error:<code>}`.
+- closeNight error order now: closed → not-active → not-closable → yesterday-open → tasks-open → protocols-unanswered → redlines-unanswered → override-reason → red-line-override.
+- Sole authorized edit to a frozen test (owner): `tests/scoring.test.js`, the crossed-red-line override-to-redo block (old L149-153: comment plus four lines) now expects the ruling-B refusal. `git diff a7ae168 -- tests/scoring.test.js` is a single hunk `@@ -146,11 +146,12 @@`. No other existing test file changed.
+- Files: `src/core/scoring.js` (120 → 126 lines), `src/core/challenge.js` (`export` only, 116 lines), `tests/scoring-addenda.test.js` (153, new, written first), `tests/scoring.test.js` (one block, above).
+- Commands:
+  - `node --test tests/scoring.test.js` at `497ed1e` → exit 1, 20/21 (only the edited ruling-B test fails). Reproduced by the controller in a temporary worktree.
+  - `node --test tests/scoring-addenda.test.js` at `4a27a06` → exit 1, 8/11. Red: A refused, A order, B refused. Already green before the code (existing behaviour pinned): A at 04:00 exact, A yesterday closed / Day 1, B reset accepted, B blank-reason order, B missed >= zeroDay, afternoon `struggling`, two streak tests. Reproduced by the controller.
+  - After the code: `node --test tests/scoring.test.js tests/scoring-addenda.test.js` → exit 0, 32/32. `npm test` → exit 0, 231/231 (220 + 11 new).
+  - `grep -n -E "toISOString|getUTC|Date\.parse|new Date\('" src/core/scoring.js src/core/challenge.js` → exit 1.
+- Review: spec ✅, quality Approved; 0 Critical, 0 Important, 4 Minor. Fixed: the `nightTargets` doc comment (it now says to close in order). Skipped: the next three entries under Deferred, and the implementer's report misprinting the grep command (the correct regex, above, exits 1).
+- Deferred:
+  - Task 16: route the night form to yesterday while it is open (`nightTargets(...)[0]`), and surface both refusal messages from `NIGHT_TEXT`.
+  - Task 8: cover `closeNight` under DST and the exact 03:59:59.999 boundary.
+  - Skipped: `yesterdayOpen` checks `result == null` while scoring's `isClosed` also counts `closedAt`. They differ only for a day with `closedAt` set and no result, which no code path creates (an edited backup could). Changing it changes Task 3 behaviour, so it needs an owner ruling if ever wanted.
+  - Skipped: older streak cases in `tests/scoring.test.js` L311-322 have only a shared derivation comment; the file is frozen, and the addenda cases carry full derivations.
+- Next: Task 5 (Recovery and War Log core).

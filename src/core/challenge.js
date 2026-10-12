@@ -66,7 +66,7 @@ const medError = (state, date, reason) => {
 };
 
 // Owner ruling: before 04:00 yesterday's night can still close (as a Reset), so today's morning waits for it.
-function yesterdayOpen(state, today, nowMs) {
+export function yesterdayOpen(state, today, nowMs) {
   const now = new Date(nowMs), y = addDays(today, -1);
   return today === dateKey(now) && now.getHours() < 4 && phase(state, y) === 'active' && state.days[y]?.result == null;
 }

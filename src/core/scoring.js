@@ -1,7 +1,7 @@
 // Scoring core (plan Task 4): suggested result, night close, 04:00 auto-settle, streaks. Pure: returns new state.
 import { dateKey, addDays, keyToDate } from '../logic.js';
 import { tasksOn, openTasks, setTaskStatus } from './tasks.js';
-import { phase } from './challenge.js';
+import { phase, yesterdayOpen } from './challenge.js';
 
 const GRACE_HOUR = 4;
 const RESULTS = ['passed', 'redo', 'reset'];
@@ -11,6 +11,9 @@ const newDay = old => ({ morning: null, afternoon: null, declaredRedo: false, sl
   auto: null, night: null, result: null, closedAt: null, ...old });
 const isClosed = d => d?.closedAt != null || d?.result != null;
 const fail = error => ({ ok: false, error });
+
+// Owner rulings A and B: the sentence the UI shows for these error codes.
+export const NIGHT_TEXT = { 'yesterday-open': 'Close yesterday first.', 'red-line-override': 'A crossed red line cannot be overridden.' };
 
 // Local 04:00 of the day after key: when its night grace ends. DST-safe (local wall clock, not +28 h).
 function graceEnd(key) {
@@ -32,7 +35,8 @@ export function suggestResult({ morningDone, protocols, redLines, zeroDay, decla
   return { result, reasons };
 }
 
-// Open active days whose night can be filed now, ascending: yesterday (before 04:00 only), then today.
+// Open active days whose night can still be filed, ascending: yesterday (before 04:00 only), then today.
+// Close them in this order (closeNight refuses today with 'yesterday-open' while yesterday is open).
 export function nightTargets(state, nowMs) {
   const now = new Date(nowMs);
   const today = dateKey(now), yesterday = addDays(today, -1);
@@ -47,6 +51,7 @@ export function closeNight(state, date, form, nowMs) {
   if (isClosed(old)) return fail('closed');
   if (phase(state, date) !== 'active') return fail('not-active');
   if (!nightTargets(state, nowMs).includes(date)) return fail('not-closable');
+  if (yesterdayOpen(state, date, nowMs)) return fail('yesterday-open');
   const tasks = form.tasks ?? {};
   if (openTasks(state, date).some(v => !TASK_DONE.includes(tasks[v.task.id]))) return fail('tasks-open');
 
@@ -59,6 +64,7 @@ export function closeNight(state, date, form, nowMs) {
   if (redLines.some(r => !['held', 'crossed'].includes(form.redLines?.[r.id]))) return fail('redlines-unanswered');
   const override = form.override ?? null;
   if (!validOverride(override)) return fail('override-reason');
+  if (override && override.result !== 'reset' && redLines.some(r => form.redLines[r.id] === 'crossed')) return fail('red-line-override');
 
   let next = state;
   for (const { task } of tasksOn(state, date)) {
