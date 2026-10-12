@@ -286,3 +286,70 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Review: spec ✅, quality Approved; 0 Critical, 0 Important, 3 Minor. Fixed: M1 (tz child env no longer inherits FLOW_START/EXPECT_OFFSET), M3 (Day 1 asserts zeroDay 3 / medPerWeek 2). Skipped: M2 (shared scenario state makes later tests noisy after an early failure; node runs them in order, so nothing is hidden).
 - Deferred: none.
 - Next: Task 9.
+
+## Task 9: Shell cutover
+- Commits: `180ef6d` test(ui): router and v2 contrast tokens (failing, WIP) — `tests/router.test.js` and `tests/contrast.test.js` only, never edited afterwards (`git diff --quiet 180ef6d -- tests/router.test.js tests/contrast.test.js` → exit 0); "feat(ui): v2 shell, fonts, background, router" (implementation, deletions, `sw.js` and this entry; a commit cannot contain its own hash, see `git log`). Base `aa6247f`.
+- Files (lines): new `src/router.js` (21), `tests/router.test.js` (50, 35 tests), `src/bg/{frieze,steps,wall-tile}@2x.webp` (copied from `docs/design/lockin-v2/assets/bg/`), 8 woff2 in `src/fonts/` (copied from `docs/design/lockin-v2/assets/fonts/`), `src/fonts/OFL-AlegreyaSans.txt` (93); replaced `tests/contrast.test.js` (20, 11 tests); modified `index.html` (35), `styles.css` (63), `screens.css` (56), `src/app.js` (90), `src/icons.js` (34), `src/logic.js` (28: lines 1–28 of the old file, nothing else changed), `src/fonts/fonts.css` (9), `sw.js` (65; ASSETS only, VERSION unchanged `1.0.23`). Deleted (git rm): `src/store.js`, `src/redlines.js`, `src/timeLog.js`, `src/views/*.js` (8), `tests/{blocks,clock,goalEdit,goals,movedLog,orphan,redlines,redlinesImport,store,timeLog,timer,weights}.test.js`, `tests/fixtures.js`, `tests/export-1.0.7.json`, `src/fonts/{archivo-latin,cinzel-600-latin,cormorant-garamond-700i-latin}.woff2`, `src/fonts/OFL-Archivo.txt`. Untouched: `tests/dates.test.js`, `tests/sw.test.js`, `src/dom.js`, `src/sheet.js` (`git diff --quiet aa6247f -- …` → exit 0).
+- Commands:
+  - Before deleting (at `aa6247f`), `node --test --test-reporter=tap tests/<f>.test.js`, all exit 0: blocks 17, clock 4, goalEdit 2, goals 12, movedLog 1, orphan 1, redlines 11, redlinesImport 3, store 7, timeLog 8, timer 4, weights 1 (= 71), old contrast 3 → 74. All 12 listed files existed.
+  - RED: `node --test tests/router.test.js tests/contrast.test.js` on the v1 source → exit 1: router.test.js ERR_MODULE_NOT_FOUND (`src/router.js`); contrast 10 assertion failures (`--plate-bot` / v2 tokens missing), `dark only` passed.
+  - GREEN: `node --test tests/router.test.js` → 35/35; `npm test` → exit 0, 299/299. Reconciliation: 327 − 74 + 35 + 11 = 299.
+  - `grep -nE "toISOString|getUTC|Date\.parse|new Date\(" src/router.js src/app.js` → exit 0, one hit: `src/app.js:18 const today = () => dateKey(new Date());` (current time, not a date key; same line as v1). Strict `grep -nE "new Date\([^)]|new Date\('"` → exit 1.
+  - `grep -rn innerHTML src index.html` → exit 0, one hit: the comment in untouched `src/dom.js:2` ("never innerHTML"). No innerHTML code anywhere.
+  - Raw contrast on #141317: text 15.997, text-2 8.876, text-3 6.872, accent 10.830, eyebrow 8.362, crimson-lt 7.752, crimson 5.174, outline #85795f 4.314; ink #1a1205 on #FCE29A 14.554, #F2BE5C 10.856, #C99139 6.704, #B08539 5.527.
+  - Preview `npx serve -l 5173`, playwright-cli 390×844 DPR 2 (+ 440×956): scrollWidth 390 (440 at 440); each tab 68×58 (78×58 at 440); back button 80×44; aria-current="page" on Today/Tasks/Challenge/Analytics/Settings for their routes and on Today for `#checkin/morning`; nav hidden (display none) on the pushed route; Back returns to the previous route; all 8 font faces load (`document.fonts.load` + `check` true); 0 console messages.
+  - `compare.py` (top 240 and bottom 240 device rows vs `reference/Main.png`, tol 12; plain / `--ignore-bg`, %): Today top 5.21/5.21, bar 1.54/1.49; Tasks top 5.81/5.81, bar 7.71/7.66; Challenge top 7.83/7.83, bar 7.56/7.50; Analytics top 7.25/7.25, bar 7.61/7.56; Settings top 7.26/7.26, bar 7.53/7.48. Run with `python -E -P` (`python -I` cannot see the user-site Pillow: ModuleNotFoundError). CSS not tuned to the numbers.
+- Owner calls (binding; implemented as given):
+  1. `parseRoute(hash)` → `{name, params, tab, pushed}`; strip one leading `#`, then one trailing `/`; split on `/`; no decoding; the five tabs, `checkin/morning|afternoon`, `checkin/night/<date>`, `recovery/<date>`, `mission/<n>` (string), `warlog`, `warlog/<key>`; anything else → `{name:'today', params:[], tab:'today', pushed:false}`.
+  2. Router tests hand-written: one case per table row plus unknown, empty, `#`, trailing slash, `#today/x`, `#mission/abc`, `#mission/9/`, `#checkin/night/2026-13-45` (accepted, commented), `#Today` (case-sensitive).
+  3. Contrast tests: v1 helpers copied; v2 tokens under `/* tokens:dark */` on #141317 rounded to one decimal; ink ≥ 5.5 on every gold stop; outline ≥ 3; `dark only` kept.
+  4. Deletions exactly the plan's list; counts and reconciliation above; dates/sw tests, dom.js, sheet.js untouched.
+  5. `src/logic.js` keeps lines 1–28 (through `uid`).
+  6. Fonts: 8 local `@font-face` (`font-display: swap`, relative urls, tokens.css family names); old Archivo/Cinzel/Cormorant files and OFL-Archivo deleted; OFL-Cinzel and OFL-CormorantGaramond kept; OFL-AlegreyaSans = google/fonts `ofl/alegreyasans/OFL.txt`.
+  7. Background: three @2x.webp only; layer values copied; floating glass tab bar 18/18/22/72/36; five tabs; aria-current; ≥ 44; pushed → bar hidden, parent tab highlighted; back button `history.back()`; no horizontal scroll at 390.
+  8. app.js keeps storage guard, gesturestart zoom lock, 30 s tick, visibility/focus re-render, `storage.persist`, SW registration; `load/save` from `src/core/store.js`; `settleMissed(state, Date.now())` through `app.set` on load and day change; failed save → `saveFailed` + `#save-banner`.
+  9. `sw.js` ASSETS updated; VERSION unchanged in `sw.js` and `src/version.js`.
+  10. Every file < 300 lines, no CDN, no external fonts, relative paths only.
+- Controller rulings (each with its cost if wrong):
+  - R1 logic.js lines 1–28 (keeps `resolveViewDate`). Cost: re-adding a helper.
+  - R2 styles.css shell-only (tokens, base, .ttl, .eyebrow, #save-banner, .back); screens.css = .scr, background stack, tab bar, reduced-transparency rule. Cost: Task 10/11 add component and sheet rules.
+  - R3 tokens.css names with --bone→--text, --t2→--text-2, --t3→--text-3, --gold→--accent; `--outline:#85795f` added; all hex 6-digit. Cost: later tasks map board hex literals to these names.
+  - R4 icons via DOMParser + importNode; tab icons, sword, shield, lambda, laurel from assets (string-equal to the source files apart from the stated additions/removal); v1 controls kept. Cost: a later task re-adds a one-line icon.
+  - R5 placeholder `main.scr > (back) + p.eyebrow + h1.ttl`; tab: "Lock In" + tab name; pushed: params joined by " · " (or "Lock In") + route name. Cost: placeholder text only.
+  - R6 `<nav class="tabs" aria-label="Tabs">` with five `<a class="tab" href="#…">`, icon prepended by app.js; `.tab[aria-current="page"]` replaces `.tab.on`; position fixed. Cost: selector rename.
+  - R7 `.scr` min-height 100dvh, padding 60 20 110; no safe-area insets. Cost: a padding change after the device check.
+  - R8 `.scr` own background + `::before` stack exactly as the boards, data-URIs → `src/bg/*@2x.webp`, `isolation:isolate`. Cost: background sizing change if the owner wants 440 covered.
+  - R9 reduced transparency/contrast → solid `#1a181c` bar, no blur; wall fade deferred to Task 21. Cost: one more declaration.
+  - R10 `let day = today()`; boot settles; tick/visibility/focus settle on a date change, else render. Cost: none expected.
+  - R11 v1 app API kept (`state, saveFailed, version, today, viewDate, setViewDate, set, subscribe`) + `nav`, `route`; `nav` lives in router.js. Cost: none expected.
+  - R12 `<button type="button" class="back">` chevronLeft + "Back", 44 min, `history.back()`. Cost: Back on a deep link does nothing (known limitation).
+  - R13 OFL re-fetched with `curl -sSfL` into an empty scratch dir outside the repo (exit 0), `cmp` with the controller's copy → identical (exit 0), copied verbatim. head -5: "Copyright 2013 The Alegreya Sans Project Authors (https://github.com/huertatipografica/Alegreya-Sans)" / "" / "This Font Software is licensed under the SIL Open Font License, Version 1.1." / "This license is copied below, and is also available with a FAQ at:" / "http://scripts.sil.org/OFL". sha256 `0677891e6a143f297350d260ad766ad33bfc18ed5fa4f213acf648d6b597ec1a`.
+  - R14 commit 1 only; commit 2 staged for controller review.
+- Implementer choices: `.eyebrow{margin:0}` and `.eyebrow + .ttl{margin-top:4px}` (board: div eyebrow + ttl margin-top 4); body carries the .scr font and colour so the fixed tab bar (outside `main`) inherits Alegreya Sans; `.back` is a pill with the boards' back-button border `rgba(242,190,92,.24)` and colour `#E9E3D6`; `aria-hidden`/`focusable="false"` added to the sword icon too; render keeps the scroll position only when the same route re-renders.
+- Deviations (screenshots vs `reference/Main.png`):
+  - Placeholder has no date eyebrow, no day badge, no content; the title sits 4 px higher than the board (board bottom-aligns the title column against the 60 px badge) → top-region diff 5–8 %.
+  - Non-Today tabs highlight their own tab → bar diff ~7.5 % vs Main.png (Today: 1.54 % / 1.49 %).
+  - `.scr` radial glows scale with the screen height (844 here vs 1260 on the board).
+  - At 440 px the 390 px-wide wall, frieze and steps leave ~25 px dark bands on each side (R8: sizes unchanged).
+  - No safe-area insets (R7): the bar's bottom 22 sits inside the home-indicator zone on Face ID iPhones; top padding 60 vs a ~59 pt Dynamic Island inset.
+  - Eyebrow weight 600 renders with the 700 face (only 400/500/700 shipped, owner call 6; the boards use the same fonts.css).
+  - Pushed placeholder title is the raw route name (`CHECKIN`).
+  - Back button is icon + "Back" (R12); the boards use a 44 px icon-only circle.
+  - `lambda` has no inline stroke (needs `.lam` CSS from Task 10); sword/laurel gradient ids (`g`, `lwo`, `lwi`) collide if several copies are inlined.
+  - `sw.js` line 1 comment said "plan Task 10" (v1 numbering); fixed in review (M3).
+- Review: spec ✅; 0 Critical, 1 Important, 5 Minor (reviewer model: `sonnet` alias returned HTTP 404 model_not_found for claude-sonnet-4-6; retried once with opus).
+  - I1 Needs ruling (owner): settleMissed runs only on load and when today() changes (owner call 8 / R10), i.e. at midnight, while the just-ended day is still inside its 04:00 grace; a missed night therefore stays open until the next date change or a cold start if the app stays open or resumes on the same date. Proposed fix (not applied, contradicts call 8 as written): in tick, `const next = settleMissed(app.state, Date.now()); if (next !== app.state) app.set(() => next); else render();`. Owner: Task 12 if accepted.
+  - M1 Needs ruling (owner): at 440 px the 390-wide wall/frieze/steps leave ~25 px dark bands each side; DESIGN-SPEC §2 says it must look right at 440, but any fix means inventing a size (owner call 7 forbids). Owner: Task 21 visual pass if not ruled sooner.
+  - M2 Skip → Task 21: a route change does not move focus to the new screen's h1; after Back, focus drops to body.
+  - M3 Fixed: sw.js comment "plan Task 10" → "plan Task 20".
+  - M4 Skip → Task 10: gradient ids g/lwo/lwi in sword/laurel collide when inlined twice; lambda renders filled without .lam CSS.
+  - M5 Skip → Tasks 14, 15, 17: Back on a deep link / cold start does nothing (plain history.back(), owner call 7).
+  - Apple-design audit (no code change): tab bar bottom 22 with no safe-area inset puts ~12 pt of the tabs inside the 34 pt home-indicator zone → device check at the ⛔ checkpoint, Task 21; text is fixed px (no Dynamic Type), tab label 11 px = minimum → Task 21; top padding 60 clears the Dynamic Island; the frieze webp appears to have the board's opacity .5 baked into its alpha → confirm on device.
+- Deferred:
+  - Component CSS (.plate, .btn-gold, .shield, chips, .lam, sword/laurel id uniqueness, M4) → owner: Task 10.
+  - Sheet (`src/sheet.js`) CSS restyle → owner: Task 11.
+  - I1 settle on the 04:00 grace while open, if the owner accepts the fix → owner: Task 12.
+  - Back on a deep link with no history does nothing (M5) → owners: Tasks 14, 15, 17.
+  - Task 20: none.
+  - Reduce Transparency ~50 % wall fade; focus to h1 on route change (M2); fixed px text (no Dynamic Type); safe areas; 440 px side bands (M1) → owner: Task 21.
+- Next: Task 10.
