@@ -103,6 +103,7 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Task 12/15: Today's morning button must route to yesterday's night while yesterday is open, and show 'Close yesterday first.'; nextAction should return 'night' for yesterday in that window.
   - Task 13: the Declare Redo confirm must pass `Date.now()` as `declareRedo`'s third argument (without it the today check is skipped).
   - Skipped: `submitMorning` accepts a past date that is still open when the clock date differs (case h; callers pass today; `settleMissed` runs first).
+  - Task 4: add a test that runs the real closeNight with a Reset on day D, then submitMorning for D+1 at 00:30 with a MED, and expects the forced-pass refusal (case e currently uses a hand-built closed day).
   - Task 12: `nextAction` does not cover yesterday's open night after midnight; Today uses `nightTargets` for that card.
   - Skipped: a few success paths lack a `validateState` assert (sibling paths have it; Task 8 flow test covers).
   - Skipped: `tests/challenge.test.js` is 378 lines (> 300 target); frozen, splitting is an owner call.
