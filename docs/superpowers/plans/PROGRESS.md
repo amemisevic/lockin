@@ -260,3 +260,29 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Deferred: Task has no created date; revisit if the owner sees wrong early-days rates (owner: Task 18)
   - "Earliest taskLog date key" counts a key whose value is `{}` (left by clearing a status), per the call's literal wording. Owner: Task 18 (same revisit).
 - Next: Task 8.
+
+## Task 8: Whole-challenge flow test and time zones
+- Commits: "test: whole-challenge flow in three time zones" (the three test files and this entry; a commit cannot contain its own hash, see `git log`). Base `78770e3`. No failing-first commit is possible (the core already exists); the tests are proven able to fail by the mutations below instead.
+- Files: `tests/flow.test.js` (180 lines, new, 13 tests), `tests/boundary.test.js` (67, new, 7 tests), `tests/tz.test.js` (30, new, 5 tests). Nothing under `src/` and `sw.js` changed.
+- Commands:
+  - `node --test tests/flow.test.js tests/boundary.test.js tests/tz.test.js` → exit 0, 25/25.
+  - `npm test` → exit 0, 327/327 (302 + 25 new).
+  - `grep -n -E "toISOString|getUTC|Date\.parse|new Date\('" tests/flow.test.js tests/tz.test.js tests/boundary.test.js` → exit 1.
+  - Guard checks (manual, spawnSync): boundary.test.js with TZ Europe/Sarajevo and EXPECT_OFFSET 480 → exit 1 (`# pass 6`, `# fail 1`); flow.test.js with FLOW_START 2026-10-12 (not a DST day) → exit 1 (`# pass 12`, `# fail 1`).
+  - Mutations, each alone in a throwaway detached worktree `../pm-v2-mut` at `78770e3` (removed afterwards with `git worktree remove --force`, never committed):
+    - (i) scoring.js `GRACE_HOUR` 4 → 5: `node --test tests/boundary.test.js` → exit 1, 1/7 pass (all six date tests fail: D still in `nightTargets` at 04:00).
+    - (ii) challenge.js `forcedFullPass` returns false: `node --test tests/flow.test.js` → exit 1, 10/13 pass (Day 6 `medCheck` returns `{ok:true}`; Day 8 `forcedFullPass` false; final results list differs).
+    - (iii) scoring.js `currentStreak` counts `'redo'` as passed: `node --test tests/flow.test.js` → exit 1, 11/13 pass (Day 7 streak 2 not 0; final currentStreak 25 not 5).
+- Owner calls (plan silent; implemented as given):
+  1. Clock helper `at(key, h, mi, s, ms)` = local `new Date(y, m-1, d, h, mi, s, ms).getTime()` from the split key; date keys via `addDays`. Forbidden-API grep on all three files exits 1.
+  2. flow.test.js start = `process.env.FLOW_START ?? '2026-10-12'` (Monday). Fixed times: oath/start 07:00, morning 08:00, afternoon 14:00, night 21:00. `nextAction` is called only at 08:00 (Day 6 → `'recovery'`): flow.test.js deliberately avoids `nextAction` between 12:00 and 23:59 because Task 12 changes the night start to 20:00 and this file is frozen by then.
+  3. Invented content only: protocols p1 "Protocol A" (med "Light A"), p2 "Protocol B", p3 "Protocol C"; red line r1 "Red Line A"; oath "Contract A", "Funeral A", "Code A", "Lines A"; zeroDay 3, medPerWeek 2 (defaults); target "Target A".
+  4. Scenario per plan steps 1–9 with `validateState(state) === null` after every transition; hand-written results D1–D4 passed, D5 reset, D6 passed, D7 redo, D8 passed, D9–D10 redo, D11–D24 passed, D25 redo, D26–D30 passed; longestStreak 14, currentStreak 5; `resultCounts` `{passed:25, redo:4, reset:1, open:0}`, `passRate` 25/30; export/import round-trip deep-equals. `medUsedInWeek(Day 4) === 1` holds for all three starts (2026-10-12, 2026-10-22, 2026-10-29).
+  5. tz.test.js: Europe/Sarajevo (-60), America/Los_Angeles (480), Pacific/Auckland (-780) run flow + boundary (20 tests each); DST runs Sarajevo FLOW_START 2026-10-22 and Los Angeles FLOW_START 2026-10-29 run flow (13 tests each). Each child must exit 0, report exactly the expected `# pass N` and `# fail 0`. Both child files assert the offset when EXPECT_OFFSET is set; flow.test.js asserts Day 4 is 25 hours when FLOW_START is set.
+  6. boundary.test.js: for 2026-03-08, 2026-03-29, 2026-09-27, 2026-10-25, 2026-11-01, 2027-04-04: close at D+1 03:59:59.999 ok/passed/closedAt = that ms; at D+1 04:00 not in `nightTargets`, `closeNight` → `not-closable`, `settleMissed` → redo/no-night closedAt = D+1 04:00; at D+1 00:40 close ok; `validateState` null each time.
+  7. Refusals (start without oath, vague autopsy, MED after declared Redo, second Redo, not-closable) run on a deep-frozen state and leave its JSON unchanged.
+- Implementer choices: the guard tests (offset, 25-hour day) always exist and return early when their variable is unset, so each file's pass count is constant (flow 13, boundary 7). tz.test.js spawns with `--test-reporter=tap` (the default reporter differs between TTY and pipe) and removes `NODE_TEST_CONTEXT` from the child env (set by the parent runner; it would switch the child's reporting protocol). Day 7's `declareRedo` is at 07:00. Day 4's night form answers only p2/p3 (the MED protocol needs no answer). Refused exact codes: `'Write your Contract, Funeral and Code first.'` (challenge.js) and `'vague-change'` (recovery.js).
+- Controller rulings: none.
+- Review: spec ✅, quality Approved; 0 Critical, 0 Important, 3 Minor. Fixed: M1 (tz child env no longer inherits FLOW_START/EXPECT_OFFSET), M3 (Day 1 asserts zeroDay 3 / medPerWeek 2). Skipped: M2 (shared scenario state makes later tests noisy after an early failure; node runs them in order, so nothing is hidden).
+- Deferred: none.
+- Next: Task 9.
