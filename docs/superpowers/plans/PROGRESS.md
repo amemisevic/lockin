@@ -109,3 +109,33 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Skipped: `tests/challenge.test.js` is 378 lines (> 300 target); frozen, splitting is an owner call.
   - Skipped: `submitMorning` trusts the form's shape (string `med`, non-string `risk`); the Task 15 view controls input.
 - Next: Task 4 (Scoring, night close, settle, streaks).
+
+## Task 4: Scoring, night close, settle, streaks
+- Commits: `a7ae168` test(core): scoring, night close, settle, streaks (failing, WIP) — test file only, never edited afterwards (`git diff --quiet a7ae168 -- tests/scoring.test.js` → exit 0); "feat(core): scoring, night close, settle, streaks" (implementation, `sw.js` and this entry; a commit cannot contain its own hash, see `git log`). Base `81adaa5`.
+- Files: `src/core/scoring.js` (120 lines, new), `tests/scoring.test.js` (417, new, written first), `sw.js` (ASSETS += `src/core/scoring.js`; VERSION unchanged).
+- Commands:
+  - `node --test tests/scoring.test.js` at `a7ae168` (before code) → exit 1 (ERR_MODULE_NOT_FOUND, expected RED; reproduced by the controller in a temporary worktree).
+  - `node --test tests/scoring.test.js` after code → exit 0, 21/21 pass.
+  - `npm test` → exit 0, 220/220 pass (199 + 21 new).
+  - `grep -n -E "toISOString|getUTC|Date\.parse|new Date\('" src/core/scoring.js` → exit 1.
+- Tests include: hand-computed expected values quoting the Rules on every scoring path; the Task 3 deferred end-to-end case (real `closeNight` Reset on D closed at D+1 00:20, then `submitMorning` D+1 00:30 with MED → `No MED today. Yesterday was a Reset.`; without MED accepted); a DST case for `settleMissed` run with `spawnSync` in `TZ=Europe/Sarajevo` (2026-10-25 25 h day, 2026-03-29 23 h day; each auto-close at local 04:00).
+- Review: spec ✅, quality Approved; 0 Critical, 0 Important, 6 Minor (2 need an owner ruling, 4 skipped, below). Only Rules clause touched with no direct test: "Afternoon is optional, zero penalty" for a negative afternoon answer (scoring never reads `afternoon`).
+- Ambiguities and choices (controller rulings R1–R11; none changes a result the plan defines):
+  - `'not-closable'` = date not in `nightTargets(state, nowMs)` (future date, or past date after its 04:00 grace) — this is "No late filing". Error order: closed → not-active → not-closable → tasks-open → protocols-unanswered → redlines-unanswered → override-reason.
+  - `suggestResult`: result = first matching rule in the plan's order; `reasons` lists every rule that applies, in order. Strings `Red line crossed`, `N protocol(s) missed` (singular for 1, listed once), `Declared Redo`, `No morning check-in`. `med` counts as held.
+  - Override: result must be passed|redo|reset and reason non-blank, else `'override-reason'`; no restriction on direction (plan: `result = override?.result ?? suggested`). Recovery is created only when the final result is `reset`.
+  - MED ids from the day's morning are stored `med` whatever the form says. Snapshots from current `challenge.protocols`/`redLines`; unknown form ids ignored.
+  - Tasks: every open due task needs a valid status in `form.tasks`; valid statuses for due tasks are written with `setTaskStatus`.
+  - `bottomG.archetype/tactic` null → `''` (model validator needs strings; Task 1 deferral settled for the core). `win`, `slipNote` default `''`.
+  - `settleMissed` skips closed days (the plan's "while … no closedAt" read literally would stop at the first closed day); stops after day `length`; `closedAt` = that 04:00; keeps morning/afternoon/declaredRedo/slipNote; no Recovery; returns the same object when nothing changes.
+  - `nightTargets` ascending (yesterday first). Streaks read closed days only, sorted by date; no calendar-gap check (plan: "only closed days").
+- Awaiting owner ruling (scoring, plan silent; code follows the plan literally until ruled):
+  - Closing today while yesterday is still open before 04:00 is allowed (`nightTargets` returns `[yesterday, today]` at 00:40; `closeNight(today)` succeeds, closing today as `redo` before it happened).
+  - Override can turn a red-line `reset` into `passed`/`redo`, which skips Recovery and the next day's forced full pass.
+- Deferred:
+  - Skipped: `tests/scoring.test.js` is 417 lines (> 300 target); frozen, splitting is an owner call.
+  - Skipped: `nightTargets`/`closeNight` not exercised under DST, boundary tested to the minute, streak table rows lack per-row derivation, no test that a `struggling` afternoon keeps `passed` — Task 8 flow/tz tests cover; `scoring.test.js` frozen.
+  - Skipped: `closeNight` trusts the form's text field types (`win`, `slipNote`, `bottomG.*`); the Task 16 view controls input.
+  - Skipped: the missed-protocol reason is listed once when both missed rules apply (text only).
+  - Task 16: the night form must pass strings (never null) for `win`/`slipNote`, and route to yesterday while it is a night target.
+- Next: Task 5 (Recovery and War Log core), after the owner's rulings above.
