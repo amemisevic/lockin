@@ -44,4 +44,9 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - `night.bottomG` must be an object (model has no null); Task 16 stores empty strings or the model gains `null` then.
   - v1 `fill` step dropped: v2 has no optional fields yet.
   - `task.skip` = string[], `pack.missions[].day` = finite number, warLog keys = any string (not pattern-checked).
+- Deferred:
+  - Task 19: import must guard non-string input (`typeof text !== 'string'`); `backupStatus` treats a future `lastBackup` (days < 0) as overdue.
+  - Task 16: `night.bottomG` cannot be null in the model; decide there (empty strings or allow null).
+  - Skipped: format-only `isDate`/`isTime` checks (matches the plan's regex rule).
+  - Model: the Agent tool accepts only sonnet/opus/haiku/fable; `sonnet` 404s; all subagents run on the session model (Opus). Do not try model names again.
 - Next: Task 2 (Tasks core).
