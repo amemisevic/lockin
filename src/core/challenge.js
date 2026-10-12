@@ -65,11 +65,18 @@ const medError = (state, date, reason) => {
     ? 'No MED today. Yesterday was a Reset.' : 'No MED today. Yesterday was a declared Redo.';
 };
 
+// Owner ruling: before 04:00 yesterday's night can still close (as a Reset), so today's morning waits for it.
+function yesterdayOpen(state, today, nowMs) {
+  const now = new Date(nowMs), y = addDays(today, -1);
+  return today === dateKey(now) && now.getHours() < 4 && phase(state, y) === 'active' && state.days[y]?.result == null;
+}
+
 export function submitMorning(state, today, { target, risk, med }, nowMs = Date.now()) {
   if (phase(state, today) !== 'active') return { ok: false, error: NOT_ACTIVE };
   const d = state.days[today];
   if (isClosed(d)) return { ok: false, error: CLOSED };
   if (d?.morning) return { ok: false, error: 'Morning check-in is already filed.' };
+  if (yesterdayOpen(state, today, nowMs)) return { ok: false, error: 'Close yesterday first.' };
   if (typeof target !== 'string' || target.trim() === '') return { ok: false, error: 'Write today\'s #1 target.' };
   const ids = [...new Set(med ?? [])];
   for (const [i, id] of ids.entries()) {
@@ -86,8 +93,10 @@ export function submitAfternoon(state, today, { onTrack, friction }, nowMs = Dat
   return putDay(state, today, { afternoon: { at: nowMs, onTrack, friction: f } });
 }
 
-export function declareRedo(state, today) {
+// nowMs optional: when given, only its local date can be declared.
+export function declareRedo(state, today, nowMs) {
   if (state.challenge?.redoUsed) return { ok: false, error: 'Your one declared Redo is already used.' };
+  if (nowMs !== undefined && today !== dateKey(new Date(nowMs))) return { ok: false, error: 'You can only declare a Redo for today.' };
   if (phase(state, today) !== 'active') return { ok: false, error: NOT_ACTIVE };
   if (isClosed(state.days[today])) return { ok: false, error: CLOSED };
   const next = putDay(state, today, { declaredRedo: true });

@@ -94,11 +94,17 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - `submitAfternoon` returns the same state when not active, closed, or `onTrack` invalid; no morning needed; `friction` kept only for `struggling`.
   - `nextAction`: recovery in any phase; morning/afternoon/night only when today is active and not closed; follows the plan's order literally (no morning at 19:00 → `'morning'`).
   - `target` must be non-blank, stored untrimmed; `risk ?? ''`, `med ?? []`.
-- Open for the owner (before Task 4): a MED can be declared for D+1 after midnight while D is still open; if D then closes as Reset, D+1 is a forced full pass that already holds a MED. The plan's `forcedFullPass` only reads stored results. Not fixed here (scoring-contract change).
+- Owner ruling on review Important #1 (a MED for D+1 filed after midnight while D is open; D then closes as Reset): `submitMorning` is refused with `Close yesterday first.` only when all hold: the submitted date equals the local date of `nowMs`, the local time of `nowMs` is before 04:00, and the previous calendar day is an active challenge day (1..30) with no result. Otherwise unchanged. Whole morning refused (with or without MED), no partial write; checked after "already filed", before the target. First version (any time of day) broke the frozen test `MED cap: two on Mon + Tue block a third on Wed; next Monday resets the count` (31/32, exit 1, shown to the owner); `tests/challenge.test.js` was not edited.
+- Owner ruling on the "Declared Redo only for today" gap: `declareRedo(state, date, nowMs)`; when `nowMs` is given and `date` is not its local date → `You can only declare a Redo for today.` (checked after redoUsed). `nowMs` is optional so the frozen tests stay clock-independent.
+- Fix commits: `738e6b8` test(core): morning blocked while yesterday is open (failing, WIP) — `tests/challenge-midnight.test.js` (75 lines, cases a–h); "fix(core): block morning while yesterday is open" (`src/core/challenge.js` 107 → 116 lines and this entry).
+  - `node --test tests/challenge-midnight.test.js` before code → exit 1, 5/8 pass (a, b, f fail on AssertionError; c, d, e, g, h are guards that already held).
+  - after code → exit 0, 8/8 pass. `npm test` → exit 0, 199/199 pass.
 - Deferred:
-  - Skipped: `submitMorning`/`declareRedo` accept a past date that is still open (callers pass today; `settleMissed` runs first). Tied to the owner question above.
+  - Task 12/15: Today's morning button must route to yesterday's night while yesterday is open, and show 'Close yesterday first.'; nextAction should return 'night' for yesterday in that window.
+  - Task 13: the Declare Redo confirm must pass `Date.now()` as `declareRedo`'s third argument (without it the today check is skipped).
+  - Skipped: `submitMorning` accepts a past date that is still open when the clock date differs (case h; callers pass today; `settleMissed` runs first).
   - Task 12: `nextAction` does not cover yesterday's open night after midnight; Today uses `nightTargets` for that card.
   - Skipped: a few success paths lack a `validateState` assert (sibling paths have it; Task 8 flow test covers).
   - Skipped: `tests/challenge.test.js` is 378 lines (> 300 target); frozen, splitting is an owner call.
   - Skipped: `submitMorning` trusts the form's shape (string `med`, non-string `risk`); the Task 15 view controls input.
-- Next: Task 4 (Scoring, night close, settle, streaks), after the owner decides the MED-after-midnight question.
+- Next: Task 4 (Scoring, night close, settle, streaks).
