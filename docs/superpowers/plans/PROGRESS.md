@@ -25,3 +25,23 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - PROGRESS.md instruction moved to item 1 of "Read first"; plan item 2, DESIGN-SPEC item 3.
   - Exact copy limited to the plan's fixed strings; reminder texts are overrulable (◆).
 - Next: Task 1.
+
+## Task 1: State model and store (`lockin.v2`)
+- Commit: "feat(core): v2 state model and store" (code, tests and this entry in one commit; a commit cannot contain its own hash, see `git log`). Base `bba5b0a`.
+- Files: `src/core/model.js` (75 lines), `src/core/store.js` (43), `tests/core-store.test.js` (170, new, written first), `sw.js` (ASSETS += the two files; VERSION unchanged).
+- Model: explicit `claude-sonnet-5-5` was rejected by the Agent tool (allowed: sonnet/opus/haiku/fable); implementer and reviewer ran on the session model (Opus 5.5). No retry.
+- Commands:
+  - `node --test tests/core-store.test.js` before code → exit 1 (ERR_MODULE_NOT_FOUND, expected RED).
+  - `node --test tests/core-store.test.js` after code → exit 0, 54/54 pass.
+  - `npm test` → exit 0, 141/141 pass (87 v1 + 54 new).
+- Review: spec ✅, quality Approved; 0 Critical, 0 Important, 4 Minor (deferred, listed for the owner).
+- Ambiguities and choices:
+  - `load(storage, today)` keeps the plan signature; `today` unused (v2 `defaultState()` takes no date).
+  - Import of `v === 1` → the plan's v1 sentence; any other non-object or `v !== 2` → "This is not a Lock In v2 backup."; other damage → "The backup's <section> is/are damaged."
+  - Implementer did not commit; one task commit made after review so this entry ships with it.
+  - `zeroDay` integer 2–5 (Rules range); `medPerWeek` integer 0–3 (Task 1 test).
+  - Archetype ids validated as strings only, not against the 5 fixed ids (an over-strict load would send real data to the corrupt copy).
+  - `night.bottomG` must be an object (model has no null); Task 16 stores empty strings or the model gains `null` then.
+  - v1 `fill` step dropped: v2 has no optional fields yet.
+  - `task.skip` = string[], `pack.missions[].day` = finite number, warLog keys = any string (not pattern-checked).
+- Next: Task 2 (Tasks core).

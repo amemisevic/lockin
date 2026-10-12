@@ -8,6 +8,8 @@ const ASSETS = [
   'screens.css',
   'manifest.webmanifest',
   'src/app.js',
+  'src/core/model.js',
+  'src/core/store.js',
   'src/dom.js',
   'src/fonts/OFL-Archivo.txt',
   'src/fonts/OFL-Cinzel.txt',
