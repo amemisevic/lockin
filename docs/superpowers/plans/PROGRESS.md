@@ -199,3 +199,28 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Task 19: `warEntries` skips unknown stored keys; Task 19 import must refuse them.
   - Owner check of earlier Task 5 deferrals: every entry has an owner (Minor 3 → Task 21, Minor 5 → Task 17, Minors 6 and 7 → Task 14, Minor 9 → Task 12). The plan-table item is done (above).
 - Next: Task 6 (Pack import).
+
+## Task 6: Pack import (missions and tactics)
+- Commits: `8dc0767` test(core): mission and tactic pack (failing, WIP) — `tests/pack.test.js` only, never edited afterwards (`git diff --quiet 8dc0767 -- tests/pack.test.js` → exit 0); "feat(core): mission and tactic pack" (implementation, `sw.js` and this entry; a commit cannot contain its own hash, see `git log`). Base `933bf65`.
+- Files: `src/core/pack.js` (42 lines, new; exports only `validatePack`, `importPack`, `missionFor`, `tacticsFor`), `tests/pack.test.js` (208, new, written first, 21 tests), `sw.js` (ASSETS += `src/core/pack.js`; VERSION unchanged).
+- Commands:
+  - `node --test tests/pack.test.js` at `8dc0767` (before code) → exit 1 (ERR_MODULE_NOT_FOUND, expected RED; reproduced by the controller in a temporary worktree).
+  - After code: `node --test tests/pack.test.js` → exit 0, 21/21. `npm test` → exit 0, 283/283 (262 + 21 new).
+  - `grep -n -E "toISOString|getUTC|Date\.parse|new Date\('" src/core/pack.js` → exit 1.
+  - Personal-data grep on added lines (`armin|memisevic|@gmail|<n> kg/lbs|weigh|HH:MM`, case-insensitive) → exit 1. Test string literals cross-checked against `docs/design/lockin-v2/`: only `Negotiator` (an archetype id, case test) and `undefined` occur there.
+- Owner calls (plan silent; implemented as given):
+  1. validatePack order, first failure wins: a. not a string or blank → `The file is empty.`; b. UTF-8 bytes (TextEncoder) > 307200, before JSON.parse → `The pack is too large.`; c. invalid JSON → `The file is not valid JSON. Choose a Lock In pack file.`; d. not a plain object or `v !== 1` → `This is not a Lock In pack.`; e. missions not an array → `The pack's missions are damaged.`; f. tactics present and not an array → `The pack's tactics are damaged.`; g. per mission: shape/title/body → `Every mission needs a title and a body.`, day not integer 1–30 → `Mission days must be whole numbers from 1 to 30.`, duplicate → `Mission day N appears twice.`; empty missions allowed; h. per tactic: name → `Every tactic needs a name.`, archetype not one of the 5 ids → `Unknown archetype in the pack's tactics.` Success `{ok:true, pack:{missions, tactics}}`, strings verbatim, `v` and unknown keys dropped.
+  2. A pack without `tactics` stores `tactics: []` (model `packOk` requires an array; otherwise the next launch would move the whole state to `lockin.v2.corrupt`). Tested with `validateState(importPack(defaultState(), pack)) === null`.
+  3. `importPack` replaces `pack`, changes no other key, does not mutate (deepFreeze), does not validate.
+  4. `missionFor(state, n)`: `n` must be a number (the string `'9'` → null); null when no pack or no match.
+  5. `tacticsFor`: matches in file order; `[]` with no pack or no match.
+  6. Pure: no Date APIs, DOM or storage.
+- Controller rulings (plan and owner silent): R1 rules g/h run per element in file order (shape → day → duplicate for each mission, then the next; same for tactics), first failure wins across the array; R2 "unknown keys dropped" applies at every level: the pack is rebuilt as `{day,title,body}` / `{archetype,name}` only; R3 "plain object" = non-null, typeof object, not an array (model.js `isObj`). Cost if wrong: which error shows for a file with two faults; extra keys inside elements dropped rather than kept.
+- Review Focus 5: end to end `validateImport(exportJson(importPack(defaultState(), pack))).ok === true` is tested.
+- Review: spec ✅, quality Approved; 0 Critical, 0 Important, 4 Minor (all skipped, below).
+- Deferred:
+  - Task 14: `#mission/<n>` must `Number()` the route param and integer-check it before calling `missionFor` (a string `'9'` returns null).
+  - Task 19: Import pack shows the exact `validatePack` error string and never calls `app.set` on a refusal; on success `importPack` after the `Replace the current pack?` confirm.
+  - Task 21: coverage polish — `importPack` "no validation inside" is not asserted with an invalid pack (Minor 1); `missionFor` with `NaN`/`Infinity` untested (Minor 2; code returns null). Both pin behaviour that already holds, so no failing-first test exists for them; `tests/pack.test.js` is frozen.
+  - Skipped: `isObj` is a one-line copy of model.js's (not exported; model.js out of scope) (Minor 3); `missionFor` uses `|| null` where `?? null` would read more plainly (Minor 4, cosmetic).
+- Next: Task 7 (Analytics selectors).

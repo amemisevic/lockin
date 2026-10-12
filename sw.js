@@ -15,6 +15,7 @@ const ASSETS = [
   'src/core/scoring.js',
   'src/core/recovery.js',
   'src/core/warlog.js',
+  'src/core/pack.js',
   'src/dom.js',
   'src/fonts/OFL-Archivo.txt',
   'src/fonts/OFL-Cinzel.txt',
