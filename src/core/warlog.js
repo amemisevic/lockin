@@ -8,9 +8,9 @@ const DAY = /^day-([1-9]|[12]\d|30)$/;
 const validKey = key => OATH_KEYS.includes(key) || AUTOPSY.test(key) || DAY.test(key);
 const blank = text => typeof text !== 'string' || text.trim() === '';
 
-// Text blank after trim deletes the key; any other key than the allowed ones returns the same state.
+// Text blank after trim deletes the key; a key other than the allowed ones, or non-string text, returns the same state.
 export function setWarEntry(state, key, text, nowMs) {
-  if (!validKey(key)) return state;
+  if (!validKey(key) || typeof text !== 'string') return state;
   const { [key]: _, ...rest } = state.warLog;
   return { ...state, warLog: blank(text) ? rest : { ...rest, [key]: { text, updatedAt: nowMs } } };
 }
