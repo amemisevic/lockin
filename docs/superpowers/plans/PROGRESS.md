@@ -224,3 +224,39 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Task 21: coverage polish — `importPack` "no validation inside" is not asserted with an invalid pack (Minor 1); `missionFor` with `NaN`/`Infinity` untested (Minor 2; code returns null). Both pin behaviour that already holds, so no failing-first test exists for them; `tests/pack.test.js` is frozen.
   - Skipped: `isObj` is a one-line copy of model.js's (not exported; model.js out of scope) (Minor 3); `missionFor` uses `|| null` where `?? null` would read more plainly (Minor 4, cosmetic).
 - Next: Task 7 (Analytics selectors).
+
+## Task 7: Analytics selectors
+- Commits: `ee845ff` test(core): analytics selectors (failing, WIP) — `tests/stats.test.js` only, never edited afterwards (`git diff --quiet ee845ff -- tests/stats.test.js` → exit 0); "feat(core): analytics selectors" (implementation, `sw.js` and this entry; a commit cannot contain its own hash, see `git log`). Base `78f47ad`.
+- Files: `src/core/stats.js` (116 lines, new; exports only `resultCounts`, `passRate`, `protocolRates`, `resetCauses`, `tacticCounts`, `weekdayRates`, `heatmap`, `taskTotals`), `tests/stats.test.js` (277, new, written first, 19 tests), `sw.js` (ASSETS += `src/core/stats.js` after `src/core/pack.js`; VERSION unchanged).
+- Commands:
+  - `node --test tests/stats.test.js` at `ee845ff` (before code) → exit 1 (ERR_MODULE_NOT_FOUND, expected RED).
+  - After code: `node --test tests/stats.test.js` → exit 0, 19/19. `npm test` → exit 0, 302/302 (283 + 19 new).
+  - `grep -n -E "toISOString|getUTC|Date\.parse|new Date\(" src/core/stats.js` → exit 1.
+- Owner calls (plan silent; implemented as given):
+  1. Window: `range = {endDate, n}`. n a positive integer → `addDays(endDate, -(n-1))`..endDate inclusive; n null → challenge.startDate..endDate (no challenge: empty for the challenge functions; task functions start at the first taskLog date); any other n (0, negative, 1.5, a string) or a start after endDate → empty window. Days outside the window never count.
+  2. Closed day = `days[date].result` not null, date inside the window.
+  3. resultCounts: passed/redo/reset = closed days; open = window dates with `phase === 'active'` and not closed (today counts). passRate = passed / (passed + redo + reset), null when the sum is 0.
+  4. protocolRates: only `night.protocols` snapshots of closed days (night null contributes nothing); grouped by id; held/missed/med by status; title from the latest date with that id; order missed desc, then title by plain `<`; a protocol appears only if it is in some snapshot.
+  5. resetCauses: reset days with a `crossed` red line in the night → redLine; every other reset (overridden, no night) → protocols. byProtocol counts `missed` protocols on the protocols-resets only, `{title (latest), count}`, count desc then title. Red-line resets never feed byProtocol.
+  6. tacticCounts: `night.bottomG` of closed days, counted only when archetype and tactic are non-blank after trim; grouped by the pair; count desc, then archetype, then tactic by plain `<`.
+  7. Task functions count a date only if it is ≥ the earliest taskLog date key and inside the window / heatmap span; empty taskLog → nothing counts. Marked `ponytail:` in the code (known ceiling: a habit created after the first log gets its earlier days counted).
+  8. weekdayRates: 7 × `{done, total}`, Monday = 0; habits (`repeat.type !== 'none'`) with `isDue` true; done only for `'done'` (open, failed, stalled = not done); archived habits excluded via `isDue`.
+  9. heatmap(state, endDate): exactly 28 entries, oldest first, last = endDate; due = habits due, done = those `'done'`; a non-counting date (call 7) → `{date, done:0, due:0}`.
+  10. taskTotals: counting window dates, ALL tasks due (`tasksOn`), counted by view status done/failed/stalled/open.
+  11. Results, protocols and tactics come only from stored closed-day data, never from current `challenge.protocols`, `redLines` or `settings.zeroDay` (Review Focus 4; tested by comparing JSON of all eight outputs before/after editing them).
+- Controller rulings (owner calls silent):
+  - R1 empty challenge stats = `{passed:0,redo:0,reset:0,open:0}`, passRate null, `[]`, `{redLine:0, protocols:0, byProtocol:[]}`, `[]`; empty task window = 7 × `{done:0,total:0}`, taskTotals all 0. Cost if wrong: the Analytics empty state renders differently (Task 18).
+  - R2 heatmap ignores range (endDate only), always 28 entries; call 7 decides the zeros. Cost if wrong: heatmap would need a range argument; signature change.
+  - R3 task functions with a challenge and n:null start at challenge.startDate, then call 7 filters further. Cost if wrong: pre-challenge task logs would be excluded/included differently in "since start".
+  - R4 open days use `phase` imported from `./challenge.js` (not reimplemented). Cost if wrong: none expected; a single definition of "active".
+  - R5 the auto no-night and Review Focus 4 tests use object-spread copies of the hand state. Cost if wrong: test style only.
+- Implementer reading (flag for review): call 5's "title (latest title)" is read as call 4's definition (latest date in the window with that id, across all closed days, not only the counted reset days). The tests do not distinguish the two readings. Cost if wrong: a renamed protocol could show its newer name in byProtocol.
+- Owner's verbatim deferred line named a real person; replaced by 'the owner' per CLAUDE.md no-real-names rule (controller ruling, awaiting owner).
+- Review: spec ✅, quality Approved; 0 Critical, 0 Important, 3 Minor (all skipped or deferred):
+  - M1: `r[result]++` / `e[p.status]++` would add a NaN key for an unknown string; validateState guards the data path. Skipped.
+  - M2: `firstLog` re-sorts the taskLog keys on every call; skipped (k is small).
+  - M3: test gaps (R3 pre-start taskLog with n:null, the C1 title reading, the C2 `{}` key, archived/skip/weekdays habits) → Task 21 coverage polish; `tests/stats.test.js` is frozen and stays untouched.
+- Deferred:
+  - Deferred: Task has no created date; revisit if the owner sees wrong early-days rates (owner: Task 18)
+  - "Earliest taskLog date key" counts a key whose value is `{}` (left by clearing a status), per the call's literal wording. Owner: Task 18 (same revisit).
+- Next: Task 8.
