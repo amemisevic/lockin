@@ -154,6 +154,6 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Deferred:
   - Task 16: route the night form to yesterday while it is open (`nightTargets(...)[0]`), and surface both refusal messages from `NIGHT_TEXT`.
   - Task 8: cover `closeNight` under DST and the exact 03:59:59.999 boundary.
-  - Skipped: `yesterdayOpen` checks `result == null` while scoring's `isClosed` also counts `closedAt`. They differ only for a day with `closedAt` set and no result, which no code path creates (an edited backup could). Changing it changes Task 3 behaviour, so it needs an owner ruling if ever wanted.
+  - Task 19: import validation must refuse a day with `closedAt` set and `result` null (the only way such a day can exist; `yesterdayOpen` and scoring's `isClosed` disagree on it). `yesterdayOpen` stays as is: Task 3 predicate, shared by `submitMorning` and `closeNight`.
   - Skipped: older streak cases in `tests/scoring.test.js` L311-322 have only a shared derivation comment; the file is frozen, and the addenda cases carry full derivations.
 - Next: Task 5 (Recovery and War Log core).
