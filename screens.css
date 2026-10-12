@@ -9,7 +9,8 @@
     radial-gradient(90% 30% at 100% 40%, rgba(242,190,92,.05), rgba(0,0,0,0) 70%), #0A0A0B;
   color: #F3EEE4; font-family: 'Alegreya Sans', system-ui, sans-serif; font-size: 15px; line-height: 20px;
 }
-/* Background stack (top → bottom): overlay + 4 corner vignettes, steps, frieze, wall. Never covers content. */
+/* Background stack (top → bottom): overlay + 4 corner vignettes, steps, frieze, wall. Never covers content.
+   Images scale to the screen width keeping their ratio (owner ruling M1): 390 px = the boards' 390×142 / 390×34 / 390×720. */
 .scr::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: linear-gradient(rgba(4,3,2,.27), rgba(4,3,2,.27)),
@@ -17,9 +18,9 @@
     radial-gradient(55% 10% at 100% 0%, rgba(0,0,0,.4), rgba(0,0,0,0) 100%),
     radial-gradient(55% 9% at 0% 100%, rgba(0,0,0,.45), rgba(0,0,0,0) 100%),
     radial-gradient(55% 9% at 100% 100%, rgba(0,0,0,.45), rgba(0,0,0,0) 100%),
-    url("src/bg/steps@2x.webp") 50% 100%/390px 142px no-repeat,
-    url("src/bg/frieze@2x.webp") 50% 0/390px 34px no-repeat,
-    url("src/bg/wall-tile@2x.webp") 50% 0/390px 720px repeat-y;
+    url("src/bg/steps@2x.webp") 50% 100%/100% auto no-repeat,
+    url("src/bg/frieze@2x.webp") 50% 0/100% auto no-repeat,
+    url("src/bg/wall-tile@2x.webp") 50% 0/100% auto repeat-y;
 }
 
 /* Floating glass tab bar. Fixed to the viewport (boards: absolute inside a fixed-height artboard). */

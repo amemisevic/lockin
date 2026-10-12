@@ -25,7 +25,9 @@ export const app = {
   viewDate: () => resolveViewDate(requestedDate, today()),
   setViewDate(key) { requestedDate = key; notify(); },
   set(updater) {
-    this.state = updater(this.state);
+    const next = updater(this.state);
+    if (next === this.state) return; // nothing changed: no save, no re-render
+    this.state = next;
     this.saveFailed = !save(storage, this.state);
     document.getElementById('save-banner').hidden = !this.saveFailed;
     notify();
@@ -69,13 +71,12 @@ function render() {
   window.scrollTo(0, y);
 }
 
-// On load and whenever the local date changes: auto-close missed days, then re-render via subscribe.
-let day = today();
-const settle = () => app.set(s => settleMissed(s, Date.now()));
+// On load, every tick and on return to the app (owner ruling I1): auto-close days whose 04:00 grace
+// has passed. app.set re-renders only when that changed something; otherwise render here.
 function tick() {
-  if (today() === day) return render();
-  day = today();
-  settle();
+  const before = app.state;
+  app.set(s => settleMissed(s, Date.now()));
+  if (app.state === before) render();
 }
 
 for (const t of tabs) t.prepend(icon(t.hash.slice(1)));
@@ -84,7 +85,7 @@ window.addEventListener('hashchange', render);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 window.addEventListener('focus', tick);
 setInterval(tick, 30_000); // "today" rolls over at midnight while the app is open
-settle();
+tick();
 
 // Offline (plan Task 20). Relative path: the app lives under a GitHub Pages sub-path.
 navigator.serviceWorker?.register('sw.js');
