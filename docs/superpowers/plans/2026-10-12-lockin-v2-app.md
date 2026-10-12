@@ -121,7 +121,7 @@ Warlog keys: `contract funeral code redlines-w1 autopsy-<date> day-<n>`. Bottom 
 | `src/core/tasks.js` | task CRUD, `tasksOn`, statuses, habit dots | 2 |
 | `src/core/challenge.js` | start, day number, morning/afternoon, MED, declared Redo, forced full pass, `nextAction` | 3 |
 | `src/core/scoring.js` | `suggestResult`, `closeNight`, `settleMissed`, `nightTargets`, streaks | 4 |
-| `src/core/recovery.js` | `checkVague`, `recoveryStatus`, `fileAutopsy` | 5 |
+| `src/core/recovery.js` | `checkVague`, `pendingRecovery`, `fileAutopsy` | 5 |
 | `src/core/warlog.js` | War Log entries and oath keys | 5 |
 | `src/core/pack.js` | pack validation and import | 6 |
 | `src/core/stats.js` | Analytics selectors | 7 |

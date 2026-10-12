@@ -185,3 +185,17 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Owner: plan file table (plan line 124) still names `recoveryStatus`; Task 5 and the code use `pendingRecovery`. Doc only.
   - Skipped: re-review notes on `tests/recovery-guards.test.js` (one title not derived in a comment; sequential asserts in a key loop). The file is frozen.
 - Next: Task 6 (Pack import).
+
+## Task 5 fix round 2: owner ruling on Minor 4
+- Commits: `9b71f8e` test(core): setWarEntry ignores non-string text (failing, WIP) — `tests/warlog-guards.test.js` only; `8183c14` fix(core): setWarEntry ignores non-string text; "docs: Task 5 fix round 2 ruling and plan table name" (this entry and the plan table fix; a commit cannot contain its own hash, see `git log`). Base `36ee169`.
+- Ruling (owner, resolves "Awaiting owner ruling" above): `setWarEntry(state, key, text)` with any non-string text (undefined, null, number, object) returns the state unchanged (same reference), exactly like an invalid key. Only a real string that is empty or whitespace-only deletes the key.
+- Pre-check: `grep -rnE "setWarEntry\([^)]*(undefined|null|[0-9]+\s*,\s*[0-9]|\{\}|\[\])" tests` → exit 1; no frozen test passes non-string text.
+- Files: `src/core/warlog.js` (one guard added to `setWarEntry`, comment updated; 32 lines), `tests/warlog-guards.test.js` (25, new, written first), plan file line 124 (`recoveryStatus` → `pendingRecovery`, the only change in that file).
+- Commands:
+  - `node --test tests/warlog-guards.test.js` at `9b71f8e` → exit 1, 1/2 pass (failing: "setWarEntry: non-string text returns the same state", AssertionError on `undefined`; the whitespace-only delete test already passed, existing behaviour pinned).
+  - After the fix: `node --test tests/warlog-guards.test.js` → exit 0, 2/2. `npm test` → exit 0, 262/262 (260 + 2 new).
+  - `git diff --quiet 62d7085 -- tests/recovery.test.js tests/warlog.test.js` → exit 0; `git diff --quiet 94adc0c -- tests/recovery-guards.test.js` → exit 0.
+- Deferred:
+  - Task 19: `warEntries` skips unknown stored keys; Task 19 import must refuse them.
+  - Owner check of earlier Task 5 deferrals: every entry has an owner (Minor 3 → Task 21, Minor 5 → Task 17, Minors 6 and 7 → Task 14, Minor 9 → Task 12). The plan-table item is done (above).
+- Next: Task 6 (Pack import).
