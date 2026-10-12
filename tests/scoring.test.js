@@ -146,11 +146,12 @@ test('closeNight: a reset day creates recovery[date] due 24 h after close; other
     state: '', time: '', place: '', decision: '', change: '' } });
   // Passed: no recovery.
   assert.deepEqual(close(s, MON, form(), at(0, 22)).recovery, {});
-  // Suggested reset overridden to redo: result redo, no recovery.
-  const o = close(s, MON, form({ redLines: crossed, override: { result: 'redo', reason: 'Reason A' } }), at(0, 22));
-  assert.equal(o.days[MON].night.suggested, 'reset');
-  assert.equal(o.days[MON].result, 'redo');
-  assert.deepEqual(o.recovery, {});
+  // Owner ruling B: a crossed red line cannot be overridden to redo; state unchanged.
+  const before = JSON.stringify(s);
+  assert.deepEqual(S.closeNight(s, MON, form({ redLines: crossed, override: { result: 'redo', reason: 'Reason A' } }), at(0, 22)),
+    { ok: false, error: 'red-line-override' });
+  assert.equal(S.NIGHT_TEXT['red-line-override'], 'A crossed red line cannot be overridden.');
+  assert.equal(JSON.stringify(s), before);
 });
 
 test('closeNight success path: day fields, snapshots, validateState', () => {
