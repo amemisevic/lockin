@@ -13,6 +13,8 @@ const ASSETS = [
   'src/core/tasks.js',
   'src/core/challenge.js',
   'src/core/scoring.js',
+  'src/core/recovery.js',
+  'src/core/warlog.js',
   'src/dom.js',
   'src/fonts/OFL-Archivo.txt',
   'src/fonts/OFL-Cinzel.txt',

@@ -157,3 +157,31 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Task 19: import validation must refuse a day with `closedAt` set and `result` null (the only way such a day can exist; `yesterdayOpen` and scoring's `isClosed` disagree on it). `yesterdayOpen` stays as is: Task 3 predicate, shared by `submitMorning` and `closeNight`.
   - Skipped: older streak cases in `tests/scoring.test.js` L311-322 have only a shared derivation comment; the file is frozen, and the addenda cases carry full derivations.
 - Next: Task 5 (Recovery and War Log core).
+
+## Task 5: Recovery and War Log core
+- Commits: `62d7085` test(core): recovery and war log (failing, WIP) — `tests/recovery.test.js` and `tests/warlog.test.js` only, never edited afterwards (`git diff --quiet 62d7085 -- tests/recovery.test.js tests/warlog.test.js` → exit 0); `94adc0c` test(core): fileAutopsy refuses inherited keys (failing, WIP) — review fix round 1, `tests/recovery-guards.test.js` only; "feat(core): recovery protocol and war log" (implementation, `sw.js` and this entry; a commit cannot contain its own hash, see `git log`). Base `99c68f5`.
+- Files: `src/core/recovery.js` (36 lines, new), `src/core/warlog.js` (32, new), `tests/recovery.test.js` (228, new), `tests/warlog.test.js` (107, new), `tests/recovery-guards.test.js` (44, new), `sw.js` (ASSETS += the two modules; VERSION unchanged).
+- Commands:
+  - `node --test tests/recovery.test.js tests/warlog.test.js` at `62d7085` → exit 1 (ERR_MODULE_NOT_FOUND for both modules, expected RED; reproduced by the controller in a temporary worktree).
+  - `node --test tests/recovery-guards.test.js` at `94adc0c` with the pre-fix line `const r = state.recovery[date];` → exit 1, 2/3 pass (failing: "fileAutopsy: inherited object keys are not recovery entries"; the dueAt and warEntries-skip tests already passed). Reproduced by the controller.
+  - After code: the three Task 5 test files → exit 0, 29/29. `npm test` → exit 0, 260/260 (231 + 29 new).
+  - `grep -n -E "toISOString|getUTC|Date\.parse|new Date\('" src/core/recovery.js src/core/warlog.js` → exit 1.
+- Owner calls (plan silent; implemented as given):
+  1. fileAutopsy error order: no-recovery → already-filed → incomplete → vague-change → vague-decision; any refusal returns `{ok:false, error}` with state byte-identical (Review Focus 3).
+  2. `incomplete` = any of the five fields blank after trim (a non-string field counts as blank); no format check on `time`.
+  3. pendingRecovery = oldest unfiled by date key; `overdue = nowMs > dueAt` (strict); `msLeft = max(0, dueAt - nowMs)`.
+  4. checkVague literal: trimmed length ≥ 15, ≥ 3 whitespace-separated words, one whole keyword from the plan's list (case-insensitive, `\b` boundaries; inflected forms such as "Moving" do not match). Returns the exact nudge or null.
+  5. setWarEntry: text empty after trim deletes the key; allowed keys are the four OATH_KEYS, `autopsy-YYYY-MM-DD`, `day-1`…`day-30`; any other key returns the same state.
+  6. Autopsy War Log text: labelled lines `State: …`, `Time: …`, `Place: …`, `Decision: …`, `Change: …` joined by newlines, answers verbatim; `updatedAt = nowMs`.
+  7. warEntries: Oath (fixed key order) → Autopsies (newest first) → Days (by number); plan titles; preview = first 80 characters (counted by code point, so an emoji is never split).
+- Owner answers (2026-10-12): fileAutopsy stores the five answers in `recovery[date]` exactly as given, plus `filedAt = nowMs`; `OATH_TITLES` is an object by key; warEntries skips stored keys that match no group; oathComplete needs each oath entry non-blank after trim.
+- Review: spec ❌ → ✅ after fix round 1; 0 Critical, 1 Important (fixed), 9 Minor. Fixed: Important — fileAutopsy read `state.recovery[date]` through the prototype ('toString' returned ok with an invalid state); now `Object.hasOwn`. Minor 1 (filing after dueAt succeeds) and Minor 2 (warEntries skips `day-31` / malformed autopsy keys) are covered by `tests/recovery-guards.test.js`. Scoped re-review: addressed, no new breakage.
+- Awaiting owner ruling (not scoring): `setWarEntry` with non-string text (e.g. `undefined`) deletes the key, like empty text. The alternative is to return the state unchanged. No current caller passes a non-string.
+- Deferred:
+  - Task 14: War Log screen passes strings to `setWarEntry`; shows the autopsy text (newline-separated labelled lines) and the code-point preview as is.
+  - Task 17: Recovery screen passes textarea strings; `checkVague` throws on non-string, non-null input (fileAutopsy type-guards first).
+  - Task 21: keyword test only proves the listed words pass (an extra keyword would go unnoticed); coverage polish.
+  - Task 12: `nextAction` (Task 3) uses `!r.filedAt`, `pendingRecovery` uses `filedAt == null`; differ only for `filedAt === 0`, which real timestamps never are.
+  - Owner: plan file table (plan line 124) still names `recoveryStatus`; Task 5 and the code use `pendingRecovery`. Doc only.
+  - Skipped: re-review notes on `tests/recovery-guards.test.js` (one title not derived in a comment; sequential asserts in a key loop). The file is frozen.
+- Next: Task 6 (Pack import).
