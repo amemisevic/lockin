@@ -7,6 +7,7 @@ import { VERSION } from './version.js';
 import { icon } from './icons.js';
 import { h } from './dom.js';
 import { renderTasks } from './views/tasks.js';
+import { renderToday } from './views/today.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
 let storage;
@@ -49,6 +50,7 @@ let shown = null;
 
 // Tasks tab (Task 11); placeholder screens for the rest (Tasks 12–19 replace them). Text nodes only.
 function screen(r) {
+  if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
   if (!r.pushed) return [h('p', { class: 'eyebrow' }, 'Lock In'), h('h1', { class: 'ttl' }, r.name[0].toUpperCase() + r.name.slice(1))];
   return [

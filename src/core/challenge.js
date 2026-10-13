@@ -1,7 +1,7 @@
 // Challenge core (plan Task 3): start, morning, afternoon, MED, declared Redo, next action. Pure: returns new state.
 import { dateKey, addDays, daysBetween, weekStart } from '../logic.js';
 
-export const NIGHT_FROM = 18;
+export const NIGHT_FROM = 20;
 export const AFTERNOON_FROM = 12;
 
 const NOT_ACTIVE = 'The challenge is not active today.';
@@ -104,7 +104,7 @@ export function declareRedo(state, today, nowMs) {
 }
 
 export function nextAction(state, nowMs) {
-  if (Object.values(state.recovery).some(r => !r.filedAt)) return 'recovery';
+  if (Object.values(state.recovery).some(r => r.filedAt == null)) return 'recovery';
   const now = new Date(nowMs);
   const today = dateKey(now), hour = now.getHours();
   const d = state.days[today];

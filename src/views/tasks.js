@@ -37,6 +37,15 @@ function menuItems(app, { task }, date) {
   return [edit, { label: skip, onSelect: () => app.set(s => skipOn(s, task.id, date)) }, del('Delete task')];
 }
 
+// The ⋯ sheet for a task on a date (also used by Today). The note is read here. Past days: only the note,
+// no actions (read-only except the shield).
+export function openTaskMenu(app, view, date) {
+  const message = view.task.note || null;
+  const past = date < app.today();
+  if (!past) openActionSheet(menuItems(app, view, date), { message });
+  else if (message) openActionSheet([], { message, cancel: 'Close' });
+}
+
 // The viewed date's convention: today is stored as null (app.setViewDate).
 const show = (app, key) => app.setViewDate(key === app.today() ? null : key);
 
@@ -74,12 +83,7 @@ export function renderTasks(app) {
   const habits = views.filter(v => v.task.repeat.type !== 'none');
   const done = once.filter(v => v.status === 'done').length;
 
-  // The note is read in the ⋯ sheet. Past days: only the note, no actions (read-only except the shield).
-  const onMenu = view => {
-    const message = view.task.note || null;
-    if (!past) openActionSheet(menuItems(app, view, date), { message });
-    else if (message) openActionSheet([], { message, cancel: 'Close' });
-  };
+  const onMenu = view => openTaskMenu(app, view, date);
   const list = items => {
     const p = plate(items.map(v => {
       const row = taskRow(app, v, date, { onMenu });

@@ -43,6 +43,8 @@ const ASSETS = [
   'src/views/taskSheet.js',
   'src/views/tasks.js',
   'src/views/tasksLogic.js',
+  'src/views/today.js',
+  'src/views/todayLogic.js',
   'src/version.js',
   'icons/favicon-16.png',
   'icons/favicon-32.png',
