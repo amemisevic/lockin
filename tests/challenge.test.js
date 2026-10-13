@@ -338,23 +338,23 @@ test('closed day D keeps its result and night snapshot after zeroDay and protoco
 // ---- nextAction ----
 
 test('nextAction constants', () => {
-  assert.equal(C.NIGHT_FROM, 18);
+  assert.equal(C.NIGHT_FROM, 20);
   assert.equal(C.AFTERNOON_FROM, 12);
 });
 
-test('nextAction: morning at 07:00; afternoon at 13:00 after morning; night at 19:00', () => {
+test('nextAction: morning at 07:00; afternoon at 13:00 after morning; night at 21:00', () => {
   assert.equal(C.nextAction(st(), new Date(2026, 9, 12, 7, 0).getTime()), 'morning');
   const s = st({ days: { [MON]: day({ morning: morning() }) } });
   assert.equal(C.nextAction(s, at(0, 13)), 'afternoon');
-  assert.equal(C.nextAction(s, at(0, 19)), 'night');
+  assert.equal(C.nextAction(s, at(0, 21)), 'night');
 });
 
-test('nextAction boundaries: 11:59 none, 12:00 afternoon, 17:59 afternoon, 18:00 night', () => {
+test('nextAction boundaries: 11:59 none, 12:00 afternoon, 19:59 afternoon, 20:00 night', () => {
   const s = st({ days: { [MON]: day({ morning: morning() }) } });
   assert.equal(C.nextAction(s, at(0, 11, 59)), 'none');
   assert.equal(C.nextAction(s, at(0, 12, 0)), 'afternoon');
-  assert.equal(C.nextAction(s, at(0, 17, 59)), 'afternoon');
-  assert.equal(C.nextAction(s, at(0, 18, 0)), 'night');
+  assert.equal(C.nextAction(s, at(0, 19, 59)), 'afternoon');
+  assert.equal(C.nextAction(s, at(0, 20, 0)), 'night');
 });
 
 test('nextAction: pending Recovery wins over morning, in any phase; a filed one does not', () => {
