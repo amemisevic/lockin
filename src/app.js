@@ -8,6 +8,8 @@ import { icon } from './icons.js';
 import { h } from './dom.js';
 import { renderTasks } from './views/tasks.js';
 import { renderToday } from './views/today.js';
+import { renderChallenge } from './views/challenge.js';
+import { renderDay0 } from './views/day0.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
 let storage;
@@ -48,10 +50,11 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Tasks tab (Task 11); placeholder screens for the rest (Tasks 12–19 replace them). Text nodes only.
+// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13); placeholder screens for the rest (Tasks 14–19 replace them). Text nodes only.
 function screen(r) {
   if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
+  if (r.name === 'challenge') return app.state.challenge ? renderChallenge(app) : renderDay0(app);
   if (!r.pushed) return [h('p', { class: 'eyebrow' }, 'Lock In'), h('h1', { class: 'ttl' }, r.name[0].toUpperCase() + r.name.slice(1))];
   return [
     h('button', { type: 'button', class: 'back', onClick: () => history.back() }, icon('chevronLeft'), 'Back'),

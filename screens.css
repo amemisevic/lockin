@@ -175,3 +175,74 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 /* Whole-plate links (start, recovery) */
 .td-link{display:flex;align-items:center;gap:14px;min-height:44px;padding:20px}
 .td-link.warn .td-ct{color:var(--crimson-lt)}
+/* ==== Challenge tab and Day 0 (plan Task 13, rulings R2-R14). Board compact format from static/Challenge.html,
+   static/Onboarding.html, css/Challenge.css, css/Onboarding.css; hex/rgba → token only where :root has the exact value.
+   Colour pairs asserted in tests/contrast-challenge.test.js. Board Day 0 numeral #6b5a3a / outline #6b4d1e fail contrast →
+   #9a8253 / #876126 (nearest same hue that passes). */
+.ch-hd{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 8px}
+.ch-hd>div:first-child{min-width:0}
+.ch-pill{background:rgba(242,190,92,.08);color:var(--accent);display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 12px;border-radius:var(--r-pill);border:1px solid #5d4521;font-weight:700;font-size:14px;line-height:16px;box-shadow:0 0 10px rgba(242,190,92,.14)}
+/* Board: pill beside the title, text on two lines ("8-day" / "streak"); intrinsic width, no fixed px */
+.ch-pill span{width:min-content}
+/* Hero (.plate.rim): laurel 168 box, DAY / numeral / of n, then the strip */
+.ch-hero{margin-top:20px;padding:24px 18px 20px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ch-lw{position:relative;width:168px;height:168px;display:grid;place-items:center}
+.ch-gl{position:absolute;inset:0;filter:drop-shadow(0 0 10px rgba(242,190,92,.22))}
+.ch-d0l{position:absolute;inset:0}
+.ch-d0l *{fill:none;stroke:#876126;stroke-width:.9}
+.ch-num{position:relative;margin-top:-4px}
+.ch-day{color:var(--eyebrow);font-size:11px;line-height:13px;letter-spacing:.26em;font-weight:600}
+.ch-n{font-family:var(--f-title);font-weight:700;font-size:62px;line-height:64px;font-variant-numeric:lining-nums}
+.ch-d0n{color:#9a8253}
+.ch-of{font-size:13px;line-height:16px}
+.goldtxt{background:linear-gradient(180deg,#FCE29A,#E3A949 60%,#B08539);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* Strip (R8): 10 columns, cells at most 29 px round; closed cells show a glyph instead of the number */
+.ch-strip{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px 3px;width:100%;margin-top:18px;place-items:center}
+.dy{width:min(29px,100%);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:12px;line-height:14px;font-weight:700;border:1px solid rgba(242,190,92,.15);background:#17161a;color:#8f897f;font-variant-numeric:lining-nums}
+.dy svg{width:62%;height:62%;stroke-width:2.6}
+.dy.p{background:linear-gradient(180deg,#FCE29A,#E3A949 70%,#C99139);color:var(--gold-ink);border-color:var(--gold-hi);box-shadow:0 0 9px rgba(242,190,92,.38)}
+.dy.t{background:#241d10;color:var(--accent);border:2px solid var(--accent);box-shadow:0 0 14px rgba(242,190,92,.35)}
+.dy.r{background:transparent;border:1.5px solid var(--crimson);color:var(--crimson)}
+.dy.x{background:var(--crimson);border-color:var(--crimson);color:var(--bg)}
+.ch-lgs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;margin-top:14px}
+.lg{color:var(--text-2);display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px}
+.lg .dy{width:18px}
+/* Mission (R9) */
+.ch-mp{padding:20px}
+.ch-mt{font-family:var(--f-title);font-weight:600;font-size:24px;line-height:30px;letter-spacing:.1em;text-transform:uppercase;overflow-wrap:anywhere}
+.ch-mb{margin:8px 0 0;white-space:pre-line;overflow-wrap:anywhere}
+.ch-mp>.ch-mb:first-child{margin-top:0}
+.ch-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+/* Declared Redo (R11) */
+.ch-rd{margin-top:12px;padding:14px 16px}
+.ch-rdr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 8px;min-height:44px;margin-top:4px}
+.ch-rdr .t2{font-size:13px}
+.ch-rd-btn{color:var(--accent);padding:0 12px;margin-right:-12px;font-size:13px;font-weight:700}
+.ch-rd-used{color:var(--text-2);font-size:13px}
+/* Protocols / red lines (R12): board .slot rows */
+.slot{display:flex;align-items:center;gap:12px;padding:13px 16px;border-top:1px solid var(--line-soft)}
+.slot:first-child{border-top:0}
+.ch-sn{flex:1;min-width:0;font-weight:600;font-size:16px;overflow-wrap:anywhere}
+/* Day 0 (R3-R5): Begin Day 1 full width, reason under it; board .st rows with the completion shield */
+.ch-wide{width:100%;margin-top:20px}
+.ch-why{margin:10px 0 0;font-size:13px;line-height:18px}
+.ch-why:empty{display:none}
+.st{display:flex;gap:14px;align-items:flex-start;padding:15px 16px;border-top:1px solid var(--line-soft)}
+.st:first-child{border-top:0}
+.st b{display:block;font-size:16px;line-height:20px;font-weight:600;overflow-wrap:anywhere}
+.st span{display:block;color:var(--text-2);font-size:13px;line-height:18px;margin-top:2px}
+.ch-row{width:100%;min-height:44px;align-items:center;text-align:left}
+.ch-row>div:last-child{min-width:0}
+.ch-setup{margin-top:12px}
+.ch-sh{flex:none;display:grid;place-items:center;width:22px;height:25px}
+.ch-sh .b{stroke:var(--outline);fill:none;stroke-width:1.7}
+.ch-sh .hl{fill:rgba(255,255,255,.28)}
+.ch-sh.on .b{fill:#E9B352;stroke:var(--gold-hi)}
+.ch-sh.on .lam{stroke:var(--gold-ink);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ch-sh.on svg{filter:drop-shadow(0 0 5px rgba(242,190,92,.45))}
+/* Graduation (R13) */
+.ch-gt{color:var(--accent);margin:4px 0 0;font-family:var(--f-title);font-weight:700;font-size:26px;line-height:32px;letter-spacing:.16em}
+.ch-gss{width:100%;margin-top:16px;text-align:left}
+.ch-gs{color:var(--text-2);display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line-soft)}
+.ch-gs:first-child{border-top:0}
+.ch-gs b{color:var(--text);font-variant-numeric:lining-nums}
