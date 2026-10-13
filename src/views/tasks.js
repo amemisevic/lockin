@@ -1,6 +1,7 @@
 // Tasks tab (plan Task 11): week strip, the day's once-only tasks, habits due that day, + and ⋯ menu.
 // Layout = static/Tasks.html; rules live in src/core/tasks.js (the view only lists and dispatches).
 import { h } from '../dom.js';
+import { addDays } from '../logic.js';
 import { icon } from '../icons.js';
 import { openActionSheet } from '../sheet.js';
 import { tasksOn, moveToTomorrow, skipOn, archiveTask } from '../core/tasks.js';
@@ -28,11 +29,33 @@ function menuItems(app, { task }, date) {
   return [edit, { label: skip, onSelect: () => app.set(s => skipOn(s, task.id, date)) }, del('Delete task')];
 }
 
-const weekStrip = (app, date) => h('div', { class: 'wks' }, weekOf(date).map((key, i) => h('button', {
-  type: 'button', id: `wk-${key}`, class: key === date ? 'wk sel' : 'wk', 'aria-label': dayLabel(key),
-  'aria-pressed': String(key === date), 'aria-current': key === app.today() ? 'date' : null,
-  onClick: () => app.setViewDate(key === app.today() ? null : key),
-}, DAY_NAMES[i].slice(0, 3).toUpperCase(), h('span', null, String(Number(key.slice(8)))))));
+// The viewed date's convention: today is stored as null (app.setViewDate).
+const show = (app, key) => app.setViewDate(key === app.today() ? null : key);
+
+// Seven day buttons; today has class "today" (gold number + dot; the dot's space is kept on every day).
+// Swipe left/right (≥ 48 px, more horizontal than vertical) = next/previous week; the click that follows a
+// swipe is swallowed in the capture phase so it never selects a day (the swiped strip may already be detached).
+function weekStrip(app, date) {
+  const strip = h('div', { class: 'wks' }, weekOf(date).map((key, i) => h('button', {
+    type: 'button', id: `wk-${key}`, class: ['wk', key === date && 'sel', key === app.today() && 'today'].filter(Boolean).join(' '),
+    'aria-label': dayLabel(key), 'aria-pressed': String(key === date), 'aria-current': key === app.today() ? 'date' : null,
+    onClick: () => show(app, key),
+  }, DAY_NAMES[i].slice(0, 3).toUpperCase(), h('span', null, String(Number(key.slice(8)))), h('i', { 'aria-hidden': 'true' }))));
+  let start = null;
+  let swiped = false;
+  strip.addEventListener('pointerdown', e => { start = [e.clientX, e.clientY]; swiped = false; });
+  strip.addEventListener('pointercancel', () => { start = null; });
+  strip.addEventListener('pointerup', e => {
+    if (!start) return;
+    const dx = e.clientX - start[0], dy = e.clientY - start[1];
+    start = null;
+    if (Math.abs(dx) < 48 || Math.abs(dx) <= Math.abs(dy)) return;
+    swiped = true;
+    show(app, addDays(date, dx < 0 ? 7 : -7));
+  });
+  strip.addEventListener('click', e => { if (swiped) { swiped = false; e.stopPropagation(); e.preventDefault(); } }, true);
+  return strip;
+}
 
 export function renderTasks(app) {
   const date = app.viewDate();
@@ -63,9 +86,15 @@ export function renderTasks(app) {
 
   return [
     h('div', { class: 'tk-hd' },
-      h('div', null, eyebrow(weekLabel(date)), screenTitle('Tasks')),
-      h('button', { type: 'button', id: 'add-task', class: 'add', 'aria-label': 'Add task',
-        onClick: () => openTaskSheet(app, { mode: 'new', date: past ? today : date }) }, plusIcon())),
+      // "Today" sits under the eyebrow (fix round 2: next to ‹ › + it overflows at 360 px).
+      h('div', null, eyebrow(weekLabel(date)),
+        !weekOf(date).includes(today) && h('button', { type: 'button', id: 'wk-today', class: 'more tdy', onClick: () => app.setViewDate(null) }, 'Today'),
+        screenTitle('Tasks')),
+      h('div', { class: 'tk-nav' },
+        h('button', { type: 'button', id: 'wk-prev', class: 'more', 'aria-label': 'Previous week', onClick: () => show(app, addDays(date, -7)) }, icon('chevronLeft')),
+        h('button', { type: 'button', id: 'wk-next', class: 'more', 'aria-label': 'Next week', onClick: () => show(app, addDays(date, 7)) }, icon('chevronRight')),
+        h('button', { type: 'button', id: 'add-task', class: 'add', 'aria-label': 'Add task',
+          onClick: () => openTaskSheet(app, { mode: 'new', date: past ? today : date }) }, plusIcon()))),
     h('div', { class: 'mk', 'aria-hidden': 'true' }),
     weekStrip(app, date),
     h('section', null,

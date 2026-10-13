@@ -56,3 +56,14 @@ test('sheet text (labels, actions, destructive, error) on both plate stops >= 4.
   check(t,'.form-error',colour(decl('.form-error','color')),bg,4.5);
  }
 });
+// Fix round 2: today marker on a week day, and the Today button text on the .more ghost background (styles.css).
+test('today week day: dot >= 3 (graphic) and number >= 4.5 on --plate-alt',t=>{
+ const bg=dark['--plate-alt'];
+ check(t,'.wk.today i dot',colour(decl('.wk.today i','background')),bg,3);
+ check(t,'.wk.today span number',colour(decl('.wk.today span','color')),bg,4.5);
+});
+test('Today button text on the .more background >= 4.5',t=>{
+ const more=tokensCss.match(/\n\.more\{[^}]*background:(#[0-9a-fA-F]{6})/)?.[1];
+ assert.ok(more,'no .more background in styles.css');
+ check(t,'.more.tdy text',colour(decl('.more.tdy','color')),more,4.5);
+});

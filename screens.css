@@ -58,16 +58,25 @@
 
 /* ==== Tasks tab (plan Task 11). Board compact format, copied from static/Tasks.html inline styles and css/Tasks.css;
    hex/rgba → token only where :root has the exact value. */
-.tk-hd{display:flex;align-items:flex-end;justify-content:space-between}
+.tk-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+/* Week navigation (fix round 2): ‹ › and Today reuse the .more ghost button (styles.css); no new colours. */
+.tk-nav{display:flex;align-items:center;gap:6px}
+.more.tdy{width:auto;padding:0 12px;margin-top:8px;font-size:15px;font-weight:600;color:var(--accent)}
+.tdy + .ttl{margin-top:8px}
 .add{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--gold-ink);background:var(--gold-grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px #543415,0 6px 16px rgba(201,145,57,.28)}
 /* Meander strip: the board's 12×11 pattern (rect 10 tall) + 1 px line at .6, edges masked. Decorative (aria-hidden). */
 .mk{height:11px;margin-top:14px;background:linear-gradient(rgba(138,106,44,.6),rgba(138,106,44,.6)) 0 100%/100% 1px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M0 10V2h8v5H4V4.5' fill='none' stroke='%238a6a2c' stroke-width='1.2'/%3E%3C/svg%3E") 0 0/12px 10px repeat-x;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
 /* Week strip: .wk divs → buttons (≥ 44 wide at 390: (350 − 6×6)/7 = 44.9) */
-.wks{display:flex;gap:6px;margin-top:16px}
+.wks{display:flex;gap:6px;margin-top:16px;touch-action:pan-y}
 .wk{flex:1;min-width:0;height:68px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--line);background:var(--plate-alt);font-size:11px;line-height:13px;font-weight:600;color:var(--text-2);letter-spacing:.08em}
 .wk span{font-family:var(--f-title);font-size:17px;line-height:20px;font-weight:600;color:var(--text);letter-spacing:0}
 .wk.sel{border-color:#7a5a24;background:linear-gradient(180deg,#2a2214,#17140f);box-shadow:inset 0 1px 0 rgba(252,226,154,.25),0 0 22px rgba(242,190,92,.14)}
 .wk.sel span{color:var(--accent)}
+/* Today (fix round 2, closes m6): gold number + 5 px gold dot (shape, not colour alone). The board's .wk i box is kept
+   on every day so no day shifts; only today's dot is visible. */
+.wk i{width:5px;height:5px;border-radius:50%;margin-top:2px;visibility:hidden}
+.wk.today i{visibility:visible;background:var(--accent)}
+.wk.today span{color:var(--accent)}
 .wk{box-shadow:inset 0 1px 0 rgba(255,236,190,.06)}
 /* Section header rows and lists (owner ruling R1: .plate.list = the board's padding-less plate, first row no border) */
 .tk-sh{display:flex;align-items:baseline;justify-content:space-between;margin-top:24px;padding:0 4px}
