@@ -465,3 +465,50 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - n3 No change: open-today dot (`.mini.td`, 10.0:1) and the exempt off dot have no test; not required by the ruling.
   - n4 Owner action: bare `npm test` counts the preview worktree's tests (605 vs 306) until `scratch/kit-preview` is removed (owner's cleanup, before Task 11).
 - Next: Task 11.
+
+## Task 11: Tasks tab, add/edit sheet, ⋯ menu
+- Commits: `11854a3` test(ui): tasks week strip and form helpers (failing, WIP) — `tests/tasksLogic.test.js` (157, 22 tests) and `tests/tasksLogic-tz.test.js` (24, 3 time-zone runs) only, never edited afterwards; "feat(ui): tasks tab" (implementation, `tests/contrast-tasks.test.js`, this entry; a commit cannot contain its own hash, see `git log`). Base `3506efb`.
+- Files (lines): new `src/views/tasks.js` (67), `src/views/taskSheet.js` (77), `src/views/tasksLogic.js` (30, DOM-free helpers: `DAY_NAMES`, `weekOf`, `weekLabel`, `dayLabel`, `formFromTask`, `draftFromForm`, `toggleDay`), `tests/contrast-tasks.test.js` (58, 6 tests); modified `src/app.js` (93), `sw.js` (71; ASSETS += the 3 views, VERSION unchanged `1.0.23`), `screens.css` (122), `styles.css` (158; line 83 comment only: stalled opacity is .82 since the contrast fix). Untouched: `src/sheet.js`, `src/dom.js`, `src/ui/*`, `src/icons.js`, `src/core/*`, `src/logic.js`, every existing test.
+- Commands:
+  - RED at `11854a3`: `node --test tests/tasksLogic.test.js tests/tasksLogic-tz.test.js` → exit 1, 0/4 (ERR_MODULE_NOT_FOUND `src/views/tasksLogic.js`; the three TZ runs fail with it).
+  - GREEN: same command → exit 0, 25/25 (22 + Europe/Sarajevo -60, America/Los_Angeles 480, Pacific/Auckland -780, each asserting `# pass 22`, `# fail 0`). `npm test` → exit 0, 337/337 (306 + 22 + 3 + 6).
+  - `grep -rnE "toISOString|getUTC|Date\.parse|new Date\(" src/ui src/views` → exit 1. `grep -rn innerHTML src/ui src/views` → exit 1. Personal-data grep (Task 10 ruling 3) on added lines, case-sensitive and -i → exit 1. Board sample strings grep → exit 1.
+  - Contrast (tests/contrast-tasks.test.js, values read from screens.css): .wk label 8.80 / number 15.86 on #151418; .wk.sel label 7.53 / 8.81 and number 9.19 / 10.75 on #2a2214 / #17140f; .wk.sel border #7a5a24 3.12 and meander stroke #8a6a2c 3.94 on --bg; field text 16.39; labels 8.21 / 8.88; links 10.02 / 10.83; destructive and errors 7.17 / 7.75.
+  - Browser (playwright-cli, `npx --no-install serve -l 5173`, 390×844 DPR 2 and 440×956; scripts and output in the git-excluded `scratch/t11/`): 3 tasks added through the sheet by UI clicks (neutral text), 93 flow checks, 0 FAIL, 0 console errors; every control ≥ 44 (week days 44.8×68, + 48×48, shields 48×48, ⋯ 44×44, sheet Cancel/Add 44 tall, inputs 48, chips 44, day chips 44.6×44); input font 18, textarea 16; scrollWidth = width at 440.
+  - compare.py (`python -E -P`, tol 12) vs `reference/Tasks.png`: full 390×1280 13.96 % (3 tasks vs the board's 5 + 4 habits); header crop 0.85 %, header + week 2.98 %, week strip 6.69 % (dates differ, no dot). CSS not tuned to the numbers.
+- Owner rulings 2026-10-13 (recorded as given):
+  - R1 Deferred `.row.first` and plate padding 0 for task lists: settled per reference/Tasks.png as `.plate.list{padding:0;overflow:hidden}` and `.plate.list>.row:first-child{border-top:0}` in screens.css. **Task 12: build the Today task list as `plate(...)` + class `list` to reuse it.**
+  - R2 Skip on a repeating task applies to the VIEWED date; label "Skip today" when viewDate is today, "Skip this day" otherwise. Deliberate deviation from the plan label "Skip today".
+  - R3 (m6) The dashed `.td` habit dot marks the viewed day (the row's date), not necessarily today. reference/Tasks.png does not contradict it (the board's dashed dot is the selected day, which is also its today). Kept.
+  - R4 Gold button height not touched (Tasks 12 and 16 own it).
+- Controller rulings (each with its cost if wrong):
+  - V1 `app.viewDate()` = `requestedDate ?? today()`: the old `resolveViewDate` clamp made future dates impossible, against the plan's "future dates allowed for planning". `resolveViewDate` stays in logic.js for its frozen test, unused in src. Cost: one-line revert; a requested date survives a resume (as in v1).
+  - V2 `+` on a past day opens the sheet with today's date (past is read-only); the `+` stays visible. Cost: owner may prefer it hidden on past days.
+  - V3 No week-strip dot (`.wk i`/`.wk i.d`): its meaning is not specified anywhere. Cost: visual deviation; today has no visual mark when another day is selected (aria-current only).
+  - V4 Habits section = habits due on the viewed date (from `tasksOn`), drawn with the shared taskRow; no weekday-letter header and no "n of 7 · streak" line (no core selector). Cost: a habit not due that day is not listed; visual deviation.
+  - V5 Once-only `Delete` → `archiveTask` (core has no hard delete; history kept). Cost: archived once-only tasks stay in state.
+  - V6 An emptied date input is ignored (reset to the last date): core never sees '', no invented error copy.
+  - Past days: ⋯ hidden by `.ro .more{visibility:hidden}` (keeps layout, leaves tab order and accessibility tree) plus an early return in `onMenu`; taskRow.js is not editable in this task.
+  - The owner's brief names "src/core/dates.js helpers"; that file does not exist. The local-date helpers are in `src/logic.js` (plan Global Constraints) and were used.
+  - Sheet copy: titles `New Task` / `Edit Task` (openSheet needs a title; the plan names only the actions Add / Done).
+  - SDD ledger, brief, report and review for this task kept in `scratch/t11/` (owner rule: scratch output only in scratch\).
+- Accessible names (the Deferred item owned by Task 11): Repeat chips `role=group` aria-label "Repeat"; Custom day chips `role=group` aria-label "Days", each chip aria-label Monday…Sunday; week-strip days aria-label like "Tuesday 20 October", aria-pressed, aria-current="date" on today.
+- Deviations from reference/Tasks.png: no week-strip dot (V3, label and number ~4.5 px lower); habits use the shared taskRow layout (shield left, ⋯ present, dots under the title) instead of the board's habit row, no weekday header, no streak line (V4); time "09:00–10:00" without the board's " · 1h 30m" (Task 10 taskRow); ⋯ label "Task options" vs board "More actions"; "n of m done" counts once-only tasks only; the sheet and action sheet have no board (v1 layout, v2 tokens, fields = board `.in`/`.ta`).
+- Review (one reviewer, opus): spec ✅, 0 Critical, 2 Important, 8 Minor, Approved. Dispositions:
+  - I1 PROGRESS.md entry missing → fixed (this entry, controller).
+  - I2 Manual check list missing from the commit body → fixed (commit message, controller).
+  - m1 → Task 21: the `role=status` error `p` is `display:none` while empty (`.form-error:empty`), so VoiceOver may not announce the first error; keep it rendered.
+  - m2 Needs ruling (owner): the Date input has no `min`, so a new or edited task can be dated in the past (plan and core silent). Fix if wanted: `min: app.today()` + the V6 reset.
+  - m3 Needs ruling (owner): the meander's 1 px bottom line `#8a6a2c` at .6 is 2.12:1 on --bg (the stroke, 3.94, is asserted); treated as decorative (aria-hidden, masked), like `.mini.off`.
+  - m4 → Task 21: below 390 css px the week days drop under 44 (42.7 at 375) and the 7 day chips overflow the sheet by ~9 px; the owner's phone is 440 (no impact now).
+  - m5 → Task 21 (with Task 10 m4): focus drops to body after a ⋯ action (the ⋯ button has no id; taskRow.js is Task 10's).
+  - m6 → owner at the Task 12 iPhone checkpoint: today has no visual mark when another day is selected (V3).
+  - m7 → Task 12: viewDate is shared and no longer clamped; after picking a future day on Tasks, Today must use `app.today()` or reset the view date.
+  - m8 No change: duplicate `.wk` rule (box-shadow line) copied from the board's CSS as is.
+- Apple-design audit (audit only, no code change): Cancel leading / Add trailing, grabber, swipe-to-dismiss with the Discard Changes action sheet match `sheets.md`; `action-sheets.md › Best practices` puts destructive choices at the top, the plan orders Delete last → owner (no change); Delete (archive) has no undo but sits behind the action sheet with Cancel → Task 21.
+- Deferred:
+  - Error announcement (m1), < 390 px targets (m4), focus after ⋯ (m5), delete undo → owner: Task 21.
+  - Today tab view date (m7) and `.plate.list` reuse (R1) → owner: Task 12.
+  - Past-dated tasks via the Date input (m2), meander line contrast (m3), destructive item order → owner ruling needed.
+  - Task 20: none.
+- Next: Task 12.

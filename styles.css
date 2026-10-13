@@ -80,7 +80,7 @@ button:disabled { opacity: .4; cursor: default; }
 .ph-back{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line-strong);display:grid;place-items:center;color:#E9E3D6}
 .ph-sp{flex:none;width:44px}
 
-/* Shield toggle; failed (owner ruling R1) and stalled (Kit.html: opacity .55, dash 3 2.5) */
+/* Shield toggle; failed (owner ruling R1) and stalled (opacity .82: Task 10 contrast fix, owner ruling 1b; board .55; Kit.html dash 3 2.5) */
 .shield{position:relative;flex:none;width:48px;height:48px;display:grid;place-items:center}
 .shield svg .b{fill:rgba(255,255,255,.02);stroke:var(--outline);stroke-width:1.7;transition:fill .2s,stroke .2s}
 .shield svg .hl{fill:rgba(255,255,255,.28);opacity:0}

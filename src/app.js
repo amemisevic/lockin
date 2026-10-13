@@ -1,11 +1,12 @@
 // App container (state, set, subscribe, viewDate), hash router, clock tick, mount.
-import { dateKey, resolveViewDate } from './logic.js';
+import { dateKey } from './logic.js';
 import { load, save } from './core/store.js';
 import { settleMissed } from './core/scoring.js';
 import { parseRoute, nav } from './router.js';
 import { VERSION } from './version.js';
 import { icon } from './icons.js';
 import { h } from './dom.js';
+import { renderTasks } from './views/tasks.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
 let storage;
@@ -22,7 +23,7 @@ export const app = {
   saveFailed: false,
   version: VERSION,
   today,
-  viewDate: () => resolveViewDate(requestedDate, today()),
+  viewDate: () => requestedDate ?? today(),
   setViewDate(key) { requestedDate = key; notify(); },
   set(updater) {
     const next = updater(this.state);
@@ -46,8 +47,9 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Placeholder screens (Tasks 11–19 replace them). Text nodes only.
+// Tasks tab (Task 11); placeholder screens for the rest (Tasks 12–19 replace them). Text nodes only.
 function screen(r) {
+  if (r.name === 'tasks') return renderTasks(app);
   if (!r.pushed) return [h('p', { class: 'eyebrow' }, 'Lock In'), h('h1', { class: 'ttl' }, r.name[0].toUpperCase() + r.name.slice(1))];
   return [
     h('button', { type: 'button', class: 'back', onClick: () => history.back() }, icon('chevronLeft'), 'Back'),
