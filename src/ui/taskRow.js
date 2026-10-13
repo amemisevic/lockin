@@ -1,4 +1,5 @@
-// One task row (plan Task 10, owner call 6): shield toggle, title, time, note, ⋯ button; habits add 7 dots.
+// One task row (plan Task 10, owner call 6): shield toggle, title, time, ⋯ button; habits add 7 dots.
+// The note is not shown in the row (owner, Task 11 fix round): the ⋯ menu shows it.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { setTaskStatus, habitDots } from '../core/tasks.js';
@@ -22,7 +23,6 @@ export function taskRow(app, view, date, { onMenu }) {
     h('div', { class: 'rb' },
       h('div', { class: 'rt' }, task.title),
       time && h('div', { class: 'rtm' }, time),
-      task.note && h('div', { class: 'rn' }, task.note),
       status === 'done' && h('div', { class: 'okt' }, 'Completed'),
       task.repeat.type !== 'none' && dots(habitDots(app.state, task.id, date))),
     h('button', { type: 'button', class: 'more', 'aria-label': 'Task options', onClick: () => onMenu(view) }, icon('more')));

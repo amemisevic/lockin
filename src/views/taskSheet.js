@@ -25,8 +25,10 @@ export function openTaskSheet(app, { mode, task, date }) {
   const start = input('start', { type: 'time' });
   const end = input('end', { type: 'time' });
   // Ruling V6: an emptied date is ignored (the input goes back to the last date), so core never sees ''.
-  const dateIn = h('input', { class: 'in', type: 'date', value: f.date, required: true, onChange: e => {
-    if (!e.target.value) { e.target.value = f.date; return; }
+  // Owner ruling m2: a new task cannot be dated before today (local key); edit mode sets no min.
+  const min = mode === 'new' ? app.today() : null;
+  const dateIn = h('input', { class: 'in', type: 'date', value: f.date, min, required: true, onChange: e => {
+    if (!e.target.value || (min && e.target.value < min)) { e.target.value = f.date; return; }
     f.date = e.target.value; changed();
   } });
 

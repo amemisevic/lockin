@@ -512,3 +512,16 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Past-dated tasks via the Date input (m2), meander line contrast (m3), destructive item order → owner ruling needed.
   - Task 20: none.
 - Next: Task 12.
+
+## Task 11 fix round: sheet layout, notes behind the ⋯ menu
+- Commit: "fix(ui): tasks sheet layout and hide notes behind the menu" (a commit cannot contain its own hash, see `git log`). Base `0c40e42`. Files: `screens.css` (124), `src/views/tasks.js` (76), `src/views/taskSheet.js` (79), `src/ui/taskRow.js` (29), this entry. `src/sheet.js`, `src/dom.js`, every test and `sw.js` VERSION untouched.
+- Sheet layout: `.form`/`.fld` `grid-template-columns:minmax(0,1fr)` (+ `.fld` min-width 0), `.fld-2` `minmax(0,1fr) minmax(0,1fr)`, `.in` max-width 100% + appearance none, `.in::-webkit-date-and-time-value{text-align:left;min-width:0}`; `.sheet-body` overflow-x hidden as a safety net only.
+- Proof (playwright-cli, Chromium, 360/390/440; `scratch/t11fix/`): before.txt and after.txt both show scrollWidth == clientWidth and every `.in` inside the 20 px gutter. Chromium does not reproduce the iPhone overflow with the old rules; WebKit is not installed (not downloaded). Stress test `stress.txt` (date/time inputs forced to 400 px, an input that ignores width:100%): old rules overflow (scrollWidth 585/600/625 vs 358/388/438), new rules with the safety net removed fit (358/388/438, right edges ≤ viewport − 20). Device check on the iPhone still needed.
+- Time vs note: `.rtm` renders next to the note (Chromium, `row-time-note-before.png`: "09:00–10:00" above "Note N"); no root cause to fix.
+- Notes: the row no longer shows the note (`.rn` line removed from taskRow; the `.rn` rule in styles.css is now unused, left for a later cleanup since styles.css was out of scope). The ⋯ action sheet shows the note as its message (no message when empty); items unchanged, one core call each; aria-label "Task options" kept.
+- ⋯ on past days: shown only for tasks with a note, opens `openActionSheet([], { message: note, cancel: 'Close' })` (no Edit/Skip/Move/Delete; no change to src/sheet.js). Rows without a note get class `nn` (tasks.js); `.ro .nn .more{visibility:hidden}` replaces `.ro .more`. Shield still toggles.
+- Owner rulings 2026-10-13:
+  - m2: the Date input of a NEW task has `min` = today's local key (`app.today()`); a picked date before it is reset like the V6 empty date. Edit mode sets no min.
+  - m3: the meander's bottom line (2.12:1) is accepted as decoration.
+- Commands: `npm test` → exit 0, 337/337. Forbidden date grep and innerHTML grep on src/ui src/views → exit 1. Personal-data grep on added lines → exit 1. Proof scripts: `measure*.js`, `stress.js`, `notes.js` (15 PASS, 0 console errors).
+- Deferred: unchanged from the Task 11 entry, minus m2 and m3 (ruled).

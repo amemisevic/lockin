@@ -43,9 +43,18 @@ export function renderTasks(app) {
   const habits = views.filter(v => v.task.repeat.type !== 'none');
   const done = once.filter(v => v.status === 'done').length;
 
-  const onMenu = view => { if (!past) openActionSheet(menuItems(app, view, date)); };
+  // The note is read in the ⋯ sheet. Past days: only the note, no actions (read-only except the shield).
+  const onMenu = view => {
+    const message = view.task.note || null;
+    if (!past) openActionSheet(menuItems(app, view, date), { message });
+    else if (message) openActionSheet([], { message, cancel: 'Close' });
+  };
   const list = items => {
-    const p = plate(items.map(v => taskRow(app, v, date, { onMenu })));
+    const p = plate(items.map(v => {
+      const row = taskRow(app, v, date, { onMenu });
+      if (!v.task.note) row.classList.add('nn'); // no note: ⋯ hidden on past days (screens.css .ro .nn)
+      return row;
+    }));
     p.classList.add('list');
     if (past) p.classList.add('ro');
     return p;

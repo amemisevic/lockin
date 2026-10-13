@@ -78,8 +78,9 @@
 .plate.list{padding:0;overflow:hidden}
 .plate.list>.row:first-child{border-top:0}
 .tk-empty{margin:10px 4px 0;color:var(--text-2)}
-/* Past days are read-only except the shield: ⋯ keeps its space, leaves the tab order and the accessibility tree. */
-.ro .more{visibility:hidden}
+/* Past days are read-only except the shield; ⋯ stays only to read a note (.nn = no note: hidden, keeps its space,
+   leaves the tab order and the accessibility tree). */
+.ro .nn .more{visibility:hidden}
 
 /* ==== Sheets (src/sheet.js): v1 styles.css sheet/action-sheet/form layout with v2 tokens. */
 dialog{padding:0;border:0;color:var(--text);max-width:none;max-height:none}
@@ -92,7 +93,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .sheet-header>button:first-of-type{justify-self:start}
 .sheet-action{justify-self:end;font-weight:700}
 .grabber{position:absolute;top:6px;left:calc(50% - 18px);width:36px;height:5px;border-radius:3px;background:var(--outline)}
-.sheet-body{flex:1;overflow:auto;overscroll-behavior:contain;padding:8px var(--gutter) calc(env(safe-area-inset-bottom) + 24px)}
+.sheet-body{flex:1;overflow:auto;overflow-x:hidden;overscroll-behavior:contain;padding:8px var(--gutter) calc(env(safe-area-inset-bottom) + 24px)}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;border-radius:var(--r-pill);font-weight:600}
 .btn-text{color:var(--accent);padding:0 12px}
 .title3{font:600 1.176em/1.25 var(--f-body)}
@@ -106,11 +107,12 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .action-cancel{font-weight:700}
 @keyframes sheet-in{from{transform:translateY(100%)}}
 /* Form: fields = the boards' .in / .ta (CheckIn.css, Recovery.css); controls stay ≥ 16 px (no iOS focus zoom). */
-.form{display:grid;gap:16px}
-.fld{display:grid;gap:8px}
+.form{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.fld{display:grid;grid-template-columns:minmax(0,1fr);min-width:0;gap:8px}
 .fld-l{font-size:13px;line-height:18px;font-weight:600;color:var(--text-2)}
-.fld-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.in{width:100%;min-width:0;height:48px;border-radius:14px;border:1px solid var(--line-strong);background:var(--field);color:var(--text);font-size:18px;padding:0 14px;font-variant-numeric:tabular-nums}
+.fld-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.in{width:100%;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;height:48px;border-radius:14px;border:1px solid var(--line-strong);background:var(--field);color:var(--text);font-size:18px;padding:0 14px;font-variant-numeric:tabular-nums}
+.in::-webkit-date-and-time-value{text-align:left;min-width:0}
 .ta{width:100%;min-height:76px;border-radius:16px;border:1px solid var(--line-strong);background:var(--field);color:var(--text);font-size:16px;line-height:22px;padding:12px 14px;resize:none}
 .days{flex-wrap:nowrap;gap:6px}
 .days .chip{flex:1;min-width:44px;padding:0;justify-content:center}
