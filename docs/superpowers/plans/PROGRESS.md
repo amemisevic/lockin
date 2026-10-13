@@ -375,3 +375,68 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - m5 Fixed: this review line replaces a placeholder.
 - Deferred: unchanged from the Task 9 entry, except I1 and M1 are now done; apple notes → Task 21 with the installed-app check at the Task 12 iPhone checkpoint.
 - Next: Task 10.
+
+## Task 10: Shared UI pieces
+- Commit: "feat(ui): shared controls" (staged by the implementer, committed by the controller after review; a commit cannot contain its own hash, see `git log`). Base `f8b3a86`.
+- Files (lines): new `src/ui/chrome.js` (17), `src/ui/controls.js` (58), `src/ui/taskRow.js` (29); modified `styles.css` (156), `src/icons.js` (53), `sw.js` (68; ASSETS += the three files, VERSION unchanged `1.0.23`). `src/app.js` and `tests/` unchanged (`git diff --quiet f8b3a86 -- src/app.js` → 0, `git diff --quiet f8b3a86 -- tests/` → 0). screens.css untouched.
+- Commands:
+  - RED before the components existed: `playwright-cli run-code --filename=kit-proofs.js` → exit 1 (`RED: no #kit page / no shield on the page`); `kit-rm.js` → exit 1 (same).
+  - GREEN: `kit-proofs.js` → exit 0, PASS true, 0 failures, 0 console messages; `kit-rm.js` with `playwright-cli set-reduced-motion reduce` → exit 0, and with `clear-reduced-motion` (control) → exit 0.
+  - `npm test` → exit 0, 299/299 (the sw ASSETS test lists the three new files).
+  - `grep -rnE "toISOString|getUTC|Date\.parse|new Date\(" src/ui` → exit 1. `grep -rn innerHTML src/ui` → exit 1.
+  - Personal-data grep on added lines → exit 0 with 7 hits, all CSS font-boldness declarations whose property name contains the grep word (the Task 9 CSS has the same); no names, mail, units or times. The same grep after deleting that property name from each line → exit 1. Not rewritten (a CSS property cannot be renamed).
+  - Served with `npx --no-install serve -l 5173` (stopped afterwards); playwright-cli 390×844 and 440×956, DPR 2.
+- Owner calls (binding; implemented as given):
+  1. CSS copied from css/Kit.css (+ the Tasks.css task-row rules), board compact format so each line diffs against its source; hex/rgba → token only where :root has the exact value; every rule is used by a component of this task.
+  2. Pop survives the re-render (mechanism below); proven on the #kit page wired through a re-rendering set-like function.
+  3. Reduced motion: pop, ripple, thumb transition (and the shield fill transition) off under `prefers-reduced-motion: reduce`.
+  4. shieldToggle = `<button type="button">`, aria-pressed true only for done, aria-label = label; failed/stalled looks per R1; switch = button role="switch" aria-checked; chips/segmented = role="group" of buttons with aria-pressed; stepper = role="group" (aria-label = label) with "Fewer"/"More" buttons (board names), value visible, disabled at min/max; goldButton uses the disabled attribute; every target ≥ 44 measured.
+  5. Icon fixes: `icon()` gives every id inside a parsed icon a per-call suffix (`g-i3`, `lwo-i7`, …) and rewrites the matching `url(#…)` fill/stroke refs; the `lambda` path carries the .lam values as attributes (fill none, stroke #1a1205, 2.6, round caps/joins).
+  6. taskRow per the call: open → `setTaskStatus(…, 'done')`; done/failed/stalled → `null`; time "HH:MM–HH:MM" / start only / nothing; ⋯ = 44×44 "Task options" → `onMenu(view)`; habits add 7 `.mini` dots from `habitDots(state, task.id, date)`; done rows tinted with "Completed" (.okt). Never touches the day close.
+  7. pushedHeader: 44 px round back button (aria-label "Back", R2 chevron) + title; built, not wired.
+  8. Temporary #kit hook in `render()` before `app.route()`/parseRoute (saved as `scratch/kit-hook.patch`: one hunk, additions only), removed before staging.
+- Owner rulings 2026-10-13 (recorded as given):
+  - R1 Failed shield: outline --crimson with the Reset-badge X (`M3 3l8 8M11 3l-8 8`, 14 box) drawn inside, lambda stroke style (round caps/joins, 2.6). Stalled = Kit.html opacity .55 + dash 3 2.5.
+  - R2 Missing rules copied from the boards: .seg (Analytics.css), .stp + the `.sw .th` transition (Settings.css), .warn (CheckIn.css), the icon-only back button (Recovery.html line 70).
+  - R3 Tap targets: chips = Recovery.css values (44 / 0 16px / 15px); switch = 60×44 transparent button around the 60×34 track; segmented buttons 44 tall (container 54); ⋯ 44×44; gold button stays 48.
+  - R4 Task row shows the note (13/18, text-2, margin-top 1px) under the time when non-empty.
+- Pop mechanism: module-level `popKey` in controls.js. The shield's click handler sets `popKey = label`, calls `onToggle()` (app.set → notify → render, synchronous), then clears it in `finally`. A shield built while `popKey === label` and `status === 'done'` gets class `pop`. So first render, un-do, reopen and every later render never pop. `ponytail:` ceiling in code: keyed by label, two shields with the same label on one screen both pop. taskRow passes `task.title` (does not change with status). Second ceiling: a screen that re-rendered asynchronously after the tap would not pop.
+- Focus ring: relied on the existing `:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }` (styles.css); no rule added. Also relied on `button:disabled { opacity: .4 }` and the body tap-highlight/touch-action rule.
+- Drawn icon (CLAUDE.md): failed-shield X = the Kit.html Reset-badge X scaled ×1.125 into the lambda's box: `M10.5 13.25l9 9M19.5 13.25l-9 9` (viewBox 30×34), drawn by swapping the `d` of the shield's `.lam` path when the status is failed, stroke --crimson. Board inline SVGs added to icons.js (copied from static/, not drawn): `back` (Recovery.html chevron 10×16), `more` (Tasks.html ⋯ 18×4), `stpMinus`/`stpPlus` (Settings.html 16×16).
+- Implementer choices: class names `.swb` (switch button), `.ph`/`.ph-back`/`.ph-sp` (pushed header), `.rb`/`.rt`/`.rtm`/`.rn` (row body, title, time, note; values from the row's inline styles in Tasks.html), `.chips` (Kit.html chip-row layout), `.dots` (display:flex only). Pushed header title is `h1.eyebrow` (Recovery board). `.ph-back`/`.ph-sp` get `flex:none` so a long title never shrinks the 44 px button. Row body order: title, time, note, "Completed", dots. Habit dots: done = `.mini.on`, today (last) = `.td`; open/failed/stalled/off = plain `.mini`; the dots row is `aria-hidden` (no invented copy). chips call `onPick(value)` for single and multi (the caller adds/removes). `.chip.on` and `.seg button.on` use `var(--gold-grad)` (the chip's board gradient omits the 0 %/100 % stops: same rendering). `.sec` sword = inline svg with the `.sec::before` box values (content/background/vertical-align dropped). `.seg span` → `.seg button`. The mini dot and the switch thumb reuse icons.js `shield` at 22×25 with the unused paths removed.
+- Deviations (compare.py, tol 12, crops centred on each element at the board's size, @2x; reference/Kit.png unless noted; the board crops come from the reference PNGs, positions from the static/ renders, which match the PNGs at 1.2–2.2 %):
+  - Same size, background only: shield open 0.55 %, switch off 0.11 %, switch on 1.04 %, mini done (Tasks.png) 0.49 %; shield done 7.14 % and stalled 3.19 % (glow over a different plate area); back button (Recovery.png) 7.45 % and stepper (Settings.png) 6.20 % (different wall behind); sec sword (Tasks.png) 4.26 %.
+  - Size changed by R3: chip on 33.39 % / off 18.29 % (40 → 44, 14 → 15 px, padding 14 → 16); segmented (Analytics.png) 33.15 % (38 → 44 buttons, 48 → 54 container; kit width 304 vs board 350); ⋯ (Tasks.png) 13.31 % (40 → 44). Switch hit area 60×44 (track unchanged 60×34). Gold button 48 (DESIGN-SPEC §2 says 54; R3 keeps Kit's 48).
+  - Text differs (neutral placeholders): gold button 17.94 % ("Button" vs board text); row done 7.02 % and row open+note 6.27 % (Tasks.png).
+  - Time format "HH:MM–HH:MM" (call 6) vs the board's "HH:MM – HH:MM · duration" (no spaces, no duration).
+  - Failed shield (R1) has no board: 12.71 % vs the board's open shield.
+  - No `.row.first`: the first row in a plate shows its 1 px top border (done row 83 vs board 82) → Tasks 11, 12 (the task lists).
+  - `.plate` keeps Kit's 22 px padding; task lists need padding 0 (Tasks board) → Tasks 11, 12.
+  - Note line added (R4).
+  - The thumb slide (.25 s) never plays in the real flow: app.set rebuilds the switch, so the new node starts in its end state (proved: switch tap → 0 animations; in-place class toggle → 1 transition). Making it play needs a mechanism like the pop; not asked → owner decision, Task 19 (Settings, where the switches live).
+  - Contrast (board values, unchanged): open `.mini` outline #6b5a36 2.77:1 on #141317 (2.56 on #1c1b20), stalled shield outline at opacity .55 ≈ 2.1:1, both under 3:1 for graphics (state is also carried by fill/dash shape).
+  - Keyboard: a shield tap re-renders the screen and focus drops to body (render restores focus by id only; controls have no ids) → Task 21 with M2.
+  - chips/segmented groups have no accessible name (the plan interface has no label) → the screens that use them.
+- Proofs (scripts and output in the git-excluded `scratch/`: `kit-proofs.js`, `kit-rm.js`, `kit-rects.js`, `compare-kit.py`, `smoke.js`, `kit/`):
+  - Pop (element.getAnimations({subtree:true}) on the shield button, cross-checked with document.getAnimations() filtered to the shield): first render 0 on all 10 shields; tap open → new node, 2 animations (`pop` on the svg, `rip` on ::after), aria-pressed true; tap again (un-do) → 0; task row tap → 2, then switch tap → 0 and focus tick → 0 (still done); failed/stalled (kit shields and the Task E/F rows) → tap → open, 0.
+  - Reduced motion: matchMedia true; tap → class `shield on pop`, 0 animations, computed animation-name none on the svg and ::after; thumb transition-property none / 0s. Control run: 2 animations, thumb `transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1)`.
+  - 44 px: 36 interactive elements measured, all ≥ 44 (shields 48×48, switches 60×44, chips 83–85×44, segmented 95×44, stepper buttons 44×44, gold 48 tall, ⋯ 44×44, back 44×44). Keyboard Tab through the 33 enabled controls: all `solid 3px rgb(242, 190, 92)`, offset 2px, :focus-visible true.
+  - Icons: 7 swords (5 headings + 2) and 2 laurels on one page, 11 svg ids all unique, 13 url(#…) refs all resolve inside their own svg; both standalone lambdas stroke rgb(26, 18, 5) 2.6px, fill none, no .lam rule in scope. Screenshot `scratch/kit/icons-two-copies-390-dpr2.png`.
+  - Screenshots: `scratch/kit/kit-390x844-dpr2-full.png`, `scratch/kit/kit-440x956-dpr2-full.png` (scrollWidth 390 / 440). After removing the hook, `#kit` renders Today (smoke.js).
+- Review (one reviewer; `sonnet` alias → HTTP 404 in this setup, opus used): spec ✅, 0 Critical, 0 Important, 7 Minor, Approved. Dispositions:
+  - m1 Skip → Task 21: open, failed and stalled all expose aria-pressed false and the same label (the label stays status-free so the pop key survives the re-render); add the state as visually hidden text or aria-describedby.
+  - m2 Needs ruling (owner): board graphics under 3:1 (open `.mini` outline #6b5a36 ≈ 2.6–2.8:1; stalled shield ≈ 2.1:1) vs CLAUDE.md 3:1; call 1 says copy exactly. Reviewer's fix if wanted: `.mini svg .b{stroke:var(--outline)}` (4.3:1).
+  - m3 Skip → Task 19: the switch thumb slide never plays after a re-render.
+  - m4 Skip → Task 21 (with Task 9 M2): focus drops to body after a tap that re-renders; affects VoiceOver too.
+  - m5 No change: `.chip.on` uses `var(--gold-grad)` (board gradient lacks the 0 %/100 % stops; identical rendering; disclosed).
+  - m6 Skip → Task 11: `.td` marks the row's `date` (the viewed day), not necessarily today; Task 11's week strip decides whether that is intended.
+  - m7 Skip (no owner task; extend when needed): `icon()` id rewrite follows fill/stroke `url(#…)` only, not href/clip-path/mask/filter.
+- Deferred:
+  - `.row.first` (first-row border) and plate padding 0 for task lists → owners: Tasks 11, 12.
+  - Accessible names for chip/segmented groups at their call sites → owners: Tasks 11, 15–19 (the screens that use them).
+  - `.td` = viewed day vs today (m6) → owner: Task 11.
+  - Switch thumb slide never visible after a re-render (m3) → owner: Task 19.
+  - Focus after a tap re-render (m4); failed/stalled state for assistive tech (m1) → owner: Task 21.
+  - `.mini`/stalled outline contrast under 3:1 (m2) → owner ruling needed.
+  - Task 20: none.
+- Next: Task 11.
