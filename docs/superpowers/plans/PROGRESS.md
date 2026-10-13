@@ -553,3 +553,6 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Re-runs: round-2 flow `scratch/t11fix2/proof.js` → 78 PASS, 0 FAIL; round-1 notes `scratch/t11fix/notes.js` → 15 PASS; round-1 sheet measurements → all OK; Task 11 `scratch/t11/flows.js` → 91 checks PASS, then stops at its past-day step because it creates a past-dated task through the New Task sheet, which the round-1 date minimum (m2) now blocks; that path is covered by round-1 notes.js.
 - Commands: `npm test` → exit 0, 339/339. Forbidden date grep and innerHTML grep on src/ui src/views → exit 1. Personal-data grep on added lines → exit 1.
 - Deferred: m7 still owned by Task 12 (viewDate must not leak into Today). 360 px overlap with the Today icon: below the supported width, no action unless the owner asks.
+- Owner ruling 2026-10-13: Delete stays last in the ⋯ menu (Apple's action-sheet guidance puts destructive items first; the plan's order is kept). No change.
+- Deferred, owner Task 21: keep "week N" together in the eyebrow with a non-breaking space so it never wraps as "SEPTEMBER · WEEK / 39" at 375 px (weekLabel is covered by frozen tests, so the change needs owner-authorised test edits).
+- Deferred, owner Task 21: the `.rn` rule in styles.css is unused since round 1; delete it.
