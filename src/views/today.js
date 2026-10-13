@@ -3,16 +3,15 @@
 // Tasks tab's view date (m7). No timer of its own: app.js re-renders on state change and on its 30 s tick.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
-import { addDays } from '../logic.js';
 import { tasksOn } from '../core/tasks.js';
-import { NIGHT_FROM, dayNo, phase, forcedFullPass } from '../core/challenge.js';
+import { NIGHT_FROM, dayNo, phase } from '../core/challenge.js';
 import { NIGHT_TEXT, currentStreak } from '../core/scoring.js';
 import { screenTitle, eyebrow, sectionHeading, plate } from '../ui/chrome.js';
 import { taskRow } from '../ui/taskRow.js';
 import { goldButton } from '../ui/controls.js';
 import { dayLabel } from './tasksLogic.js';
 import { openTaskMenu } from './tasks.js';
-import { todayCards, timeLeft } from './todayLogic.js';
+import { todayCards, timeLeft, nightLineVisible, medLine } from './todayLogic.js';
 
 // Afternoon "Not now" (ruling R6): in memory only, for one date, never saved.
 let dismissedOn = null;
@@ -45,12 +44,11 @@ function medallion(state, n) {
     h('b', { 'aria-hidden': 'true' }, String(n)), h('span', { 'aria-hidden': 'true' }, of));
 }
 
-function challengePlate(state, today, n) {
+function challengePlate(state, today, n, nowMs) {
   const streak = currentStreak(state);
   const morning = state.days[today]?.morning;
-  const night = `Night opens ${String(NIGHT_FROM).padStart(2, '0')}:00`;
-  const forced = forcedFullPass(state, today) && (state.days[addDays(today, -1)]?.result === 'reset'
-    ? 'No MED today. Yesterday was a Reset.' : 'No MED today. Yesterday was a declared Redo.');
+  const night = nightLineVisible(nowMs) && `Night opens ${String(NIGHT_FROM).padStart(2, '0')}:00`;
+  const forced = medLine(state, today, nowMs);
   return h('a', { href: '#challenge', id: 'td-ch', class: 'plate td-ch' },
     h('div', { class: 'td-chh' },
       h('div', { class: 'td-tile' }, icon('challenge')),
@@ -60,7 +58,7 @@ function challengePlate(state, today, n) {
       chevron()),
     h('div', { class: 'td-st' },
       h('span', morning ? null : { class: 't2' }, torch(!!morning), morning ? 'Morning done' : 'Morning pending'),
-      h('span', { class: 't2' }, torch(false), night)),
+      night && h('span', { class: 't2' }, torch(false), night)),
     forced && h('p', { class: 't2 td-ff' }, forced));
 }
 
@@ -97,7 +95,8 @@ export function renderToday(app) {
   const today = app.today();
   const active = phase(state, today) === 'active';
   const n = dayNo(state, today);
-  const cards = todayCards(state, Date.now(), { afternoonDismissed: dismissedOn === today });
+  const now = Date.now();
+  const cards = todayCards(state, now, { afternoonDismissed: dismissedOn === today });
   // Every task due today, once-only and habits (differs on purpose from the Tasks tab).
   const views = tasksOn(state, today);
   const done = views.filter(v => v.status === 'done').length;
@@ -109,7 +108,7 @@ export function renderToday(app) {
       h('div', null, eyebrow(dayLabel(today)), screenTitle('Today')),
       active && medallion(state, n)),
     h('div', { class: 'mk', 'aria-hidden': 'true' }),
-    active && challengePlate(state, today, n),
+    active && challengePlate(state, today, n, now),
     ...cards.map(c => card(app, c)),
     h('section', null,
       h('div', { class: 'tk-sh' }, sectionHeading('Today\'s tasks'), views.length > 0 && h('span', { class: 't2' }, `${done} of ${views.length} done`)),
