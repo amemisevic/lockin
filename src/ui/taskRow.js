@@ -7,9 +7,9 @@ import { shieldToggle, shieldSvg } from './controls.js';
 // "HH:MM–HH:MM" (en dash) when both exist, the start alone, else nothing.
 const timeText = t => (t.start && t.end ? `${t.start}–${t.end}` : t.start || '');
 
-// Seven small shields, oldest first; done = gold, today = dashed gold outline; open/failed/stalled/off = plain.
+// Seven small shields, oldest first; done = gold, today = dashed gold outline, off (not due) = muted; open/failed/stalled = plain.
 const dots = statuses => h('div', { class: 'dots', 'aria-hidden': 'true' },
-  statuses.map((s, i) => h('span', { class: ['mini', s === 'done' && 'on', i === 6 && 'td'].filter(Boolean).join(' ') },
+  statuses.map((s, i) => h('span', { class: ['mini', s === 'done' && 'on', s === 'off' && 'off', i === 6 && 'td'].filter(Boolean).join(' ') },
     shieldSvg([22, 25], ['b']))));
 
 export function taskRow(app, view, date, { onMenu }) {

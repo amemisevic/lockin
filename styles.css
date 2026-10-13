@@ -95,7 +95,7 @@ button:disabled { opacity: .4; cursor: default; }
 .shield svg{filter:drop-shadow(0 0 3px rgba(242,190,92,.14))}
 .shield.failed svg .b{stroke:var(--crimson)}
 .shield.failed svg .lam{opacity:1;stroke:var(--crimson)}
-.shield.stalled{opacity:.55}
+.shield.stalled{opacity:.82}
 .shield.stalled svg .b{stroke-dasharray:3 2.5}
 
 /* Switch: R3 60×44 button around the 60×34 track; .th transition from Settings.css */
@@ -143,7 +143,9 @@ button:disabled { opacity: .4; cursor: default; }
 .more{box-shadow:inset 0 1px 0 rgba(255,236,190,.07)}
 .dots{display:flex}
 .mini{width:30px;height:34px;display:grid;place-items:center}
-.mini svg .b{fill:transparent;stroke:#6b5a36;stroke-width:1.5}
+.mini svg .b{fill:transparent;stroke:var(--outline);stroke-width:1.5}
+/* Not due (off): inactive, exempt from the 3:1 graphics rule (owner ruling 1c); keeps the board value. */
+.mini.off svg .b{stroke:#6b5a36}
 .mini.on svg .b{fill:#E9B352;stroke:var(--gold-hi)}
 .mini.td svg .b{stroke:var(--accent);stroke-width:2;stroke-dasharray:3 2}
 .mini.on.td svg .b{stroke-dasharray:none}

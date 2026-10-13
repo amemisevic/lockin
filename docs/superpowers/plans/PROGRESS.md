@@ -440,3 +440,28 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - `.mini`/stalled outline contrast under 3:1 (m2) → owner ruling needed.
   - Task 20: none.
 - Next: Task 11.
+
+## Task 10 fix round: graphic contrast for open dot and stalled shield
+- Commits: `f746f81` test(ui): graphic contrast for open dot and stalled shield (failing, WIP) — new `tests/contrast-graphics.test.js` (31, 7 tests) only; "fix(ui): graphic contrast for open dot and stalled shield" (styles.css, src/ui/taskRow.js, this entry; a commit cannot contain its own hash, see `git log`). Base `00ba9dc`. `tests/contrast.test.js` and every other existing test untouched.
+- Owner rulings (2026-10-13, recorded as given; the approved board wins except where it breaks the CLAUDE.md 3:1 graphics rule):
+  1. Review m2 fixed now: (a) open habit-dot outline `.mini svg .b` stroke → `var(--outline)` (#85795f); (b) stalled shield keeps the dashed outline and muted look, opacity raised by the smallest amount giving ≥ 3.1:1 on the surface it sits on; (c) not-due (off) dots stay muted: inactive, exempt from 3:1.
+  1c follow-up (owner, asked during the fix): off dots rendered as the same plain `.mini` as open dots, so CSS alone could not keep them muted. taskRow adds class `off` for 'off' dots and styles.css adds `.mini.off svg .b{stroke:#6b5a36}` (the old board value). Commit 2 therefore also contains `src/ui/taskRow.js` (one class token + its comment). A not-due today dot still gets the `.td` gold dashed outline (`.mini.td` comes later in the cascade).
+  2. New test file `tests/contrast-graphics.test.js` (helpers copied from tests/contrast.test.js): resolves the stroke colour and opacity from styles.css for the outline token, open/done/failed/stalled shield, open/done habit dot, composites opacity over the surface, asserts ≥ 3 on both plate stops (`--plate-top` #1c1b20, `--plate-bot` #141317; the lighter stop is the binding one).
+  3. Personal-data grep from now on: `grep -nPi` on added lines with the owner's name and surname, the mail domain, a digit followed by an optional space and kg/lbs at a word end, and the body-mass word stem only when not preceded by "font-" (negative lookbehind); font-weight is not a hit. (The literal pattern is kept out of this file so the grep does not match itself.)
+  4. Gold button height stays 48 (Kit); Tasks 12 and 16 set it per screen board (DESIGN-SPEC §2 says 54) → owners: Tasks 12, 16.
+  5. m1 → Task 21, m3 → Task 19, m4 → Task 21, m6 → Task 11 (already recorded in the Task 10 entry; confirmed).
+- Ratios (same helpers as the tests; stroke composited over the surface; top = #1c1b20 / bot = #141317):
+  - Before: stalled shield (#85795f at opacity .55) 2.115 / 2.147; open dot #6b5a36 2.560 / 2.767.
+  - After: stalled shield opacity .82 (smallest two-decimal opacity with min ≥ 3.1) 3.116 / 3.316; open dot var(--outline) 3.991 / 4.314. Unchanged: outline 3.991 / 4.314, done 13.435 / 14.520, failed (--crimson) 4.788 / 5.174, done dot 13.435 / 14.520.
+- Commands:
+  - RED at `f746f81`: `node --test --test-reporter=tap tests/contrast-graphics.test.js` → exit 1, 5 pass / 2 fail: `.shield.stalled on --plate-top: 2.115 < 3`, `.mini svg .b on --plate-top: 2.560 < 3`.
+  - GREEN: same command → exit 0, 7/7. `node --test "tests/**/*.test.js"` → exit 0, 306/306 (299 + 7). Bare `npm test` reports 605/605: `node --test` also discovers the 299 tests inside the git-excluded preview worktree `scratch/kit-preview` (at 00ba9dc); it returns to 306 once that worktree is removed.
+  - `grep -rnE "toISOString|getUTC|Date\.parse|new Date\(" src/ui` → exit 1. `grep -rn innerHTML src/ui` → exit 1. Personal-data grep (ruling 3) on added lines → exit 1.
+- Visual: the stalled shield is slightly brighter (opacity .55 → .82, still dashed); open habit dots have the brighter shield outline; not-due dots unchanged.
+- Deferred: gold button height per screen → Tasks 12, 16. Others unchanged from the Task 10 entry.
+- Review (one reviewer, opus): spec ✅, 0 Critical, 0 Important, 4 Minor, Approved. Dispositions:
+  - n1 Skip → Task 21: the test's `decl` reads the first rule with a matching selector, so a later duplicate overriding rule would go unseen; the stalled check assumes `.shield.stalled` has no stroke of its own (true today). Tests are not edited.
+  - n2 Skip → Task 21: the faint gold drop-shadow behind the shield (alpha .14) is not modelled; margin is thin (3.116 vs 3.1) → check the stalled shield on the real iPhone.
+  - n3 No change: open-today dot (`.mini.td`, 10.0:1) and the exempt off dot have no test; not required by the ruling.
+  - n4 Owner action: bare `npm test` counts the preview worktree's tests (605 vs 306) until `scratch/kit-preview` is removed (owner's cleanup, before Task 11).
+- Next: Task 11.
