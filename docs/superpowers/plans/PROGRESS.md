@@ -585,7 +585,7 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Icon re-path helper shared (m4) → owner: Task 21.
   - app.js screen() comment (m5) → owner: Task 13.
   - Task 3 Deferred "Task 12/15" second half (the morning check-in screen itself refusing while yesterday is open) → owner: Task 15.
-  - Owner iPhone checkpoint: installed app tab bar vs home indicator, 440 px wall seam (Task 9 m4), Task 11 m6.
+  - Task 21: installed-app checks not done at the Task 12 checkpoint (owner tested in Safari only): tab bar against the home indicator, 440 px wall seam (Task 9 m4), Task 11 m6. Owner may report earlier.
 - Next: Task 13.
 - Owner rulings 2026-10-13 on the five "Needs owner ruling" items:
   - Q1 accepted: the day medallion (board) stands in for the laurel on Today.
