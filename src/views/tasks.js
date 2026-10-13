@@ -18,6 +18,14 @@ function plusIcon() {
   return svg;
 }
 
+// "Go to today": the plus icon redrawn as a rounded calendar with a dot (a zero-length round-capped stroke).
+function todayIcon() {
+  const svg = icon('plus');
+  for (const [k, v] of [['viewBox', '0 0 22 22'], ['width', 22], ['height', 22], ['stroke-width', 2.4]]) svg.setAttribute(k, v);
+  svg.querySelector('path').setAttribute('d', 'M5 4.5h12a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2zM3 9h16M7.5 2.5v3.5M14.5 2.5v3.5M11 14h0');
+  return svg;
+}
+
 // ⋯ menu: every item calls exactly one core function (plan Task 11 step 3, rulings V5 and R2).
 function menuItems(app, { task }, date) {
   const edit = { label: 'Edit', onSelect: () => openTaskSheet(app, { mode: 'edit', task, date }) };
@@ -86,11 +94,11 @@ export function renderTasks(app) {
 
   return [
     h('div', { class: 'tk-hd' },
-      // "Today" sits under the eyebrow (fix round 2: next to ‹ › + it overflows at 360 px).
-      h('div', null, eyebrow(weekLabel(date)),
-        !weekOf(date).includes(today) && h('button', { type: 'button', id: 'wk-today', class: 'more tdy', onClick: () => app.setViewDate(null) }, 'Today'),
-        screenTitle('Tasks')),
+      h('div', null, eyebrow(weekLabel(date)), screenTitle('Tasks')),
+      // Right-aligned group: the Today icon grows it to the left, so ‹ › + never move (fix round 3).
       h('div', { class: 'tk-nav' },
+        !weekOf(date).includes(today) && h('button', { type: 'button', id: 'wk-today', class: 'more tdy', 'aria-label': 'Go to today',
+          title: 'Go to today', onClick: () => app.setViewDate(null) }, todayIcon()),
         h('button', { type: 'button', id: 'wk-prev', class: 'more', 'aria-label': 'Previous week', onClick: () => show(app, addDays(date, -7)) }, icon('chevronLeft')),
         h('button', { type: 'button', id: 'wk-next', class: 'more', 'aria-label': 'Next week', onClick: () => show(app, addDays(date, 7)) }, icon('chevronRight')),
         h('button', { type: 'button', id: 'add-task', class: 'add', 'aria-label': 'Add task',

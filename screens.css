@@ -58,11 +58,13 @@
 
 /* ==== Tasks tab (plan Task 11). Board compact format, copied from static/Tasks.html inline styles and css/Tasks.css;
    hex/rgba → token only where :root has the exact value. */
-.tk-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
-/* Week navigation (fix round 2): ‹ › and Today reuse the .more ghost button (styles.css); no new colours. */
-.tk-nav{display:flex;align-items:center;gap:6px}
-.more.tdy{width:auto;padding:0 12px;margin-top:8px;font-size:15px;font-weight:600;color:var(--accent)}
-.tdy + .ttl{margin-top:8px}
+.tk-hd{display:flex;align-items:flex-end;gap:8px}
+/* Owner ruling (fix round 3): no breakpoints. The left block shrinks and its eyebrow may wrap (the only way the
+   header grows); the button group keeps its size, so the Today icon grows it to the left and ‹ › + never move. */
+.tk-hd>div:first-child{flex:1 1 auto;min-width:0}
+/* Week navigation (fix rounds 2-3): Today icon, ‹ › reuse the .more ghost button (styles.css); no new colours. */
+.tk-nav{flex:none;display:flex;align-items:center;gap:6px}
+.more.tdy{color:var(--accent)}
 .add{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--gold-ink);background:var(--gold-grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px #543415,0 6px 16px rgba(201,145,57,.28)}
 /* Meander strip: the board's 12×11 pattern (rect 10 tall) + 1 px line at .6, edges masked. Decorative (aria-hidden). */
 .mk{height:11px;margin-top:14px;background:linear-gradient(rgba(138,106,44,.6),rgba(138,106,44,.6)) 0 100%/100% 1px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M0 10V2h8v5H4V4.5' fill='none' stroke='%238a6a2c' stroke-width='1.2'/%3E%3C/svg%3E") 0 0/12px 10px repeat-x;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
