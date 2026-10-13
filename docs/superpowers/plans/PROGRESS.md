@@ -587,3 +587,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Task 3 Deferred "Task 12/15" second half (the morning check-in screen itself refusing while yesterday is open) → owner: Task 15.
   - Owner iPhone checkpoint: installed app tab bar vs home indicator, 440 px wall seam (Task 9 m4), Task 11 m6.
 - Next: Task 13.
+- Owner rulings 2026-10-13 on the five "Needs owner ruling" items:
+  - Q1 accepted: the day medallion (board) stands in for the laurel on Today.
+  - Q2 accepted: a pending Recovery hides the afternoon and night cards too (nextAction returns 'recovery' first).
+  - Q3 changed: "Night opens …" renders only before NIGHT_FROM; at or after it, nothing. `nightLineVisible(nowMs)` in todayLogic.js; renderToday passes one `Date.now()` to the plate.
+  - Q4 accepted: the medallion is not a link; the challenge plate is.
+  - Q5 changed: the "No MED today" line is not rendered while a Recovery is pending. `medLine(state, today, nowMs)` in todayLogic.js reads `pendingRecovery`, the same source as `todayCards`.
+  - Fix commits: "test(ui): night line and MED line rulings (failing, WIP)" (tests/today-fixes.test.js, 7 tests; red 374/367/7, exit 1) and "fix(ui): today night line and MED line" (green 374/374). Browser re-run (scratch/t12/proof2.tpl.js, recovery pending, 19:59, 20:00, 21:00 at 375/390/440): 106 checks PASS, 0 FAIL, 0 console errors, no overflow, no overlap.
