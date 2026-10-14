@@ -53,6 +53,9 @@ export function redoStatus(state, today) {
 
 export const confirmRedo = (state, today, nowMs) => declareRedo(state, today, nowMs);
 
+// Fix round 2 (owner): today carries a declared Redo and is not closed yet (the night stores the result).
+export const redoDeclaredToday = (state, today) => state.days[today]?.declaredRedo === true && !closed(state.days[today]);
+
 export function missionInfo(state, today) {
   const n = dayNo(state, today) ?? 0;
   return { n, mission: missionFor(state, n), href: `#mission/${n}` };

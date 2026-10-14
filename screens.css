@@ -202,6 +202,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .dy svg{width:62%;height:62%;stroke-width:2.6}
 .dy.p{background:linear-gradient(180deg,#FCE29A,#E3A949 70%,#C99139);color:var(--gold-ink);border-color:var(--gold-hi);box-shadow:0 0 9px rgba(242,190,92,.38)}
 .dy.t{background:#241d10;color:var(--accent);border:2px solid var(--accent);box-shadow:0 0 14px rgba(242,190,92,.35)}
+.dy.t.dr{border-color:var(--bronze);box-shadow:0 0 14px rgba(154,107,44,.35)}
 .dy.r{background:transparent;border:1.5px solid var(--crimson);color:var(--crimson)}
 .dy.x{background:var(--crimson);border-color:var(--crimson);color:var(--bg)}
 .ch-lgs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;margin-top:14px}

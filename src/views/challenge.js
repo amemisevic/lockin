@@ -7,7 +7,7 @@ import { dayNo } from '../core/challenge.js';
 import { currentStreak } from '../core/scoring.js';
 import { screenTitle, eyebrow, sectionHeading } from '../ui/chrome.js';
 import { goldButton } from '../ui/controls.js';
-import { graduated, stripCells, legend, redoStatus, confirmRedo, missionInfo, graduation, rateLabel } from './challengeLogic.js';
+import { graduated, stripCells, legend, redoStatus, confirmRedo, redoDeclaredToday, missionInfo, graduation, rateLabel } from './challengeLogic.js';
 
 const LABEL = { passed: 'passed', redo: 'redo', reset: 'reset', today: 'today', open: 'not closed', future: 'upcoming' };
 const CELL = { passed: 'dy p', redo: 'dy r', reset: 'dy x', today: 'dy t', open: 'dy', future: 'dy' };
@@ -57,15 +57,17 @@ function dayMark(n, length) {
 }
 
 // R8: closed cells show the glyph instead of the number; every cell is labelled.
-const cell = c => h('div', { class: CELL[c.kind], role: 'img', 'aria-label': `Day ${c.n}, ${LABEL[c.kind]}` },
+// Fix round 2 (owner): an open today with a declared Redo gets the bronze ring (.dr); number, result and legend stay.
+const cell = (c, dr) => h('div', { class: dr && c.kind === 'today' ? `${CELL.today} dr` : CELL[c.kind], role: 'img',
+  'aria-label': `Day ${c.n}, ${LABEL[c.kind]}${dr && c.kind === 'today' ? ', Redo declared' : ''}` },
   GLYPH[c.kind] ? GLYPH[c.kind]() : h('span', { 'aria-hidden': 'true' }, String(c.n)));
 
 const legendItem = (kind, label, count) => h('span', { class: 'lg' },
   h('i', { class: CELL[kind], 'aria-hidden': 'true' }, GLYPH[kind]()), `${label} ${count}`);
 
-function hero(state, n, cells, counts) {
+function hero(state, n, cells, counts, dr) {
   return h('div', { class: 'plate rim ch-hero' }, dayMark(n, state.challenge.length),
-    h('div', { class: 'ch-strip' }, cells.map(cell)),
+    h('div', { class: 'ch-strip' }, cells.map(c => cell(c, dr))),
     h('div', { class: 'ch-lgs' },
       legendItem('passed', 'Passed', counts.passed), legendItem('redo', 'Redo', counts.redo),
       legendItem('reset', 'Reset', counts.reset)));
@@ -127,7 +129,7 @@ export function renderChallenge(app) {
   const n = dayNo(state, today) ?? 0; // phase 'before' (clock moved back): Day 0 (R1)
   return [
     header(currentStreak(state)),
-    hero(state, n, stripCells(state, today), legend(state)),
+    hero(state, n, stripCells(state, today), legend(state), redoDeclaredToday(state, today)),
     missionPlate(app, missionInfo(state, today), !!state.pack),
     redoPlate(app, redoStatus(state, today)),
     slots('Protocols', null, state.challenge.protocols.map(p => p.title)),
