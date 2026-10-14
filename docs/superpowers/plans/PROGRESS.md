@@ -671,6 +671,7 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Deferred (owner):
   - M1 `#mission/1e1`, `/abc`, `/-1`, `''` land on Today (router.js regex; tests/router.test.js pins `#mission/abc` → Today), not #challenge → owner: Task 21 (decide whether the router changes).
   - M2 R8 guard applies to any textarea in #view, not only #wl-text → owner: Task 17 (Recovery form) decides whether to narrow it.
+    - Owner ruling 2026-10-14 (Task 17 prompt): keep as is, NO narrowing (every form keeps a module draft and re-renders via the blur+hashchange helper). M2 closed.
   - M3 moved to Fixed (fix round 1, `fdd95ee`).
   - M4 R8 guard has no automated test (browser proof flow 4 only) → owner: Task 21.
   - M5 moved to Fixed (fix round 1, `fdd95ee`; needed by the round-1 whitespace test).
@@ -768,4 +769,13 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Stale action sheet after the 04:00 auto-close (apple-design Medium; no data harm) → owner: checkpoint ruling.
   - A second open tab with stale state could re-close a day (app.js has no storage listener; the Home Screen app is single-window) → owner: Task 21.
 - iPhone checks for later (installed app, active challenge, after Task 19): keyboard up in Top G win, tap Close the day → keyboard closes, sheet opens; confirm → Today, one Back leaves Today; type win, tap a chip → text kept; leave the app > 30 s while typing → text kept; cross a red line → crimson plate + "This is a Reset."; open Override, type a Reason → Close enables while typing; reset close → Recovery placeholder.
+- Pushed to origin/v2 (1bf4af7..0080e35).
+- Owner rulings 2026-10-14:
+  - R1 (archetype ids duplicated in checkinNightLogic.js) accepted for now; drift guard (a test that validatePack accepts a tactic for each of the five ids) → Task 21; core export only on owner authorisation.
+  - R2 (src/night.css) accepted; merging into screens.css is a Task 21 option.
+  - R3, R4, R5, R7, R8, R9 accepted.
+  - R6 (solid crimson "I crossed it", 5.7:1, instead of the board gradient at 3.7:1) accepted.
+  - Board deviations 1..12 accepted.
+  - Stale "This is final." sheet after 04:00 → Task 21 (tapping either sheet button closes it first, no data harm).
+  - iPhone checkpoint stays moved to after Task 19.
 - Next: Task 17.
