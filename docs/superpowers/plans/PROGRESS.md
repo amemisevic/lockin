@@ -642,4 +642,6 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
     - (5) accepted: "Import a pack in Settings" hidden when a pack lacks that day.
     - (6) action sheets with OK kept for the Day 0 stubs (deleted in Task 19) and the Redo refusal (plan text); revisit in Task 21.
 - Fix round 2 (owner, 2026-10-14): today's strip cell gets a bronze ring while a Redo is declared; result and legend unchanged until the night check-in (Task 16).
+- Fix round 3 (owner iPhone finding, 2026-10-14): gold today ring and bronze declared-Redo ring were hard to tell apart. Owner ruling: add a subtle non-colour cue. Done: `.dy.t.dr` gets `border-style:dashed` (screens.css:205), gold stays solid, 2 px unchanged. Commit 14b8acc, pushed to origin/v2 (2521b96..14b8acc). Owner confirmed on the iPhone (Safari): dashes look even.
+- Process change: the step-4 forbidden-date grep is now the string-argument form over the WHOLE src: `` grep -rnE "toISOString|getUTC|Date\.parse|new Date\(\s*['\"\`]" src `` (expect exit 1). The old pattern also matched `new Date(ms)`, which CLAUDE.md allows (todayLogic.js lines 9 and 30). innerHTML grep stays over src/ui and src/views (dom.js:2 is a comment).
 - Next: Task 14.
