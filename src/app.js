@@ -14,6 +14,7 @@ import { renderMission } from './views/mission.js';
 import { renderWarLog, renderWarEntry } from './views/warlog.js';
 import { renderMorning } from './views/checkinMorning.js';
 import { renderAfternoon } from './views/checkinAfternoon.js';
+import { renderNight } from './views/checkinNight.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
 let storage;
@@ -63,6 +64,7 @@ function screen(r) {
   if (r.name === 'mission') return renderMission(app, r.params);
   if (r.name === 'checkin' && r.params[0] === 'morning') return renderMorning(app);
   if (r.name === 'checkin' && r.params[0] === 'afternoon') return renderAfternoon(app);
+  if (r.name === 'checkin' && r.params[0] === 'night') return renderNight(app, r.params.slice(1));
   if (r.name === 'warlog') return r.params.length ? renderWarEntry(app, r.params) : renderWarLog(app);
   if (!r.pushed) return [h('p', { class: 'eyebrow' }, 'Lock In'), h('h1', { class: 'ttl' }, r.name[0].toUpperCase() + r.name.slice(1))];
   return [

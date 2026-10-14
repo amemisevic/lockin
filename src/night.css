@@ -1,0 +1,30 @@
+/* ==== Night check-in (Task 16). Board: css/CheckIn.css + static/CheckIn.html inline styles. Tokens from styles.css :root;
+   hex only where :root has no exact value. Rows = board .q inside .plate.list; segmented = shared .seg. */
+.nt-sec{margin-top:28px}
+.nt-sec .sec{margin:0 4px}
+.nt-help{margin:8px 4px 0;font-size:14px;line-height:19px}
+.nt-lbl{display:block;margin:8px 4px 0;font-size:13px;line-height:18px}
+.nt-sec>.plate,.nt-sec>.chips,.nt-sec>.ta{margin-top:12px}
+.q{padding:14px 16px 16px;border-top:1px solid var(--line-soft);overflow-wrap:anywhere}
+.q:first-child{border-top:0}
+.q .h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+.q .h b{font-size:16px;line-height:20px;font-weight:600}
+.q .h .t3{color:var(--text-3);font-size:13px;font-variant-numeric:lining-nums}
+.q .seg{margin-top:12px}
+.q .seg button{padding:0 8px;letter-spacing:0;font-size:14px}
+.q .s{margin:8px 0 0;font-size:13px;line-height:17px;color:var(--text-2)}
+/* Stalled chosen = board .sgb.s slate (#0A0A0B on #8b98ad = 6.8:1); crossed chosen = .sgb.r, solid crimson-dk (#fff 5.7:1). */
+.nt-tasks .seg button.on:nth-child(3){color:var(--bg);background:#8b98ad;box-shadow:none}
+.nt-red .seg button.on:nth-child(2){color:#fff;background:var(--crimson-dk);box-shadow:none}
+.nt-reset{color:var(--crimson-lt);font-weight:700}
+/* MED pill: board inline style (bronze tint, #F0C987 text). */
+.nt-med{display:inline-flex;align-items:center;min-height:34px;margin:8px 0 0;padding:0 14px;border-radius:var(--r-pill);background:rgba(154,107,44,.25);border:1px solid var(--bronze);font-size:13px;font-weight:700;color:#F0C987}
+/* Suggested result: board .plate.rim, centred, Cinzel result word. */
+.nt-res{margin-top:30px;padding:22px 20px;text-align:center}
+.nt-res p{margin:0}
+.nt-word{margin-top:8px !important;font-family:var(--f-title);font-weight:700;font-size:38px;line-height:42px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);overflow-wrap:anywhere}
+.nt-res .t2{margin-top:6px;font-size:14px;line-height:19px}
+.nt-res>.btn-text{margin-top:10px}
+.nt-ovr{margin-top:8px;text-align:left}
+.nt-ovr>*+*{margin-top:10px}
+.nt-ovr .nt-lbl{margin:12px 4px 0}

@@ -5,22 +5,11 @@ import { h } from '../dom.js';
 import { addDays } from '../logic.js';
 import { dayNo, phase, medCheck, medUsedInWeek, submitMorning } from '../core/challenge.js';
 import { pendingRecovery } from '../core/recovery.js';
-import { pushedHeader } from '../ui/chrome.js';
+import { pushedHeader, question, rerender } from '../ui/chrome.js';
 import { switchControl, goldButton } from '../ui/controls.js';
 import { timeLeft } from './todayLogic.js';
 
 const drafts = {};
-// app.js re-renders on hashchange (no state write). Blur first: iOS keeps a textarea focused on a button tap, and the R8 guard
-// skips the re-render while one is focused.
-const rerender = () => {
-  const a = document.activeElement;
-  if (a?.tagName === 'TEXTAREA') a.blur();
-  window.dispatchEvent(new Event('hashchange'));
-};
-
-// Board .fq: label with the gold number badge, then the control(s).
-const question = (n, label, forId, ...body) =>
-  h('div', { class: 'fq' }, h(forId ? 'label' : 'div', { class: 'n', for: forId }, h('i', null, String(n)), label), body);
 
 const field = (id, d, key) => h('textarea', { id, class: 'ta', onInput: e => { d[key] = e.target.value; } }, d[key]);
 

@@ -3,23 +3,13 @@
 import { h } from '../dom.js';
 import { dayNo, phase, submitAfternoon } from '../core/challenge.js';
 import { openTasks } from '../core/tasks.js';
-import { pushedHeader, sectionHeading } from '../ui/chrome.js';
+import { pushedHeader, sectionHeading, question, rerender } from '../ui/chrome.js';
 import { segmented, goldButton } from '../ui/controls.js';
 import { taskRow } from '../ui/taskRow.js';
 import { openTaskMenu } from './tasks.js';
 
 const drafts = {};
-// app.js re-renders on hashchange (no state write). Blur first: iOS keeps a textarea focused on a button tap, and the R8 guard
-// skips the re-render while one is focused.
-const rerender = () => {
-  const a = document.activeElement;
-  if (a?.tagName === 'TEXTAREA') a.blur();
-  window.dispatchEvent(new Event('hashchange'));
-};
 const TRACK = [{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }, { value: 'struggling', label: 'Struggling' }];
-
-const question = (n, label, forId, ...body) =>
-  h('div', { class: 'fq' }, h(forId ? 'label' : 'div', { class: 'n', for: forId }, h('i', null, String(n)), label), body);
 
 export function renderAfternoon(app) {
   const { state } = app;
