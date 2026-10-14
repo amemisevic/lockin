@@ -113,8 +113,13 @@ export function renderNight(app, [date] = []) {
     app.set(() => r.state);
     app.nav(r.state.days[date].result === 'reset' ? `#recovery/${date}` : '#today');
   };
-  const close = goldButton('Close the day', () => openActionSheet([{ label: 'Close the day', destructive: true, onSelect: confirm }],
-    { message: 'This is final.', cancel: 'Keep editing' }), { disabled: !canClose(state, date, d) });
+  // Blur first (iOS keeps a textarea focused on a button tap): the sheet would record it as its opener and refocus it
+  // before confirm runs, and app.js's R8 guard would then skip the post-save render.
+  const close = goldButton('Close the day', () => {
+    const a = document.activeElement;
+    if (a?.tagName === 'TEXTAREA') a.blur();
+    openActionSheet([{ label: 'Close the day', destructive: true, onSelect: confirm }], { message: 'This is final.', cancel: 'Keep editing' });
+  }, { disabled: !canClose(state, date, d) });
   close.id = 'ci-closeday';
   // Typing the Reason re-renders nothing (keeps focus and the keyboard): update the gate in place.
   const refreshGate = () => { close.disabled = !canClose(app.state, date, d); };
