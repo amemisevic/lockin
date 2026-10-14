@@ -630,6 +630,15 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - mission plate gap when a pack lacks the day (re-review minor) → owner: Task 21.
   - #mission/<n> and #warlog/<key> land on the router placeholder → owner: Task 14.
   - pre-Day-1 storage of protocols / red lines, setupLists, the "Available in Settings" stub → owner: Task 19.
-  - refusal / stub messages as inline text instead of action sheets (apple-design note) → owner: decide at the checkpoint.
+  - refusal / stub messages as inline text instead of action sheets (apple-design note) → owner: Task 21.
+  - Challenge board sections Check-ins, MED this week, Know your enemy (R10) -> owner: Task 21, decide scope then.
+  - MED cell state on the 30-cell strip -> owner: Task 21.
 - Needs owner ruling: (1) R3 Day 0 hero copy dropped and button "Begin Day 1"; (2) R10 Check-ins section, MED this week and Know your enemy not built on Challenge; (3) R8 closed strip cells show a glyph instead of the day number, no MED tile state; (4) today ring 2px vs board 1.5px; (5) "Import a pack in Settings" hidden when a pack exists but lacks the day; (6) refusal / stub messages as action sheets with OK.
+  - Owner rulings 2026-10-13:
+    - (1) accepted: Day 0 hero copy dropped, button "Begin Day 1".
+    - (2) accepted for now, not built on Challenge: Check-ins section, MED this week, Know your enemy.
+    - (3) accepted: glyph instead of day number on closed strip cells; no MED tile state.
+    - (4) accepted: today ring 2 px.
+    - (5) accepted: "Import a pack in Settings" hidden when a pack lacks that day.
+    - (6) action sheets with OK kept for the Day 0 stubs (deleted in Task 19) and the Redo refusal (plan text); revisit in Task 21.
 - Next: Task 14.
