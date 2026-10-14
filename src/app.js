@@ -10,6 +10,8 @@ import { renderTasks } from './views/tasks.js';
 import { renderToday } from './views/today.js';
 import { renderChallenge } from './views/challenge.js';
 import { renderDay0 } from './views/day0.js';
+import { renderMission } from './views/mission.js';
+import { renderWarLog, renderWarEntry } from './views/warlog.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
 let storage;
@@ -38,6 +40,7 @@ export const app = {
   },
   subscribe(fn) { subscribers.add(fn); return () => subscribers.delete(fn); },
   nav,
+  redirect: path => location.replace(path), // R5: replace, so Back never lands on the invalid URL
   route: () => parseRoute(location.hash),
 };
 
@@ -50,11 +53,13 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13); placeholder screens for the rest (Tasks 14–19 replace them). Text nodes only.
+// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14); placeholder screens for the rest (Tasks 15–19 replace them). Text nodes only.
 function screen(r) {
   if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
   if (r.name === 'challenge') return app.state.challenge ? renderChallenge(app) : renderDay0(app);
+  if (r.name === 'mission') return renderMission(app, r.params);
+  if (r.name === 'warlog') return r.params.length ? renderWarEntry(app, r.params) : renderWarLog(app);
   if (!r.pushed) return [h('p', { class: 'eyebrow' }, 'Lock In'), h('h1', { class: 'ttl' }, r.name[0].toUpperCase() + r.name.slice(1))];
   return [
     h('button', { type: 'button', class: 'back', onClick: () => history.back() }, icon('chevronLeft'), 'Back'),
@@ -66,6 +71,9 @@ function screen(r) {
 function render() {
   const r = app.route();
   const key = [r.name, ...r.params].join('/');
+  // R8: a tick re-render would rebuild the editor from stored state, wiping unsaved typing and dropping the iOS keyboard.
+  const a = document.activeElement;
+  if (key === shown && a?.tagName === 'TEXTAREA' && view.contains(a)) return;
   const y = key === shown ? window.scrollY : 0; // keep position on re-render, top on route change
   const focusId = view.contains(document.activeElement) && document.activeElement.id;
   view.replaceChildren(...screen(r));
