@@ -256,3 +256,23 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .wl-row .rt,.wl-row .rn{overflow-wrap:anywhere}
 .wl-ta{min-height:220px}
 .wl-ro{white-space:pre-wrap;overflow-wrap:anywhere}
+/* ==== Check-ins (Task 15). Numbered questions = Recovery board .fq (css/Recovery.css); gold button 54 px full width
+   (CheckIn.css .btn-gold); MED rows = .plate.list rows, switch on the right, wrap at large text. */
+.ci-rec{margin-top:20px}
+.fq{margin-top:22px}
+.fq .n{display:flex;gap:10px;align-items:center;font-weight:600;font-size:16px;line-height:20px;overflow-wrap:anywhere}
+.fq .n i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:700;color:var(--accent);border:1px solid #5d4521;background:rgba(242,190,92,.08)}
+.fq>:not(.n){margin-top:10px}
+.fq .ta{overflow-wrap:anywhere}
+.ci-hl{font-size:13px;line-height:18px;font-variant-numeric:lining-nums}
+.ci-mr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:13px 16px;border-top:1px solid var(--line-soft)}
+.ci-mr:first-child{border-top:0}
+.ci-mt{flex:1 1 180px;min-width:0;overflow-wrap:anywhere}
+.ci-mt b{display:block;font-size:16px;line-height:20px;font-weight:600}
+.ci-mt div{font-size:13px;line-height:18px;margin-top:2px}
+.ci-go{margin-top:28px}
+.ci-go .btn-gold{display:flex;height:54px;width:100%;font-size:17px}
+.ci-go .form-error{margin-top:12px;overflow-wrap:anywhere}
+.ci-go .btn-ghost{margin-top:12px}
+.ci-tk{margin-top:28px}
+.ci-tk>*+*{margin-top:10px}

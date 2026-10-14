@@ -42,6 +42,8 @@ const ASSETS = [
   'src/ui/taskRow.js',
   'src/views/challenge.js',
   'src/views/challengeLogic.js',
+  'src/views/checkinAfternoon.js',
+  'src/views/checkinMorning.js',
   'src/views/day0.js',
   'src/views/mission.js',
   'src/views/taskSheet.js',

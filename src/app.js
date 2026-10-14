@@ -12,6 +12,8 @@ import { renderChallenge } from './views/challenge.js';
 import { renderDay0 } from './views/day0.js';
 import { renderMission } from './views/mission.js';
 import { renderWarLog, renderWarEntry } from './views/warlog.js';
+import { renderMorning } from './views/checkinMorning.js';
+import { renderAfternoon } from './views/checkinAfternoon.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
 let storage;
@@ -53,12 +55,14 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14); placeholder screens for the rest (Tasks 15–19 replace them). Text nodes only.
+// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Task 15); placeholder screens for the rest (Tasks 16–19 replace them). Text nodes only.
 function screen(r) {
   if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
   if (r.name === 'challenge') return app.state.challenge ? renderChallenge(app) : renderDay0(app);
   if (r.name === 'mission') return renderMission(app, r.params);
+  if (r.name === 'checkin' && r.params[0] === 'morning') return renderMorning(app);
+  if (r.name === 'checkin' && r.params[0] === 'afternoon') return renderAfternoon(app);
   if (r.name === 'warlog') return r.params.length ? renderWarEntry(app, r.params) : renderWarLog(app);
   if (!r.pushed) return [h('p', { class: 'eyebrow' }, 'Lock In'), h('h1', { class: 'ttl' }, r.name[0].toUpperCase() + r.name.slice(1))];
   return [
