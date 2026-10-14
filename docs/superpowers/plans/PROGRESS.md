@@ -671,11 +671,17 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Deferred (owner):
   - M1 `#mission/1e1`, `/abc`, `/-1`, `''` land on Today (router.js regex; tests/router.test.js pins `#mission/abc` → Today), not #challenge → owner: Task 21 (decide whether the router changes).
   - M2 R8 guard applies to any textarea in #view, not only #wl-text → owner: Task 17 (Recovery form) decides whether to narrow it.
-  - M3 app backgrounded / killed while typing: saved only if iOS fires blur → owner: iPhone checkpoint below; if it fails, Task 21 decides on saving on `input`/`visibilitychange`.
+  - M3 moved to Fixed (fix round 1, `fdd95ee`).
   - M4 R8 guard has no automated test (browser proof flow 4 only) → owner: Task 21.
-  - M5 whitespace-only blur on an unwritten key does a no-op save + re-render → owner: Task 21.
+  - M5 moved to Fixed (fix round 1, `fdd95ee`; needed by the round-1 whitespace test).
   - M6 autopsy fixtures use generic sentences ("I will block the app after work") because checkVague needs a keyword and ≥ 15 chars; no personal data; tests frozen → no action.
   - M8 polish: War Log header spacing, two h1 on Mission (header eyebrow + title), row chevrons, editor prompt, autopsy ISO title → owner: Task 21.
 - Needs owner ruling: (1) R1 canonical day param ('09' redirects); (2) R3/R4 unwritten oath keys valid; (3) R6 Done also leaves; (4) R8 app-wide textarea render guard; (5) R5 app.redirect; (6) M1 non-digit mission params go to Today.
-- iPhone checks (installed app): open War Log from Challenge; type in an entry, tap Back → text kept; type, tap Done → kept; type, wait > 30 s → keyboard stays and text stays; type, swipe the app away and reopen → is the text kept? (M3); open #mission for today, a future day (locked) and a day with no mission.
+- iPhone checks (installed app; owner does them at Task 21, no server runs now): type in an entry, tap Back → text kept; type, tap Done → kept; type, wait > 30 s → keyboard stays and text stays; open #mission for today, a future day (locked) and a day with no mission.
+- Owner rulings 2026-10-14: R1, R2, R3, R4, R5, R6 accepted as written above. M3 promoted to a fix now: the editor also saves on `input`.
+- Fix round 1 (owner, 2026-10-14):
+  - `25add48` test(ui): war log saves on input (failing, WIP) — new tests/warlog-input-save.test.js (2 tests, own minimal fake DOM; frozen tests untouched). RED: `npm test` exit 1, tests 456, pass 455, fail 1 (input saves without blur/Back/Done). The whitespace test passed only because no input handler existed yet.
+  - `fdd95ee` fix(ui): war log saves on input — src/views/warlog.js: textarea `onInput: () => save()` (same save, no debounce; R8 guard unchanged). After that the whitespace test failed (tests 456, pass 455, fail 1): saveEntry returned a new, equal state for `   ` on an absent key (setWarEntry rebuilds warLog), so the owner premise did not hold. Controller ruling: one condition in src/views/warlogLogic.js saveEntry (blank on blank → same state; this is M5), outside the "warlog.js only" scope — Cost if wrong: one line to revert, M5 back to Deferred. GREEN: tests 456, pass 456, fail 0.
+  - Browser (playwright-cli, 375×812 DPR 3, scratch/t14/proof-fix1.js): typing "Text A input" keystroke by keystroke → 12/12 with activeElement #wl-text, caret = length, value and stored text equal after each key; mid-text edit keeps caret (11) and focus; reload with no blur shows "Text A inpXut"; 0 console/page errors.
+  - Fixed: M3 (swiped-away app keeps text: saved on every input), M5.
 - Next: Task 15.
