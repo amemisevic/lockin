@@ -645,3 +645,37 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Fix round 3 (owner iPhone finding, 2026-10-14): gold today ring and bronze declared-Redo ring were hard to tell apart. Owner ruling: add a subtle non-colour cue. Done: `.dy.t.dr` gets `border-style:dashed` (screens.css:205), gold stays solid, 2 px unchanged. Commit 14b8acc, pushed to origin/v2 (2521b96..14b8acc). Owner confirmed on the iPhone (Safari): dashes look even.
 - Process change: the step-4 forbidden-date grep is now the string-argument form over the WHOLE src: `` grep -rnE "toISOString|getUTC|Date\.parse|new Date\(\s*['\"\`]" src `` (expect exit 1). The old pattern also matched `new Date(ms)`, which CLAUDE.md allows (todayLogic.js lines 9 and 30). innerHTML grep stays over src/ui and src/views (dom.js:2 is a comment).
 - Next: Task 14.
+
+## Task 14: Mission detail and War Log
+- Commits: `36f4584` docs: record Task 13 fix round 3 and close Task 13; `643a6a1` test(ui): mission and war log (failing, WIP) — tests/warlogLogic.test.js (163, 16 tests), tests/mission-warlog-view.test.js (227, 15 tests, fake DOM inside the file), never edited afterwards; `500bd74` feat(ui): mission and war log; this entry: "docs: record Task 14". Base `14b8acc`. Not pushed.
+- Files (lines): new `src/views/warlogLogic.js` (56, DOM-free: dayParam, missionView, warLogGroups, entryView, saveEntry), `src/views/mission.js` (20, renderMission), `src/views/warlog.js` (35, renderWarLog, renderWarEntry); modified `src/app.js` (106: routes, `app.redirect`, R8 render guard), `screens.css` (258; Task 14 block, 9 rules, existing tokens only), `sw.js` (79; ASSETS += 3 views, VERSION unchanged `1.0.23`). Untouched: src/core, src/router.js, src/ui, every existing test.
+- Commands:
+  - Preconditions: status empty; HEAD = origin/v2 = `14b8accce00d7e9acd4ef22ec949df79127f1ba5`; origin/main `556b55a161ba13105977270d8558e493a36d3556`; `npm test` 423/423; no serve process, nothing on 5173.
+  - RED at `643a6a1`: `npm test` exit 1, tests 425, pass 423, fail 2 (both file-level ERR_MODULE_NOT_FOUND: src/views/mission.js, src/views/warlogLogic.js).
+  - GREEN at `500bd74`: `npm test` exit 0, tests 454, pass 454, fail 0.
+  - `grep -rnE "toISOString|getUTC|Date\.parse|new Date\(\s*['\"\`]" src` exit 1; `grep -rn innerHTML src/ui src/views` exit 1.
+  - Browser (playwright-cli, 375×812 DPR 3, clock 2026-10-14 10:00, seeded by scratch/t14/seed + seed.mjs from core functions, invented data; scratch/t14/proof.raw): 7 screenshots, no overflow, no text < 11 px, every a/button/textarea ≥ 44, tab bar hidden; textarea computed font-size 16px, min-height 220px, line-height 22px; #mission/31, /09, /0 → #challenge; #warlog/foo, /day-09 → #warlog; Back after typing (no explicit blur) saved and left; Done saved and left; blur saved; tick (window focus + 31 s clock) kept unsaved text, focus and caret; Back after a redirect → #challenge (no bounce); 0 console/page errors.
+- Controller rulings (cost if wrong):
+  - R1 day param: Number + isInteger + 1..CHALLENGE_LENGTH AND canonical `String(n) === p`, so '09' and '1e1' are invalid (mission → #challenge, editor → #warlog). Why: core setWarEntry refuses `day-09`, so a non-canonical editor key would drop typed text silently. Cost: '#mission/09' redirects instead of showing Day 9.
+  - R2 no challenge / before start: dayNo is null → every day locked; lock checked before missionFor (locked DOM has no title/body). Finished challenge (dayNo > length): all readable.
+  - R3 War Log Oath group always lists the four oath keys ("Not written yet" when absent; warEntries leaves missing oath keys out); Autopsies / Days only when non-empty. Row date = dayLabel of updatedAt's local date ("Monday 12 October"); preview exactly warEntries'.
+  - R4 valid editor keys: OATH_KEYS (even unwritten; Day 0 and the list link there), any key warEntries lists, or `day-<n>` per R1. Owner text said "warEntries lists it or legal day-<n>" — that would redirect unwritten oath keys.
+  - R5 `app.redirect(path)` = `location.replace`, so Back never lands on the invalid URL.
+  - R6 Done saves and leaves (history.back()); Back also saves first.
+  - R7 mousedown preventDefault on Done and Back keeps focus in the textarea, so the blur → re-render cannot swallow the click; their click handlers save.
+  - R8 app.js render() skips re-rendering while a TEXTAREA in #view has focus on the same route (the 30 s / focus tick would rebuild the editor from stored state, wipe unsaved typing and drop the iOS keyboard). Midnight rollover / settleMissed show on the first render after blur.
+  - Mission CTA uses goldButton → app.nav('#warlog/day-<n>'); "Import a pack in Settings." in text-2 under the null plate's first line.
+- Design choices (no mockup; patterns from Recovery.png / static/Recovery.html): pushed header = pushedHeader (44 px round back, eyebrow title: "Day <n>", "War Log", entry title); Mission = eyebrow "Mission" + Cinzel screenTitle + body paragraphs (16 px body, pre-line) + gold button; locked / null = one .plate; War Log = sectionHeading (sword + Cormorant italic) per group + `.plate.list` of task-style rows (.rt title, .rtm date, .rn preview, ≥ 44 px, wrap anywhere); editor = Recovery's `.ta` field (16 px, field token, line-strong border) at min-height 220 + gold "Done" left-aligned under it; autopsy = `.plate.wl-ro` with pre-wrap labelled lines, no field, no Done. No new colours, no new icons.
+- Review (one reviewer, opus; scratch/t14/review.md): spec ✅ (deviations above need a ruling), quality Approved, 0 Critical, 0 Important, 8 Minor. No fix round.
+- apple-design audit (notes only, scratch/t14/apple-design-audit.md, no code changed): Medium — War Log rows lack a disclosure chevron; Medium — empty editor has no prompt; Low — locked / null plates are dead ends; Low — first section heading tight under the War Log header; Low — autopsy title shows the ISO date; Low — Done placement.
+- Deferred (owner):
+  - M1 `#mission/1e1`, `/abc`, `/-1`, `''` land on Today (router.js regex; tests/router.test.js pins `#mission/abc` → Today), not #challenge → owner: Task 21 (decide whether the router changes).
+  - M2 R8 guard applies to any textarea in #view, not only #wl-text → owner: Task 17 (Recovery form) decides whether to narrow it.
+  - M3 app backgrounded / killed while typing: saved only if iOS fires blur → owner: iPhone checkpoint below; if it fails, Task 21 decides on saving on `input`/`visibilitychange`.
+  - M4 R8 guard has no automated test (browser proof flow 4 only) → owner: Task 21.
+  - M5 whitespace-only blur on an unwritten key does a no-op save + re-render → owner: Task 21.
+  - M6 autopsy fixtures use generic sentences ("I will block the app after work") because checkVague needs a keyword and ≥ 15 chars; no personal data; tests frozen → no action.
+  - M8 polish: War Log header spacing, two h1 on Mission (header eyebrow + title), row chevrons, editor prompt, autopsy ISO title → owner: Task 21.
+- Needs owner ruling: (1) R1 canonical day param ('09' redirects); (2) R3/R4 unwritten oath keys valid; (3) R6 Done also leaves; (4) R8 app-wide textarea render guard; (5) R5 app.redirect; (6) M1 non-digit mission params go to Today.
+- iPhone checks (installed app): open War Log from Challenge; type in an entry, tap Back → text kept; type, tap Done → kept; type, wait > 30 s → keyboard stays and text stays; type, swipe the app away and reopen → is the text kept? (M3); open #mission for today, a future day (locked) and a day with no mission.
+- Next: Task 15.
