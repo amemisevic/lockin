@@ -724,4 +724,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - `question()` helper shared between check-in views → owner: Task 16.
   - Hint text / "optional" marking, MED counter after a Reset (apple-design) → owner: checkpoint ruling.
 - iPhone checks for later (installed app, active challenge needed, Task 19): type a target, tap a MED switch with the keyboard up → switch flips, keyboard closes, text kept; leave the app > 30 s while typing → text kept; Start the day with an empty target → error shown; afternoon: type friction, tap Yes → friction field gone; type friction, tap a task shield → row updates (after blur); Log it, reopen → answer shown.
+- Pushed to origin/v2 (b43d62a..1bf4af7).
+- Owner rulings 2026-10-14: R1..R6, R8, R9 accepted as reported; deviations 1..11 from CheckIn.png accepted (the board is the long night check-in, so the pixel diff was meaningless); m3 (stale afternoon draft after Back) deferred to Task 21; R8 helper duplication handed to Task 16.
 - Next: Task 16.
+
+## Task 16: Night check-in
+- Checkpoint moved: the plan's "Owner on the iPhone: one full day (morning -> night)" happens after Task 19 (Begin Day 1 is disabled until Task 19 and the scratch seed pages need a local server). The owner's iPhone checks for Tasks 12-16 happen together once a local or deployed build is reachable.
+- Next: Task 16 (in progress).
