@@ -779,3 +779,40 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - Stale "This is final." sheet after 04:00 → Task 21 (tapping either sheet button closes it first, no data harm).
   - iPhone checkpoint stays moved to after Task 19.
 - Next: Task 17.
+
+## Task 17: Recovery screen
+- Commits: `a791dc2` docs: record Task 16 push and Task 17 start; `eed3922` test(ui): recovery screen (failing, WIP) — tests/recovery-logic.test.js (107), tests/recovery-view.test.js (270), fake DOM inside the view test; `4d9166d` feat(ui): recovery protocol screen; this entry: "docs: record Task 17". Base `0080e35`. Not pushed.
+- Files (lines): new `src/views/recoveryLogic.js` (58, DOM-free), `src/views/recovery.js` (103, renderRecovery), `src/recovery.css` (24); modified `src/app.js` (114; import, route line, stale comment fixed = Task 16 m9 closed), `src/icons.js` (56; two board SVGs copied verbatim from static/Recovery.html: crimson Reset shield, warning triangle), `index.html` (37; one link), `sw.js` (87; ASSETS += 3 files, VERSION unchanged `1.0.23`). Untouched: src/core, src/router.js, src/ui, every existing test.
+- Commands:
+  - Preconditions: status empty; HEAD = origin/v2 = `0080e354a21075d2c8a77154aabae14aebbaaea6`; origin/main `556b55a161ba13105977270d8558e493a36d3556`; `npm test` 511/511; no node serve process, nothing on 5173.
+  - RED at `eed3922`: `npm test` exit 1, tests 513, pass 511, fail 2 (file-level ERR_MODULE_NOT_FOUND: recoveryLogic.js, recovery.js).
+  - GREEN at `4d9166d`: exit 0, 533/533.
+  - Forbidden-date string-argument grep over src exit 1; `grep -rn innerHTML src/ui src/views` exit 1.
+  - Browser (playwright-cli, 375x812 DPR 3, fixed clock, seeded by scratch/t17/seed.html + seed.mjs from core functions, invented data; scratch/t17/proof.raw): 5 screenshots (r-fresh, r-nudge, r-overdue, r-lastday, r-filed): no horizontal overflow, smallest text 11 px, no tap target < 44, textareas 16 px, time box inside its container, 0 console/page errors. 49 checks, 45 PASS, 4 FAIL = one item: `#rc-time` computed 18 px (shared `.in`, board 18 px) vs the brief's 16 px, see R6. Flows PASS: typed text and chosen chips survive a chip tap and focus + 31 s tick (focused textarea keeps value, focus, caret); button disabled until all five non-blank; file → `#warlog/autopsy-2026-10-14` with the five labelled lines; Back → read-only; reload → read-only; Today's Recovery card gone; unknown date and date without entry → #today (replace); time default = local HH:MM of closedAt; Overdue crimson text; last day → only `Streak back to 0`.
+  - compare.py vs reference/Recovery.png: refused, "size mismatch (780, 2600) vs (780, 2748)", exit 1. Per-section crops (--ignore-bg / full, fresh form): header 2.33/2.33 %, reset plate + effect chips 9.21/9.44, countdown 11.80/11.80, section heading 7.83/7.83, Q1 16.98/17.33, Q2 9.36/9.76, Q3 14.46/14.75, Q4 10.93/11.25, Q5 13.62/14.48, button/footer 71.24/72.84 (board's dark bottom band and offset). Copy, order, icons, colours match (scratch/t17/compare-run.txt, crops/).
+  - Serve: started and stopped by the proof run (a mistaken second launch on :50282 was killed before any proof); afterwards no serve process, nothing on 5173.
+- Owner decisions (this task's prompt) 1-8: all implemented.
+- Rulings (cost if wrong):
+  - R1 Reset on the last day (n+1 > CHALLENGE_LENGTH) shows only `Streak back to 0`. Cost: one line.
+  - R2 CSS in new `src/recovery.css` (screens.css at 278 lines). Cost: move 24 lines, drop one link.
+  - R3 Countdown bar = elapsed share of closedAt → dueAt (window from dueAt - closedAt; core exports no 24 h constant; missing closedAt → full bar). Overdue → full crimson bar plus crimson `Overdue` text (text carries the signal). Cost: one line.
+  - R4 Gate, time field and nudges update in place on input/blur (no re-render); chip taps and errors use the shared `rerender`. Nudge after the field's first blur, then live; survives re-renders.
+  - R5 Read-only view = header, DAY n: RESET plate with quote and effect chips, section `Your autopsy`, the five stored answers; no countdown, no form, no button.
+  - R6 Time field stays 18 px (shared `.in`, board value; ≥ 16 so iOS does not zoom). Cost: one CSS value.
+  - R7 The two NEW test files changed after the WIP commit: the fixture decision lacked a core keyword (core rightly refused it), now "Picked up the phone and did not put it down"; the fake DOM gained a `disabled` getter/setter like a real DOM. No assertion removed or loosened (reviewer confirmed). Needs owner ruling. Cost: re-cut the WIP commit.
+  - Board copy used verbatim (header `Recovery Protocol`, quote, `File within 24 hours`, `File your autopsy`, question labels, Q4 hint, footer `Your autopsy and fix go into the War Log under Day <n>.`). Invented copy: `Your autopsy`; errors `Answer all five questions.`, `There is no Recovery for this day.`, `This autopsy is already filed.`; vague-change / vague-decision = the core nudge.
+- New inline icons: two, copied verbatim from static/Recovery.html (crimson Reset shield, warning triangle).
+- Deviations from reference/Recovery.png. Needs owner ruling: (1) time field full width (board 140 px); (2) time field 18 px (= board; brief said 16); (3) textareas 76 px tall (board ~84); (4) nudge also under decision (owner decision 5); (5) button inline in the flow, not in the board's dark bottom band; ~74 px floor below the footer; (6) fresh form shows the disabled button (board shows enabled only); (7) effect chips and plate ~4 px shorter; (8) quote and countdown row 1-2 px lower; (9) at 375 `Triggered` wraps to a second row (fits at 390); (10) Overdue bar turns crimson; (11) last-day chips have no board; (12) read-only view has no board; (13) the board's own sample decision would be refused by core as `vague-decision` (no keyword), so real "exact sequence" answers get the nudge unless they contain block/delete/move/put/set/....
+- Review (one reviewer, opus; .superpowers task-17-review.md): spec ✅, quality Approved, 0 Critical, 0 Important, 7 Minor. No fix round.
+- apple-design audit (notes only, scratch/t17/apple-design-audit.md, no code changed): Medium — chip groups have no accessible name; Medium — Q4 hint not in aria-describedby; Medium — File stays enabled while a nudge shows (a tap only yields the error); Medium — disabled button does not say what is missing; Medium — the decision nudge's wording fits Q5 only; Low — time field opens the full keyboard (inputmode="numeric"); Low — time field width; Low — `Triggered` wraps at 375; Low — effect pills look tappable; Low — empty space under the footer; Low — read-only view shows no "filed" status.
+- Deferred (owner):
+  - m1 the time field (input, not textarea) loses focus and the iOS keyboard on the 30 s tick; text survives (app.js R8 guard and chrome.js rerender handle TEXTAREA only; both shared files must change together) → owner: Task 21 / iPhone check.
+  - m2 the double-tap test passes without the view guard (core refuses the second file anyway) → owner: Task 21.
+  - m3 `already-filed` not tested through the view (`incomplete` unreachable through the UI) → owner: Task 21.
+  - m4 recovery.js overwrites the class names of the shared header / plate after building them → owner: Task 21.
+  - m5 the error stays until the next tap and may disagree with the live nudge (Task 15 m6 / Task 16 m2 pattern) → owner: Task 21.
+  - m6 core's decision rule (keyword required) vs the question "The exact sequence" → owner: ruling (a core change needs authorisation).
+  - m7 `dayNo` null not guarded (`DAY null: RESET`; unreachable today) → owner: Task 21.
+  - `#recovery/garbage` keeps its hash and renders Today without a redirect (existing router behaviour, Task 14 M1) → owner: Task 21.
+- iPhone checks for later (installed app, after Task 19): reset close → Recovery form; type in both textareas, tap a chip → text kept; leave > 30 s while typing → text kept; time field keyboard; vague change, tap elsewhere → nudge; file → War Log entry; Back → read-only; Today card gone.
+- Next: Task 18.
