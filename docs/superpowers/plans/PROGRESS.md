@@ -641,4 +641,5 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
     - (4) accepted: today ring 2 px.
     - (5) accepted: "Import a pack in Settings" hidden when a pack lacks that day.
     - (6) action sheets with OK kept for the Day 0 stubs (deleted in Task 19) and the Redo refusal (plan text); revisit in Task 21.
+- Fix round 2 (owner, 2026-10-14): today's strip cell gets a bronze ring while a Redo is declared; result and legend unchanged until the night check-in (Task 16).
 - Next: Task 14.
