@@ -51,6 +51,7 @@ export function entryView(state, key) {
 // Same object back when nothing changes (app.set then neither saves nor re-renders); autopsies are read-only.
 export function saveEntry(state, key, text, nowMs) {
   const s = String(text);
-  if (key.startsWith('autopsy-') || (state.warLog[key]?.text ?? '') === s) return state;
+  const old = state.warLog[key]?.text ?? '';
+  if (key.startsWith('autopsy-') || old === s || (old === '' && s.trim() === '')) return state; // blank on blank: no-op (M5)
   return setWarEntry(state, key, s, nowMs);
 }

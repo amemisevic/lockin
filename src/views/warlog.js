@@ -23,7 +23,7 @@ export function renderWarEntry(app, [key] = []) {
   if (v.readOnly) {
     return [pushedHeader({ title: v.title, onBack: () => history.back() }), h('div', { class: 'wl' }, h('div', { class: 'plate wl-ro' }, v.text))];
   }
-  const ta = h('textarea', { id: 'wl-text', class: 'ta wl-ta', 'aria-label': v.title, onBlur: () => save() }, v.text);
+  const ta = h('textarea', { id: 'wl-text', class: 'ta wl-ta', 'aria-label': v.title, onBlur: () => save(), onInput: () => save() }, v.text);
   const save = () => app.set(s => saveEntry(s, key, ta.value, Date.now()));
   const leave = () => { save(); history.back(); };
   const keepFocus = e => e.preventDefault();
