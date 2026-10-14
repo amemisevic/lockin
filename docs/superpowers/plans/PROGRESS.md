@@ -684,4 +684,6 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - `fdd95ee` fix(ui): war log saves on input — src/views/warlog.js: textarea `onInput: () => save()` (same save, no debounce; R8 guard unchanged). After that the whitespace test failed (tests 456, pass 455, fail 1): saveEntry returned a new, equal state for `   ` on an absent key (setWarEntry rebuilds warLog), so the owner premise did not hold. Controller ruling: one condition in src/views/warlogLogic.js saveEntry (blank on blank → same state; this is M5), outside the "warlog.js only" scope — Cost if wrong: one line to revert, M5 back to Deferred. GREEN: tests 456, pass 456, fail 0.
   - Browser (playwright-cli, 375×812 DPR 3, scratch/t14/proof-fix1.js): typing "Text A input" keystroke by keystroke → 12/12 with activeElement #wl-text, caret = length, value and stored text equal after each key; mid-text edit keeps caret (11) and focus; reload with no blur shows "Text A inpXut"; 0 console/page errors.
   - Fixed: M3 (swiped-away app keeps text: saved on every input), M5.
+- Pushed to origin/v2 (14b8acc..b43d62a).
+- Owner ruling 2026-10-14: the saveEntry change in src/views/warlogLogic.js (blank text on a blank entry returns the state unchanged) is ACCEPTED as the right place for the fix; M5 closed by it.
 - Next: Task 15.
