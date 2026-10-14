@@ -10,7 +10,13 @@ import { switchControl, goldButton } from '../ui/controls.js';
 import { timeLeft } from './todayLogic.js';
 
 const drafts = {};
-const rerender = () => window.dispatchEvent(new Event('hashchange')); // app.js re-renders on hashchange; no state write
+// app.js re-renders on hashchange (no state write). Blur first: iOS keeps a textarea focused on a button tap, and the R8 guard
+// skips the re-render while one is focused.
+const rerender = () => {
+  const a = document.activeElement;
+  if (a?.tagName === 'TEXTAREA') a.blur();
+  window.dispatchEvent(new Event('hashchange'));
+};
 
 // Board .fq: label with the gold number badge, then the control(s).
 const question = (n, label, forId, ...body) =>
@@ -62,6 +68,7 @@ export function renderMorning(app) {
 
   // The error stays until the next tap (simplest; typing does not clear it).
   const start = goldButton('Start the day', () => {
+    if (today !== app.today()) return rerender(); // past midnight: never file on the render-time date
     const r = submitMorning(app.state, today, { target: d.target, risk: d.risk, med: d.med }, Date.now());
     if (!r.ok) { d.error = r.error; rerender(); return; }
     delete drafts[today];
@@ -72,7 +79,7 @@ export function renderMorning(app) {
 
   return [
     pushedHeader({ title: `Morning · Day ${dayNo(state, today)}`, onBack: () => history.back() }),
-    rec && h('a', { href: `#recovery/${rec.date}`, class: 'plate warn td-link ci-rec' },
+    rec && h('a', { href: `#recovery/${rec.date}`, id: 'ci-rec', class: 'plate warn td-link ci-rec' },
       h('div', { class: 'td-chb' }, h('div', { class: 'td-ct' }, 'Recovery due'),
         h('p', { class: 't2 td-cl' }, rec.overdue ? 'Overdue' : timeLeft(rec.msLeft)))),
     question(1, 'Today\'s #1 target', 'ci-target', field('ci-target', d, 'target')),
@@ -80,6 +87,6 @@ export function renderMorning(app) {
     medQuestion(state, today, d),
     h('div', { class: 'ci-go' }, start,
       d.error && h('p', { class: 'form-error', role: 'alert' }, d.error),
-      d.error === 'Close yesterday first.' && h('a', { href: `#checkin/night/${addDays(today, -1)}`, class: 'btn-ghost' }, 'Close yesterday')),
+      d.error === 'Close yesterday first.' && h('a', { href: `#checkin/night/${addDays(today, -1)}`, id: 'ci-close', class: 'btn-ghost' }, 'Close yesterday')),
   ].filter(Boolean);
 }
