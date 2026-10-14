@@ -19,6 +19,8 @@ class El {
   set className(v) { this.attrs.class = String(v); }
   get id() { return this.attrs.id ?? ''; }
   set id(v) { this.attrs.id = String(v); }
+  get disabled() { return 'disabled' in this.attrs; } // reflects the attribute, as in a real DOM
+  set disabled(v) { if (v) this.attrs.disabled = ''; else delete this.attrs.disabled; }
   setAttribute(k, v) { this.attrs[k] = String(v); }
   getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
   removeAttribute(k) { delete this.attrs[k]; }
@@ -80,7 +82,7 @@ function reset(day, h = 22, mi = 7, back = 0) {
   NOW = at(day, h + 1, mi);
   return s;
 }
-const DECISION = 'Picked up the phone and kept scrolling the feed';
+const DECISION = 'Picked up the phone and did not put it down';
 const CHANGE = 'Block the app on my phone after work';
 // Fills every field on the shared draft (chip taps re-render: fetch fresh nodes after each).
 function fillAll(app, day, { decision = DECISION, change = CHANGE } = {}) {

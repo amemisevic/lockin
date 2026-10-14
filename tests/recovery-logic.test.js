@@ -25,7 +25,7 @@ function started(start) {
 // A Reset closed on `day` at h:mi local; the challenge started `back` days earlier.
 const reset = (day, h, mi, back = 0) =>
   ok(closeNight(settleMissed(started(addDays(day, -back)), at(day, h, mi)), day, FORM, at(day, h, mi)));
-const GOOD = { state: 'Tired', time: '22:07', place: 'Bed', decision: 'Picked up the phone and kept scrolling the feed',
+const GOOD = { state: 'Tired', time: '22:07', place: 'Bed', decision: 'Picked up the phone and did not put it down',
   change: 'Block the app on my phone after work' };
 
 test('closedTime: local HH:MM of that day\'s closedAt, zero-padded; missing → empty string', () => {

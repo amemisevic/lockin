@@ -23,6 +23,9 @@ export const icons = {
   more: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="4" viewBox="0 0 18 4" aria-hidden="true" focusable="false"><circle cx="2" cy="2" r="1.7" fill="currentColor"></circle><circle cx="9" cy="2" r="1.7" fill="currentColor"></circle><circle cx="16" cy="2" r="1.7" fill="currentColor"></circle></svg>',
   stpMinus: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false" style="fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round"><path d="M3 8h10"></path></svg>',
   stpPlus: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false" style="fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round"><path d="M8 3v10M3 8h10"></path></svg>',
+  // Recovery board (static/Recovery.html): the crimson Reset shield and the vague-nudge warning triangle.
+  resetShield: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="34" viewBox="0 0 30 34" aria-hidden="true" focusable="false" style="flex: none"><path d="M15 2.5 27 6.5v10.2c0 8-5.6 13.2-12 16.3C8.6 29.9 3 24.7 3 16.7V6.5z" fill="none" stroke="#F08A99" stroke-width="1.8"></path><path d="M15 11v8M15 23v1.5" stroke="#F08A99" stroke-width="2.2" stroke-linecap="round"></path></svg>',
+  warn: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false" style="flex: none"><path d="M7 1.5 13 12H1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="M7 5.5v3M7 10v.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>',
   // Controls
   plus: svg('<path d="M12 5v14M5 12h14"/>'),
   minus: svg('<path d="M5 12h14"/>'),
