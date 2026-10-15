@@ -259,6 +259,7 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Deferred:
   - Deferred: Task has no created date; revisit if the owner sees wrong early-days rates (owner: Task 18)
   - "Earliest taskLog date key" counts a key whose value is `{}` (left by clearing a status), per the call's literal wording. Owner: Task 18 (same revisit).
+  - Owner ruling 2026-10-14 (Task 18): leave both items as they are (Task has no created date; a `{}` taskLog key counts as "earliest log"). Revisit in Task 21 only if real data shows wrong early-days rates.
 - Next: Task 8.
 
 ## Task 8: Whole-challenge flow test and time zones
@@ -814,5 +815,12 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
   - m6 core's decision rule (keyword required) vs the question "The exact sequence" → owner: ruling (a core change needs authorisation).
   - m7 `dayNo` null not guarded (`DAY null: RESET`; unreachable today) → owner: Task 21.
   - `#recovery/garbage` keeps its hash and renders Today without a redirect (existing router behaviour, Task 14 M1) → owner: Task 21.
+- Pushed to origin/v2 (`0080e35..e8a1ec8`).
+- Owner rulings 2026-10-14:
+  - R1..R6 accepted as reported (last-day chips, `src/recovery.css`, bar fill with "Overdue" as the signal, in-place typing updates, filed view, time field 18 px).
+  - R7 accepted (the two new test files were edited after the WIP commit to fix a keyword-less sample decision and make the fake DOM's `disabled` behave like a browser's; no existing test touched, nothing weakened).
+  - The two icons, the wording and the 13 board differences accepted.
+  - m1 (time field loses focus on the 30 s tick) → Task 21: extend the app.js render guard from TEXTAREA to a focused INPUT too, with its test.
+  - Needs owner ruling (STILL OPEN): the vague-DECISION rule. Core refuses decisions without a keyword like block/delete/move; the board's own sample decision fails. Options: 1 drop the decision check, 2 keep, 3 length/word-count only. Any change edits `src/core/recovery.js` and the frozen `tests/recovery.test.js`, so it needs owner authorisation.
 - iPhone checks for later (installed app, after Task 19): reset close → Recovery form; type in both textareas, tap a chip → text kept; leave > 30 s while typing → text kept; time field keyboard; vague change, tap elsewhere → nudge; file → War Log entry; Back → read-only; Today card gone.
 - Next: Task 18.
