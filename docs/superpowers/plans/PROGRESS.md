@@ -909,3 +909,24 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Next: Task 20 (offline, version, release). The plan's ⛔ CHECKPOINT after Task 19 (owner imports the real pack on the phone) is the owner's step.
 
 - Owner ruling on Task 19 (2026-10-15): Day 1 date control KEPT as is (effectively read-only: the only move is to yesterday before 04:00; earlier moves are refused with `Day 1 cannot move back to a day that has already ended.`). Needs-owner-ruling item 1 and 2 of the Task 19 entry are closed. Items 3 to 7 remain open.
+
+## Core fixes: Task 18 / Task 19 open rulings (owner, 2026-10-15)
+
+- Commits (v2, not pushed): `07a6fd2` test WIP (red); `dbea336` fix(core); plus this docs commit.
+- Red counts (`node --test`, at `07a6fd2`): tests 614, pass 609, fail 5 (analytics-logic All walk, view decision-no-nudge, recovery order test, decision accepted, stats All-from-first-log). Green: `npm test` tests 614, pass 614, fail 0.
+- Greps (exit 1 both): `grep -rnE "toISOString|getUTC|Date\.parse|new Date\(\s*['\"`]" src`; `grep -rn innerHTML src/ui src/views`.
+- Ruling A (owner option 1): `fileAutopsy` no longer vague-checks the Decision (the board's own sample decision failed it). `change` keeps the check and the exact nudge. Error `vague-decision` removed (core, `recoveryLogic.js` ERRORS); the Recovery view's Decision is a plain textarea with no nudge.
+- Ruling B: "All" (n null) for habits and tasks (`weekdayRates`, `taskTotals`) starts at the first taskLog date. Challenge-bound selectors and the heatmap unchanged. ponytail comment above `taskDates` updated.
+- Test assertions changed (frozen-test edits, only these):
+  - tests/recovery.test.js:121 title `incomplete beats vague; vague-change beats vague-decision` -> `incomplete beats vague-change; the decision is never vague-checked`.
+  - tests/recovery.test.js:128 `refused(..., decision: 'try harder' ...) === 'vague-decision'` -> `fileAutopsy(...).ok === true`; comment on :130 reworded (both keyword-less: only change refused; assertion unchanged).
+  - tests/recovery-logic.test.js:95 deleted `errorText('vague-decision') === NUDGE`; test title now says `vague-change is the exact core nudge`.
+  - tests/recovery-view.test.js:163 loop over `[change, decision]` -> `[change]`; :183 loop over `[vague-change, vague-decision]` -> `[vague-change]`.
+  - tests/analytics-logic.test.js:74 oracle walker `cut(n) ?? (s.challenge ? s.challenge.startDate : first)` -> `cut(n) ?? first`; header comment updated. analytics-view and stats.test.js existing assertions unchanged (stats.js:167 comment reworded only).
+- New tests: recovery.test.js x2 (decision without keyword accepted and stored; vague change still `vague-change`); recovery-view.test.js x1 (decision no nudge after blur, files OK); stats.test.js x1 (All from first log, All = 30d, resultCounts still from challenge start).
+- Numbers (script over raw taskLog, not the selector; scratch only):
+  - analytics-logic fixture, All task totals: before done 10 / failed 2 / stalled 2 / open 21 (from 08-25), after 11 / 2 / 2 / 24 (from first log 08-20). Weekdays Mon..Sun before [4,8] [2,5] [3,10] [0,5] [0,5] [0,0] [0,0], after [4,10] [2,5] [3,10] [1,6] [0,6] [0,0] [0,0]. 30d for reference: 8/1/1/19.
+  - stats fixture with challenge start 10-05: All tasks before 0/0/1/2, after 4/1/1/2; weekdays before only Mon-Wed [0,1], after [0,1] [0,1] [0,1] [1,1] [1,1] [0,1] [1,1].
+- Review: the `opus` alias returned model_not_found (HTTP 404); review ran on the session model (Sonnet 5.5). No Critical, no Important. Minors deferred (owner Armin): decision textarea lost its unused `aria-describedby` (correct); `touched` draft key now only used for change; `.filter(d => d >= first)` redundant for n null (kept for finite n); "All never smaller than 30d" test holds because the fixture's first log is inside the 30-day window.
+- Closes Task 19 Needs-owner-ruling item 5 (both parts).
+- Needs owner ruling: review model (opus unavailable, same as Task 19).
