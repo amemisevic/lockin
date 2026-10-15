@@ -9,6 +9,7 @@ Single-user iPhone web app (PWA) for one person. Built around Hamza's video (htt
 - **Users/devices:** one user, iPhone 17 Pro Max, installed from Safari to the Home Screen. Phone only; no sync. Built on Windows via Claude Code; hosted free on GitHub Pages (public repo).
 
 ## 1. Product rules
+§1.1–1.8 superseded by v2 plan (docs/superpowers/plans/2026-10-12-lockin-v2-app.md).
 
 ### 1.1 Screens
 Today, Plan, Progress, Settings (4 tabs).
@@ -67,6 +68,7 @@ An occurrence's minutes = `actualMin` (whole minutes, no seconds) if a timer or 
 Goals (rename; weekday/weekend minimums; weekly targets; daily check labels; color is fixed), Red Lines (add/rename/delete; optional limit + unit with chips **min, times, drinks** or free text; no commitment friction, red lines are not goals; deleting hides a line from summaries, stored history is kept), Weight target, **Reminders** (setup instructions, see 1.9), Data (Export / Import / last backup), app version text.
 
 ### 1.9 Reminders (iOS Shortcuts, no code in the app)
+Times and texts superseded by v2 plan Task 19 (Reminders); the Shortcuts mechanism still applies.
 A web app on iPhone cannot schedule its own notifications. Reminders are three **iOS Shortcuts personal automations** (Shortcuts › Automation › New › Time of Day › Daily › *Run Immediately* › action *Show Notification*). Settings › Reminders shows these steps and the texts with a Copy button each:
 
 | Time | Text |
@@ -81,6 +83,7 @@ Notifications will show "Shortcuts" as the sender. Ceiling: no tap-to-open; opti
 Changing a goal's rules before its `committedUntil` asks for confirmation. `committedUntil` = creation date + 30 days (`2026-11-07` if created `2026-10-08`), reset to today + 30 on a confirmed change.
 
 ### 1.11 Not built (user rejected or out of scope)
+Streaks, check-ins (morning/afternoon/night), Top G / Bottom G, MED / Redo / Reset and the Recovery Protocol are built in v2 as specified in docs/superpowers/plans/2026-10-12-lockin-v2-app.md (Rules); the rest of this list still applies.
 Wake-time setting, `.ics`/Add to Calendar, in-app notifications, panic/Rut-Breaker button, Top G / Bottom G lines, morning and night screens, Screen Time passcode, streaks, stars/gamification, sync/accounts, adding or deleting goals, goal color picker, overnight blocks, "edit this and future" for series.
 
 ## 2. Platform facts the build must respect
@@ -93,8 +96,14 @@ Wake-time setting, `.ics`/Add to Calendar, in-app notifications, panic/Rut-Break
 - **Offline (Task 10, `sw.js`):** precaches every shipped file (`ASSETS`, checked against the directories by `tests/sw.test.js`) in cache `lockin-<VERSION>`; cache-first for same-origin GETs, navigations fall back to `index.html`; old caches deleted on activate; no `skipWaiting`, so a new version needs **two** full close/reopen cycles (the first installs it, the second runs it). `VERSION` in `sw.js` must equal `src/version.js` (test). No push, no background sync.
 - `localStorage` writes can fail (quota/private mode): the app must show a persistent banner "Couldn't save. Export a backup." and never silently drop data.
 - iOS has no web haptics and no background timers; the Now card is correct only while the app is open, and recomputes from the clock on open.
+- **Custom serif fonts (deliberate deviation, owner's choice on 2026-10-12, v2):** bundled serif webfonts replace the system font; see docs/design/lockin-v2/DESIGN-SPEC.md §3.
+- **Gold-on-dark (deliberate deviation, owner's choice on 2026-10-12, v2):** gold accents on a dark ground replace the HIG system colors; see docs/design/lockin-v2/DESIGN-SPEC.md §4.
+- **Floating glass tab bar (deliberate deviation, owner's choice on 2026-10-12, v2):** a floating glass bar replaces the standard bottom tab bar; see docs/design/lockin-v2/DESIGN-SPEC.md §2.
+- **Ornamental background (deliberate deviation, owner's choice on 2026-10-12, v2):** every screen sits on an ornamental background instead of a plain one; see docs/design/lockin-v2/DESIGN-SPEC.md §6.
+- **Five tabs (deliberate deviation, owner's choice on 2026-10-12, v2):** five tabs replace the four in §1.1; see docs/design/lockin-v2/DESIGN-SPEC.md §1.
 
 ## 3. Design spec (Apple HIG)
+§3.1–3.8 and §3.10 superseded by docs/design/lockin-v2/DESIGN-SPEC.md (v2); §3.9 accessibility checklist still applies (v2 plan Task 21).
 
 References read: `accessibility.md`, `layout.md`, `typography.md`, `color.md`, `dark-mode.md`, `designing-for-ios.md`, `tab-bars.md`, `sheets.md`, `lists-and-tables.md`, `toggles.md`, `segmented-controls.md`, `sliders.md`, `entering-data.md`, `toolbars.md`, `motion.md`, `liquid-glass.md`. Framework translation: this is a web app, so SwiftUI/UIKit vocabulary maps to HTML/CSS (semantic colors → CSS custom properties, Dynamic Type → `-apple-system-*` fonts, Liquid Glass → `backdrop-filter`).
 

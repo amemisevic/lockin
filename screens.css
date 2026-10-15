@@ -1,191 +1,278 @@
-/* Lock In: screen-specific styles (tokens and shared components live in styles.css). */
+/* Lock In v2: screen container, temple background, floating glass tab bar (DESIGN-SPEC §2, §6).
+   Values copied from docs/design/lockin-v2/css/Main.css and static/Main.html; data-URIs → src/bg/*@2x.webp. */
 
-/* ---- Block row */
-.block-row { align-items: flex-start; }
-.row-main p { margin: 0; }
-.block-title { font-weight: 600; overflow-wrap: anywhere; }
-.block-meta { display: flex; align-items: center; gap: 4px; }
-.log-time { margin-left: -12px; } /* text lines up with the title; hit area stays 44 pt */
-.log-time svg { width: 20px; height: 20px; }
-.tag-icon { display: inline-flex; color: var(--g); }
-.tag-icon svg { width: 18px; height: 18px; }
-.missed { color: var(--red); font-weight: 600; }
-.done-toggle { display: grid; place-items: center; flex: none; width: 44px; height: 44px; margin: 0 -6px 0 -10px; border-radius: 999px; }
-.done-toggle svg { width: 26px; height: 26px; padding: 3px; border: 2px solid var(--outline); border-radius: 50%; color: transparent; transition: background-color 120ms; }
-.done-toggle[aria-pressed="true"] svg { background: var(--gold-fill); border-color: var(--gold-rim); color: var(--on-gold); box-shadow: var(--gold-emboss); }
-.toggle-spacer { flex: none; width: 28px; }
-.block-row .icon-btn { margin-right: -10px; }
-
-/* ---- Plan */
-.toolbar { display: flex; justify-content: flex-end; min-height: 44px; margin: 0 -10px; }
-.toolbar + .large-title { margin-top: 0; }
-.week-nav { display: flex; align-items: center; justify-content: space-between; margin: 4px -10px; }
-.week-label { margin: 0; }
-.day-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(44px, 2.4em), 1fr)); gap: 2px; } /* 7 across; fewer at large text or zoom, never touching */
-.day { display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 64px; padding: 6px 0; border-radius: 14px; }
-.day .caption2 { color: var(--text-2); }
-.day-num { font-weight: 600; }
-.day[aria-current="date"] .day-num { color: var(--accent); }
-.day[aria-current="date"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
-.day[aria-pressed="true"] { background: var(--gold-fill); box-shadow: var(--gold-emboss), 0 0 0 1px var(--gold-rim); } /* Iron: the selected day is a gold plate, like selected chips */
-.day[aria-pressed="true"] .caption2, .day[aria-pressed="true"] .day-num { color: var(--on-gold); }
-.day[aria-pressed="true"]::after { background: var(--on-gold); }
-.section-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
-
-/* ---- Today */
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.date-switcher { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0 -10px 8px; }
-.date-label { flex: 1; min-width: 0; margin: 0; text-align: center; }
-.banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; margin-bottom: 8px; padding: 4px 4px 4px var(--pad); background: var(--surface); border: 1px solid var(--outline); border-radius: var(--radius); }
-.banner p { margin: 0; }
-.now-card { display: grid; gap: 4px; }
-.now-card p { margin: 0; }
-.now-free { background: var(--surface); }
-.card-label { display: flex; align-items: center; gap: 6px; text-transform: uppercase; font-weight: 600; }
-.card-label .tag-icon, .now-card .tag-icon { color: var(--g); vertical-align: -4px; margin-right: 4px; }
-.clock { font-variant-numeric: tabular-nums; }
-.now-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.now-card .bar { margin: 4px 0; }
-.card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
-.status-row p, .goal p, .red-row p { margin: 0; }
-.status-icon { display: inline-flex; }
-.status-icon.won svg { padding: 3px; border-radius: 50%; background: var(--gold-fill); color: var(--on-gold); box-shadow: var(--gold-emboss); }
-.status-icon.partial { color: var(--text-2); }
-.goal + .goal, .status-row + .goal, .goal + .row { border-top: .5px solid var(--sep); margin-left: var(--pad); }
-.goal > .row { padding-left: 0; }
-.goal-row { flex-wrap: wrap; }
-.goal-name { font-weight: 600; overflow-wrap: anywhere; }
-.goal .row-main { min-width: min(9em, 100%); }
-.goal > .sub-row { flex-wrap: wrap; min-height: 44px; padding-left: 44px; }
-.goal-bar { margin: 0 var(--pad) 12px 44px; }
-.goal:first-child { margin-left: var(--pad); }
-.stepper { display: inline-flex; align-items: center; }
-.stepper .icon-btn:disabled { opacity: .4; }
-.stepper-value { min-width: 2ch; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; }
-.red-row { flex-wrap: wrap; }
-.red-row .row-main { min-width: min(8em, 100%); overflow-wrap: anywhere; }
-.red-row .seg { flex: 0 1 200px; }
-.seg > .seg-slipped[aria-checked="true"] { background: var(--red); color: var(--on-accent); box-shadow: none; }
-.done-toggle[aria-disabled="true"] { cursor: default; }
-/* Iron Today (redesign step 2). Hero: the Now card is the only gold-rimmed plate; minutes left is the one big number. */
-.date-switcher .icon-btn, .week-nav .icon-btn { background: linear-gradient(180deg, #24232A, #151418); box-shadow: inset 0 0 0 1px #34333A, var(--emboss); color: var(--text); }
-.date-switcher .icon-btn:disabled { opacity: .35; }
-.now-card {
-  gap: 6px; padding: 20px; border: 1px solid transparent;
-  background: radial-gradient(90% 75% at 100% 100%, color-mix(in srgb, var(--g, var(--accent)) 14%, transparent), transparent 70%) padding-box,
-    var(--plate) padding-box, linear-gradient(180deg, #FDE7A0, #C99139 45%, #543415) border-box;
+/* Screen: the boards' .scr, fluid width (boards fix 390 px). Content ends ≥ 110 above the bottom. */
+.scr {
+  position: relative; display: block; min-height: 100dvh; padding: 60px 20px 110px; overflow: hidden; isolation: isolate;
+  background: radial-gradient(110% 34% at 50% -4%, rgba(242,190,92,.17), rgba(242,190,92,0) 70%),
+    radial-gradient(90% 16% at 50% 100%, rgba(242,190,92,.08), rgba(242,190,92,0) 75%),
+    radial-gradient(90% 30% at 100% 40%, rgba(242,190,92,.05), rgba(0,0,0,0) 70%), #0A0A0B;
+  color: #F3EEE4; font-family: 'Alegreya Sans', system-ui, sans-serif; font-size: 15px; line-height: 20px;
 }
-.now-card .title3 { font: italic 700 calc(1em + 15px)/1.05 var(--serif-i); overflow-wrap: anywhere; } /* the block's name: 32 pt default */
-.now-hero { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; margin: 8px 0 4px; font-weight: 600; color: var(--text-2); }
-.hero-num { font: 700 min(calc(1.6em + 37px), 30vw)/1 var(--sans); letter-spacing: -.02em; color: var(--accent); } /* 64 pt default */
-.now-card .title1 { color: var(--accent); }
-.now-card .bar { height: 8px; border-radius: 4px; margin: 6px 0 4px; }
-.now-card .bar > span { background: var(--gold-fill); }
-.now-card .card-actions { margin-top: 14px; }
-.now-card .btn-primary { min-height: 50px; padding: 0 30px; }
-/* Timeline rail through the done checks (Today's Blocks). The check centre sits 30 pt down, 28 pt in. */
-.rail .block-row::after { content: ""; position: absolute; left: 27px; top: 0; bottom: 0; width: 2px; background: linear-gradient(#7C828B, #6B6E75); } /* steel, >= 3.35:1 on the plate */
-.rail .block-row:first-child::after { top: 30px; }
-.rail .block-row:last-child::after { bottom: calc(100% - 30px); }
-.rail .block-row:only-child::after { display: none; }
-.rail .done-toggle { position: relative; z-index: 1; }
-.rail .done-toggle svg { background-color: #18171B; }
-.rail .row + .row::before { left: 56px; }
-.slip { display: flex; align-items: center; gap: 6px; color: var(--red); font-weight: 600; }
-.slip svg { width: 18px; height: 18px; flex: none; }
+/* Background stack (top → bottom): overlay + 4 corner vignettes, steps, frieze, wall. Never covers content.
+   Images scale to the screen width keeping their ratio (owner ruling M1): 390 px = the boards' 390×142 / 390×34 / 390×720. */
+.scr::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(rgba(4,3,2,.27), rgba(4,3,2,.27)),
+    radial-gradient(55% 10% at 0% 0%, rgba(0,0,0,.4), rgba(0,0,0,0) 100%),
+    radial-gradient(55% 10% at 100% 0%, rgba(0,0,0,.4), rgba(0,0,0,0) 100%),
+    radial-gradient(55% 9% at 0% 100%, rgba(0,0,0,.45), rgba(0,0,0,0) 100%),
+    radial-gradient(55% 9% at 100% 100%, rgba(0,0,0,.45), rgba(0,0,0,0) 100%),
+    url("src/bg/steps@2x.webp") 50% 100%/100% auto no-repeat,
+    url("src/bg/frieze@2x.webp") 50% 0/100% auto no-repeat,
+    url("src/bg/wall-tile@2x.webp") 50% 0/100% auto repeat-y;
+}
+
+/* Floating glass tab bar. Fixed to the viewport (boards: absolute inside a fixed-height artboard). */
+.tabs {
+  position: fixed; left: 18px; right: 18px; bottom: 22px; height: 72px; border-radius: 36px; display: flex; gap: 0; padding: 6px; z-index: 5;
+  background: linear-gradient(180deg, rgba(62,55,44,.58) 0%, rgba(24,22,24,.62) 55%, rgba(14,13,16,.7) 100%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%); backdrop-filter: blur(26px) saturate(170%);
+  border: 1px solid rgba(242,190,92,.30);
+  box-shadow: inset 0 1px 0 rgba(255,236,190,.34), inset 0 -1px 0 rgba(0,0,0,.5), inset 0 0 22px rgba(242,190,92,.05),
+    0 0 0 1px rgba(0,0,0,.55), 0 18px 36px rgba(0,0,0,.65), 0 0 36px rgba(242,190,92,.07);
+}
+.tab {
+  position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  border-radius: 30px; font-size: 11px; line-height: 13px; font-weight: 600; letter-spacing: .02em; color: #BDB6AA;
+  border: 1px solid transparent; transition: color .2s;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+/* Active tab (boards: .tab.on): soft gold glow, 3 px light bar on top, gold icon and label. */
+.tab[aria-current="page"] {
+  color: #FCE29A; border-color: rgba(242,190,92,.20);
+  background: radial-gradient(70% 90% at 50% 0%, rgba(242,190,92,.17), rgba(242,190,92,.04) 60%, rgba(242,190,92,0) 100%);
+}
+.tab[aria-current="page"]::before {
+  content: ""; position: absolute; top: -2px; left: 50%; width: 30px; height: 3px; margin-left: -15px; border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, rgba(252,226,154,0), #FCE29A 30%, #FCE29A 70%, rgba(252,226,154,0));
+  box-shadow: 0 0 8px 1px rgba(242,190,92,.5);
+}
+.tab[aria-current="page"] svg { filter: drop-shadow(0 0 4px rgba(242,190,92,.5)); }
+.tab svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Reduce Transparency / Increase Contrast (spec §6): solid bar. The ~50 % wall fade is deferred to Task 21. */
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .now-card { background: var(--surface); border: 1px solid var(--outline); box-shadow: none; }
-  .now-card .bar > span, .done-toggle[aria-pressed="true"] svg, .status-icon.won svg { background: var(--gold-solid); box-shadow: none; }
-  .day[aria-pressed="true"] { background: var(--gold-solid); box-shadow: 0 0 0 1px var(--gold-rim); }
-  .date-switcher .icon-btn, .week-nav .icon-btn { background: var(--surface); box-shadow: inset 0 0 0 1px var(--outline); }
-  .rail .block-row::after { background: var(--outline); }
+  .tabs { -webkit-backdrop-filter: none; backdrop-filter: none; background: #1a181c; }
 }
 
-@media (max-width: 320px) { /* ~300% zoom: restack instead of squeezing controls below 44 pt */
-  .goal > .sub-row { padding-left: 0; } .goal-bar { margin-left: 0; }
-  .red-row .seg { flex-basis: 100%; }
-  .block-row { flex-wrap: wrap; } .block-row .row-main { order: 1; flex-basis: 100%; } /* check and … on top, text full width */
-  .block-row .icon-btn { margin-left: auto; } .rail .block-row::after { display: none; }
+/* ==== Tasks tab (plan Task 11). Board compact format, copied from static/Tasks.html inline styles and css/Tasks.css;
+   hex/rgba → token only where :root has the exact value. */
+.tk-hd{display:flex;align-items:flex-end;gap:8px}
+/* Owner ruling (fix round 3): no breakpoints. The left block shrinks and its eyebrow may wrap (the only way the
+   header grows); the button group keeps its size, so the Today icon grows it to the left and ‹ › + never move. */
+.tk-hd>div:first-child{flex:1 1 auto;min-width:0}
+/* Week navigation (fix rounds 2-3): Today icon, ‹ › reuse the .more ghost button (styles.css); no new colours. */
+.tk-nav{flex:none;display:flex;align-items:center;gap:6px}
+.more.tdy{color:var(--accent)}
+.add{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--gold-ink);background:var(--gold-grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px #543415,0 6px 16px rgba(201,145,57,.28)}
+/* Meander strip: the board's 12×11 pattern (rect 10 tall) + 1 px line at .6, edges masked. Decorative (aria-hidden). */
+.mk{height:11px;margin-top:14px;background:linear-gradient(rgba(138,106,44,.6),rgba(138,106,44,.6)) 0 100%/100% 1px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M0 10V2h8v5H4V4.5' fill='none' stroke='%238a6a2c' stroke-width='1.2'/%3E%3C/svg%3E") 0 0/12px 10px repeat-x;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+/* Week strip: .wk divs → buttons (≥ 44 wide at 390: (350 − 6×6)/7 = 44.9) */
+.wks{display:flex;gap:6px;margin-top:16px;touch-action:pan-y}
+.wk{flex:1;min-width:0;height:68px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--line);background:var(--plate-alt);font-size:11px;line-height:13px;font-weight:600;color:var(--text-2);letter-spacing:.08em}
+.wk span{font-family:var(--f-title);font-size:17px;line-height:20px;font-weight:600;color:var(--text);letter-spacing:0}
+.wk.sel{border-color:#7a5a24;background:linear-gradient(180deg,#2a2214,#17140f);box-shadow:inset 0 1px 0 rgba(252,226,154,.25),0 0 22px rgba(242,190,92,.14)}
+.wk.sel span{color:var(--accent)}
+/* Today (fix round 2, closes m6): gold number + 5 px gold dot (shape, not colour alone). The board's .wk i box is kept
+   on every day so no day shifts; only today's dot is visible. */
+.wk i{width:5px;height:5px;border-radius:50%;margin-top:2px;visibility:hidden}
+.wk.today i{visibility:visible;background:var(--accent)}
+.wk.today span{color:var(--accent)}
+.wk{box-shadow:inset 0 1px 0 rgba(255,236,190,.06)}
+/* Section header rows and lists (owner ruling R1: .plate.list = the board's padding-less plate, first row no border) */
+.tk-sh{display:flex;align-items:baseline;justify-content:space-between;margin-top:24px;padding:0 4px}
+.tk-sh.hb{margin-top:30px}
+.t2{color:var(--text-2)}
+.tk-sh .t2{font-size:14px}
+.tk-sh + .plate{margin-top:10px}
+.plate.list{padding:0;overflow:hidden}
+.plate.list>.row:first-child{border-top:0}
+.tk-empty{margin:10px 4px 0;color:var(--text-2)}
+/* Past days are read-only except the shield; ⋯ stays only to read a note (.nn = no note: hidden, keeps its space,
+   leaves the tab order and the accessibility tree). */
+.ro .nn .more{visibility:hidden}
+
+/* ==== Sheets (src/sheet.js): v1 styles.css sheet/action-sheet/form layout with v2 tokens. */
+dialog{padding:0;border:0;color:var(--text);max-width:none;max-height:none}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.sheet,.action-sheet{position:fixed;inset:auto 0 0;margin:0 auto;width:100%;max-width:672px}
+.sheet[open]{display:flex;flex-direction:column;height:calc(100% - env(safe-area-inset-top) - 12px);background:linear-gradient(180deg,var(--plate-top) 0%,var(--plate-bot) 100%);border:1px solid var(--line);border-bottom:0;border-radius:var(--r-plate) var(--r-plate) 0 0;box-shadow:inset 0 1px 0 rgba(255,236,190,.10),0 -12px 26px rgba(0,0,0,.5);animation:sheet-in 320ms cubic-bezier(.2,.8,.2,1);transition:transform 320ms cubic-bezier(.2,.8,.2,1)}
+/* The title column gives way at large text so Cancel and the action never leave the screen. */
+.sheet-header{position:relative;display:grid;grid-template-columns:minmax(max-content,1fr) minmax(0,auto) minmax(max-content,1fr);align-items:center;padding:14px 4px 6px;touch-action:none}
+.sheet-header h2{margin:0;text-align:center;overflow-wrap:anywhere}
+.sheet-header>button:first-of-type{justify-self:start}
+.sheet-action{justify-self:end;font-weight:700}
+.grabber{position:absolute;top:6px;left:calc(50% - 18px);width:36px;height:5px;border-radius:3px;background:var(--outline)}
+.sheet-body{flex:1;overflow:auto;overflow-x:hidden;overscroll-behavior:contain;padding:8px var(--gutter) calc(env(safe-area-inset-bottom) + 24px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;border-radius:var(--r-pill);font-weight:600}
+.btn-text{color:var(--accent);padding:0 12px}
+.title3{font:600 1.176em/1.25 var(--f-body)}
+.action-sheet[open]{display:flex;flex-direction:column;gap:8px;background:transparent;padding:0 8px calc(env(safe-area-inset-bottom) + 8px);animation:sheet-in 320ms cubic-bezier(.2,.8,.2,1)}
+.action-sheet .group{border-radius:var(--r-plate);overflow:hidden;background:linear-gradient(180deg,var(--plate-top) 0%,var(--plate-bot) 100%);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,236,190,.10)}
+.footnote{font-size:13px;line-height:18px;color:var(--text-2)}
+.action-message{margin:0;padding:12px var(--gutter);text-align:center;border-bottom:1px solid var(--line-soft)}
+.action-row{display:block;width:100%;min-height:56px;padding:0 var(--gutter);color:var(--accent);font-size:17px}
+.action-row+.action-row{border-top:1px solid var(--line-soft)}
+.action-row.destructive{color:var(--crimson-lt)}
+.action-cancel{font-weight:700}
+@keyframes sheet-in{from{transform:translateY(100%)}}
+/* Form: fields = the boards' .in / .ta (CheckIn.css, Recovery.css); controls stay ≥ 16 px (no iOS focus zoom). */
+.form{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.fld{display:grid;grid-template-columns:minmax(0,1fr);min-width:0;gap:8px}
+.fld-l{font-size:13px;line-height:18px;font-weight:600;color:var(--text-2)}
+.fld-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.in{width:100%;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;height:48px;border-radius:14px;border:1px solid var(--line-strong);background:var(--field);color:var(--text);font-size:18px;padding:0 14px;font-variant-numeric:tabular-nums}
+.in::-webkit-date-and-time-value{text-align:left;min-width:0}
+.ta{width:100%;min-height:76px;border-radius:16px;border:1px solid var(--line-strong);background:var(--field);color:var(--text);font-size:16px;line-height:22px;padding:12px 14px;resize:none}
+.days{flex-wrap:nowrap;gap:6px}
+.days .chip{flex:1;min-width:44px;padding:0;justify-content:center}
+.form-error{margin:0;color:var(--crimson-lt);font-weight:700}
+.form-error:empty{display:none}
+/* Reduced motion: sheets appear without the slide. */
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open], .action-sheet[open] { animation: none; transition: none; }
 }
 
-/* ---- Progress */
-.progress-head p, .row-main p, .row-split p, .row.stack > p { margin: 0; }
-.stat { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
-.delta { display: inline-flex; align-items: center; gap: 2px; }
-.delta svg { width: 18px; height: 18px; }
-.row-split { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 8px; }
-.overdue { color: var(--red); font-weight: 600; }
-.chart { width: 100%; height: auto; }
-.chart text { fill: var(--text-2); font-size: 11px; }
-.chart .axis { stroke: var(--outline); }
-.chart .target { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 6 4; }
-.chart .logged { fill: none; stroke: var(--g-body); stroke-width: 2.5; stroke-linejoin: round; }
-.chart .logged-dot { fill: var(--g-body); }
-.goal-label { display: inline-flex; align-items: center; gap: 6px; }
-/* Iron Progress (step 3): one hero figure (good days), gold limit/target lines, delta chips (arrow + sign, not color alone). */
-.progress-head { display: grid; gap: 6px; padding: 20px; background: radial-gradient(90% 75% at 100% 100%, rgba(201,145,57,.14), transparent 70%), var(--plate); }
-.hero-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; font-weight: 600; color: var(--text-2); } /* Body, so .hero-num is 64 pt as on Today */
-.hero-label { flex-basis: 100%; font: italic 700 calc(1em + 9px)/1.15 var(--serif-i); color: var(--text); } /* 26 pt, like section names */
-.progress-head .bar { position: relative; height: 8px; border-radius: 4px; margin: 10px 0 6px; overflow: visible; }
-.progress-head .bar > span { background: var(--gold-fill); }
-.progress-head .bar::after { content: ""; position: absolute; left: 90%; top: -5px; bottom: -5px; width: 2px; border-radius: 1px; background: var(--text); } /* target 27 of 30 */
-.delta { padding: 2px 8px 2px 6px; border-radius: 999px; font-weight: 600; }
-.delta.up { color: var(--accent); background: rgba(242,190,92,.12); }
-.delta.down, .delta.flat { color: var(--text-2); background: rgba(255,255,255,.07); }
-.delta.flat { padding-left: 8px; }
-.row:has(> .delta) { flex-wrap: wrap; } /* large text: the chip drops under the text instead of squeezing it to one word per line */
-.row:has(> .delta) .row-main { min-width: min(8em, 100%); }
-.row:has(> .delta) .delta { margin-left: auto; }
-@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .progress-head { background: var(--surface); }
-  .progress-head .bar > span { background: var(--gold-solid); }
-  .delta { background: none; box-shadow: inset 0 0 0 1px var(--outline); }
-}
-
-/* ---- Settings */
-.row-btn { width: 100%; text-align: left; color: var(--text); }
-.row-btn.action { color: var(--accent); }
-.row-btn.destructive { color: var(--red); }
-.chevron { display: inline-flex; color: var(--text-3); }
-.chevron svg { width: 18px; height: 18px; }
-.goal-line { display: flex; align-items: center; gap: 12px; }
-.block { display: block; }
-.import-error { margin-top: 8px; }
-.steps { margin: 0; padding-left: 1.5em; color: var(--text); }
-.steps li + li { margin-top: 6px; }
-.reminder { align-items: flex-start; }
-.reminder-text { margin: 2px 0 0; user-select: text; -webkit-user-select: text; }
-.version { margin: 24px var(--pad) 0; text-align: center; }
-/* Iron Settings (step 4a): logo tile + wordmark plate, the only place the logo appears (spec §3.1). */
-.brand { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px var(--pad); }
-.brand-logo { flex: none; width: 64px; height: 64px; border-radius: 15px; box-shadow: 0 0 0 1px #3A3940; }
-.wordmark { /* Cinzel caps, wide tracking; 22 pt default, capped so "LOCK IN" fits the plate like .large-title */
-  margin: 0; font: 600 calc(1em + 5px)/1.2 var(--caps); font-size: min(calc(1em + 5px), calc((100vw - var(--side-l) - var(--side-r) - 2 * var(--pad)) / 6));
-  letter-spacing: .22em; text-transform: uppercase; color: var(--accent); text-shadow: var(--engrave);
-}
-#add-red-line { margin-left: -12px; } /* the + lines up with row text; hit area stays 44 pt */
-@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .wordmark { text-shadow: none; }
-  .brand-logo { box-shadow: 0 0 0 1px var(--outline); }
-}
-
-/* ---- Measured red lines */
-.red-status { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; color: var(--text); vertical-align: -4px; }
-.red-status svg { width: 18px; height: 18px; }
-.red-status.slipped { color: var(--red); }
-.none-row { display: flex; justify-content: center; gap: 12px; }
-.red-card-empty { color: var(--text-2); }
-.chart .held-bar { fill: var(--text-3); }
-.chart .slip-bar { fill: var(--red); }
-.chart .slip-mark { stroke: var(--red); stroke-width: 1.75; stroke-linecap: round; }
-
-/* ---- Sheets (Iron step 4b; chrome, plates, chips and segments are in styles.css) */
-/* Fields share the row with their label and drop under it at large text instead of running off the edge
-   (text inputs default to ~20 characters wide: +200 px at AX5). */
-.form-row { flex-wrap: wrap; } .form-row > .row-main { flex: 1 1 auto; } /* the label keeps its width, so the row wraps */
-.form-row input:not([type="checkbox"]), .form-row select { flex: 1 1 6em; min-width: 0; max-width: 100%; }
-.form-row input[type="date"], .form-row input[type="time"] { min-width: min(7.5em, 100%); }
-/* Bar title and buttons stop growing at Title 1 size, as iOS bars do, so titles wrap between words, not mid-word. */
-.sheet-header { font-size: min(1em, 28px); }
-.sheet-header h2 { font-size: min(1.176em, 28px); }
-.day-chip { flex-shrink: 0; padding: 0 6px; } /* large text: weekday chips wrap instead of squeezing letters past their edges */
+/* ==== Today tab (plan Task 12). Board compact format, copied from static/Main.html inline styles and <style>;
+   hex/rgba → token only where :root has the exact value. Header = .tk-hd, meander = .mk, list = .tk-sh/.plate.list. */
+/* .rim and .btn-ghost: Main.html <style> (absent from styles.css until now) */
+.rim{position:relative;border-color:#6e4f1f;background:linear-gradient(180deg,#201d1a 0%,var(--plate-bot) 70%);box-shadow:inset 0 1px 0 rgba(252,226,154,.28),0 0 0 1px rgba(242,190,92,.10),0 0 40px rgba(242,190,92,.15),0 14px 30px rgba(0,0,0,.55)}
+.rim::before{content:"";position:absolute;left:14%;right:14%;top:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(252,226,154,0),var(--gold-hi),rgba(252,226,154,0));box-shadow:0 0 10px 0 rgba(242,190,92,.35);pointer-events:none}
+.btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 20px;border-radius:var(--r-pill);font-weight:600;font-size:16px;color:#E9E3D6;border:1px solid var(--line-strong);background:rgba(255,255,255,.02);box-shadow:0 0 14px rgba(242,190,92,.07),inset 0 1px 0 rgba(255,236,190,.07)}
+/* Day medallion (not a link: the challenge plate below is the one link to #challenge) */
+.td-med{flex:none;width:60px;height:60px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #7a5a24;background:radial-gradient(circle at 50% 30%,#2a2316,var(--plate-bot));box-shadow:inset 0 1px 0 rgba(252,226,154,.3),0 0 22px rgba(242,190,92,.14)}
+.td-med b{font-family:var(--f-title);font-weight:700;font-size:22px;line-height:22px;color:var(--accent)}
+.td-med span{font-size:11px;line-height:13px;letter-spacing:.08em;color:var(--text-2)}
+/* Plates under the meander: hero gap 18, then 14 (board) */
+.tk-hd ~ :is(.td-ch,.td-card,.td-link){margin-top:14px}
+.mk + :is(.td-ch,.td-card,.td-link){margin-top:18px}
+/* Challenge plate (board: padding 16 18 18; icon tile 44, chevron 9×16) */
+.td-ch{display:block;padding:16px 18px 18px}
+.td-chh{display:flex;align-items:center;gap:14px}
+.td-tile{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(242,190,92,.10);border:1px solid #5d4521;color:var(--accent)}
+.td-tile svg{width:26px;height:26px}
+.td-chb{flex:1;min-width:0;overflow-wrap:anywhere}
+.td-stk{font-weight:600;font-size:17px;line-height:22px;margin-top:2px;font-variant-numeric:lining-nums}
+.td-chev{flex:none;color:var(--text-3);stroke-width:1.8}
+.td-st{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:13px;line-height:18px;font-variant-numeric:lining-nums}
+.td-st span{display:flex;align-items:center;gap:7px}
+.td-torch{flex:none}
+.td-torch path:first-child{fill:var(--accent);stroke:none}
+.td-torch path:last-child{stroke:var(--gold-mid);stroke-width:1.5}
+.td-torch.off path:first-child{fill:none;stroke:var(--outline);stroke-width:1.2}
+.td-torch.off path:last-child{stroke:var(--outline)}
+.td-ff{margin:8px 0 0;font-size:13px;line-height:18px}
+/* Action cards: board hero (.plate.rim, padding 20, shield watermark); title = hero title, 36 → 30 so it wraps less */
+.td-card{padding:20px;overflow:hidden}
+.td-wm{position:absolute;right:-22px;top:-18px;width:150px;height:150px;opacity:.07;pointer-events:none}
+.td-wm .b{fill:var(--accent)}
+.td-wm .lam{fill:none;stroke:var(--bg);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.td-ct{font-family:var(--f-serif);font-style:italic;font-weight:700;font-size:30px;line-height:34px;overflow-wrap:anywhere}
+.td-cl{margin:6px 0 0;font-variant-numeric:lining-nums}
+.td-cl1{margin-top:0}
+.td-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+/* Whole-plate links (start, recovery) */
+.td-link{display:flex;align-items:center;gap:14px;min-height:44px;padding:20px}
+.td-link.warn .td-ct{color:var(--crimson-lt)}
+/* ==== Challenge tab and Day 0 (plan Task 13, rulings R2-R14). Board compact format from static/Challenge.html,
+   static/Onboarding.html, css/Challenge.css, css/Onboarding.css; hex/rgba → token only where :root has the exact value.
+   Colour pairs asserted in tests/contrast-challenge.test.js. Board Day 0 numeral #6b5a3a / outline #6b4d1e fail contrast →
+   #9a8253 / #876126 (nearest same hue that passes). */
+.ch-hd{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 8px}
+.ch-hd>div:first-child{min-width:0}
+.ch-pill{background:rgba(242,190,92,.08);color:var(--accent);display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 12px;border-radius:var(--r-pill);border:1px solid #5d4521;font-weight:700;font-size:14px;line-height:16px;box-shadow:0 0 10px rgba(242,190,92,.14)}
+/* Board: pill beside the title, text on two lines ("8-day" / "streak"); intrinsic width, no fixed px */
+.ch-pill span{width:min-content}
+/* Hero (.plate.rim): laurel 168 box, DAY / numeral / of n, then the strip */
+.ch-hero{margin-top:20px;padding:24px 18px 20px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ch-lw{position:relative;width:168px;height:168px;display:grid;place-items:center}
+.ch-gl{position:absolute;inset:0;filter:drop-shadow(0 0 10px rgba(242,190,92,.22))}
+.ch-d0l{position:absolute;inset:0}
+.ch-d0l *{fill:none;stroke:#876126;stroke-width:.9}
+.ch-num{position:relative;margin-top:-4px}
+.ch-day{color:var(--eyebrow);font-size:11px;line-height:13px;letter-spacing:.26em;font-weight:600}
+.ch-n{font-family:var(--f-title);font-weight:700;font-size:62px;line-height:64px;font-variant-numeric:lining-nums}
+.ch-d0n{color:#9a8253}
+.ch-of{font-size:13px;line-height:16px}
+.goldtxt{background:linear-gradient(180deg,#FCE29A,#E3A949 60%,#B08539);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* Strip (R8): 10 columns, cells at most 29 px round; closed cells show a glyph instead of the number */
+.ch-strip{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px 3px;width:100%;margin-top:18px;place-items:center}
+.dy{width:min(29px,100%);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:12px;line-height:14px;font-weight:700;border:1px solid rgba(242,190,92,.15);background:#17161a;color:#8f897f;font-variant-numeric:lining-nums}
+.dy svg{width:62%;height:62%;stroke-width:2.6}
+.dy.p{background:linear-gradient(180deg,#FCE29A,#E3A949 70%,#C99139);color:var(--gold-ink);border-color:var(--gold-hi);box-shadow:0 0 9px rgba(242,190,92,.38)}
+.dy.t{background:#241d10;color:var(--accent);border:2px solid var(--accent);box-shadow:0 0 14px rgba(242,190,92,.35)}
+.dy.t.dr{border-color:var(--bronze);border-style:dashed;box-shadow:0 0 14px rgba(154,107,44,.35)}
+.dy.r{background:transparent;border:1.5px solid var(--crimson);color:var(--crimson)}
+.dy.x{background:var(--crimson);border-color:var(--crimson);color:var(--bg)}
+.ch-lgs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;margin-top:14px}
+.lg{color:var(--text-2);display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px}
+.lg .dy{width:18px}
+/* Mission (R9) */
+.ch-mp{padding:20px}
+.ch-mt{font-family:var(--f-title);font-weight:600;font-size:24px;line-height:30px;letter-spacing:.1em;text-transform:uppercase;overflow-wrap:anywhere}
+.ch-mb{margin:8px 0 0;white-space:pre-line;overflow-wrap:anywhere}
+.ch-mp>.ch-mb:first-child{margin-top:0}
+.ch-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+/* Declared Redo (R11) */
+.ch-rd{margin-top:12px;padding:14px 16px}
+.ch-rdr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 8px;min-height:44px;margin-top:4px}
+.ch-rdr .t2{font-size:13px}
+.ch-rd-btn{color:var(--accent);padding:0 12px;margin-right:-12px;font-size:13px;font-weight:700}
+.ch-rd-used{color:var(--text-2);font-size:13px}
+/* Protocols / red lines (R12): board .slot rows */
+.slot{display:flex;align-items:center;gap:12px;padding:13px 16px;border-top:1px solid var(--line-soft)}
+.slot:first-child{border-top:0}
+.ch-sn{flex:1;min-width:0;font-weight:600;font-size:16px;overflow-wrap:anywhere}
+/* Day 0 (R3-R5): Begin Day 1 full width, reason under it; board .st rows with the completion shield */
+.ch-wide{width:100%;margin-top:20px}
+.ch-why{margin:10px 0 0;font-size:13px;line-height:18px}
+.ch-why:empty{display:none}
+.st{display:flex;gap:14px;align-items:flex-start;padding:15px 16px;border-top:1px solid var(--line-soft)}
+.st:first-child{border-top:0}
+.st b{display:block;font-size:16px;line-height:20px;font-weight:600;overflow-wrap:anywhere}
+.st span{display:block;color:var(--text-2);font-size:13px;line-height:18px;margin-top:2px}
+.ch-row{width:100%;min-height:44px;align-items:center;text-align:left}
+.ch-row>div:last-child{min-width:0}
+.ch-setup{margin-top:12px}
+.ch-sh{flex:none;display:grid;place-items:center;width:22px;height:25px}
+.ch-sh .b{stroke:var(--outline);fill:none;stroke-width:1.7}
+.ch-sh .hl{fill:rgba(255,255,255,.28)}
+.ch-sh.on .b{fill:#E9B352;stroke:var(--gold-hi)}
+.ch-sh.on .lam{stroke:var(--gold-ink);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ch-sh.on svg{filter:drop-shadow(0 0 5px rgba(242,190,92,.45))}
+/* Graduation (R13) */
+.ch-gt{color:var(--accent);margin:4px 0 0;font-family:var(--f-title);font-weight:700;font-size:26px;line-height:32px;letter-spacing:.16em}
+.ch-gss{width:100%;margin-top:16px;text-align:left}
+.ch-gs{color:var(--text-2);display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line-soft)}
+.ch-gs:first-child{border-top:0}
+.ch-gs b{color:var(--text);font-variant-numeric:lining-nums}
+/* Mission and War Log (Task 14) */
+.ms,.wl{margin-top:24px}
+.ms-p{margin:12px 0 0;white-space:pre-line;overflow-wrap:anywhere}
+.ms-p:first-child{margin-top:0}
+.ms>.btn-gold,.wl>.btn-gold{margin-top:24px}
+.wl-row{min-height:44px;padding:12px 16px}
+.wl-row .rt,.wl-row .rn{overflow-wrap:anywhere}
+.wl-ta{min-height:220px}
+.wl-ro{white-space:pre-wrap;overflow-wrap:anywhere}
+/* ==== Check-ins (Task 15). Numbered questions = Recovery board .fq (css/Recovery.css); gold button 54 px full width
+   (CheckIn.css .btn-gold); MED rows = .plate.list rows, switch on the right, wrap at large text. */
+.ci-rec{margin-top:20px}
+.fq{margin-top:22px}
+.fq .n{display:flex;gap:10px;align-items:center;font-weight:600;font-size:16px;line-height:20px;overflow-wrap:anywhere}
+.fq .n i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:700;color:var(--accent);border:1px solid #5d4521;background:rgba(242,190,92,.08)}
+.fq>:not(.n){margin-top:10px}
+.fq .ta{overflow-wrap:anywhere}
+.ci-hl{font-size:13px;line-height:18px;font-variant-numeric:lining-nums}
+.ci-mr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:13px 16px;border-top:1px solid var(--line-soft)}
+.ci-mr:first-child{border-top:0}
+.ci-mt{flex:1 1 180px;min-width:0;overflow-wrap:anywhere}
+.ci-mt b{display:block;font-size:16px;line-height:20px;font-weight:600}
+.ci-mt div{font-size:13px;line-height:18px;margin-top:2px}
+.ci-go{margin-top:28px}
+.ci-go .btn-gold{display:flex;height:54px;width:100%;font-size:17px}
+.ci-go .form-error{margin-top:12px;overflow-wrap:anywhere}
+.ci-go .btn-ghost{margin-top:12px}
+.ci-tk{margin-top:28px}
+.ci-tk>*+*{margin-top:10px}

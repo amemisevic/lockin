@@ -1,99 +1,142 @@
-// Settings: goals, red lines, weight target, reminders, data (export / import / erase), version.
+// Settings tab (plan Task 19). Layout = static/Settings.html; state changes = settingsLogic.js; sheets = settingsSheets.js.
+// The board's per-protocol pause switch is not built: the data model has no paused flag (owner ruling pending).
+// The latest refusal (date, pack or backup) is module memory shown in an alert plate while the state is the one it was made on
+// (any change to it, or the next attempt, removes the plate); never saved.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
-import { openActionSheet } from '../sheet.js';
-import { exportJson, markBackup, validateImport, backupStatus, defaultState } from '../store.js';
-import { openGoalSheet, openRedLineSheet, openWeightTargetSheet, openRemindersSheet } from './settingsSheets.js';
+import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
+import { stepper } from '../ui/controls.js';
+import { validateImport, markBackup } from '../core/store.js';
+import { validatePack, importPack } from '../core/pack.js';
+import { addDays } from '../logic.js';
+import { dayLabel } from './tasksLogic.js';
+import * as L from './settingsLogic.js';
+import { openProtocolSheet, openRedLineSheet, openRemindersSheet, confirmSheet } from './settingsSheets.js';
 
-// Shared by Settings › Export and Progress › Back Up Now. Marks the backup only when it went out.
-export async function exportBackup(app) {
-  const name = `lockin-${app.today()}.json`;
-  // The file carries its own backup date, so a restore reports when that backup was made.
-  const blob = new Blob([exportJson(markBackup(app.state, app.today()))], { type: 'application/json' });
-  const file = new File([blob], name, { type: 'application/json' });
-  if (navigator.canShare?.({ files: [file] })) {
-    try { await navigator.share({ files: [file] }); } catch { return; } // cancelled or failed: not backed up
-  } else {
-    const a = h('a', { href: URL.createObjectURL(blob), download: name });
+let refusal = null; // { key: 'start' | 'pack' | 'backup', text, state, announced }
+// Leaving Settings drops the refusal (registered before app.js's own listener, so it runs before the re-render).
+window.addEventListener('hashchange', () => { if (location.hash !== '#settings') refusal = null; });
+const fail = (app, key, text) => { refusal = { key, text, state: app.state, announced: false }; rerender(); };
+const clear = () => { if (refusal) { refusal = null; rerender(); } };
+const readText = async file => { try { return await file.text(); } catch { return null; } };
+
+const browserIo = {
+  makeFile: (name, text) => new File([new Blob([text], { type: 'application/json' })], name, { type: 'application/json' }),
+  canShare: file => !!navigator.canShare?.({ files: [file] }),
+  share: file => navigator.share({ files: [file] }),
+  download(file) {
+    const url = URL.createObjectURL(file);
+    const a = h('a', { href: url, download: file.name });
     document.body.append(a);
     a.click();
     a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  }
-  app.set(s => markBackup(s, app.today()));
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  },
+};
+
+// Shared with nothing else yet; the backup is marked only after the share or download ran (a cancelled share is not a backup).
+export async function exportBackup(app, io = browserIo) {
+  const today = app.today();
+  const r = await L.runExport(app.state, today, io);
+  if (r.outcome !== 'cancelled') app.set(s => markBackup(s, today));
 }
 
-let importError = ''; // shown until the next import attempt; never auto-dismissed
+export async function importBackupFile(app, file, ask = confirmSheet) {
+  const text = await readText(file);
+  const r = text === null ? { ok: false, error: 'The file could not be read.' } : validateImport(text);
+  if (!r.ok) return fail(app, 'backup', r.error);
+  clear();
+  ask('Replace everything?', () => app.set(() => r.state), 'Replace everything');
+}
 
-const header = text => h('h2', { class: 'section-header footnote' }, text);
-const chevron = () => h('span', { class: 'chevron' }, icon('chevronRight'));
-const navRow = (id, main, detail, onClick, cls = '') => h('button', { type: 'button', class: `row row-btn ${cls}`, id, onClick },
-  main, detail != null && h('span', { class: 'subhead stat' }, detail), chevron());
+export async function importPackFile(app, file, ask = confirmSheet) {
+  const text = await readText(file);
+  const r = text === null ? { ok: false, error: 'The file could not be read.' } : validatePack(text);
+  if (!r.ok) return fail(app, 'pack', r.error);
+  clear();
+  ask('Replace the current pack?', () => app.set(s => importPack(s, r.pack)), 'Replace pack');
+}
 
-function goalSummary(g) {
-  return [g.minutes && `${g.minutes.weekday} min weekdays, ${g.minutes.weekend} min weekends`,
-    ...g.checks.map(c => c.label),
-    g.weeklyCount && `${g.weeklyCount.target} ${g.weeklyCount.label.toLowerCase()} a week`].filter(Boolean).join(' · ');
+// role=alert only on the first display: the 30 s tick rebuilds the screen and must not make VoiceOver repeat it.
+function alertPlate(app, key) {
+  if (refusal?.key !== key || refusal.state !== app.state) return null;
+  const role = refusal.announced ? null : 'alert';
+  refusal.announced = true;
+  return plate.warn(h('p', { class: 'set-err', role }, refusal.text));
+}
+const row = (...children) => h('div', { class: 'sr' }, children);
+const label = (title, sub) => h('div', { class: 'a' }, h('b', null, title), sub != null && h('span', null, sub));
+const chevron = () => { const c = icon('chevronRight'); c.setAttribute('class', 'set-chev'); return c; };
+const navRow = (id, title, sub, onClick) => h('button', { type: 'button', id, class: 'sr set-btn', onClick }, label(title, sub), chevron());
+const addRow = (id, text, onClick) => h('button', { type: 'button', id, class: 'sr set-btn gt', onClick }, icon('plus'), text);
+const actionRow = (id, text, onClick) => h('button', { type: 'button', id, class: 'sr set-btn gt', onClick }, text);
+// Built on tap and kept in <body> until it answers, so a screen rebuild while the Files sheet is open cannot detach it.
+function pickFile(id, onFile) {
+  const input = h('input', { type: 'file', id, accept: 'application/json,.json', hidden: true,
+    onChange: e => { const f = e.target.files?.[0]; input.remove(); if (f) onFile(f); },
+    onCancel: () => input.remove() });
+  document.body.append(input);
+  input.click();
+}
+
+function startRow(app) {
+  const { state } = app;
+  const sub = 'The day the 30 days count from';
+  if (!state.challenge) return row(label('Day 1', sub), h('span', { class: 't2' }, 'Starts when you begin'));
+  const date = state.challenge.startDate;
+  if (!L.startEditable(state)) return row(label('Day 1', sub), h('span', { class: 't2' }, dayLabel(date)));
+  const input = h('input', { type: 'date', id: 'set-start', class: 'in set-date', value: date, min: addDays(app.today(), -1), max: app.today(), 'aria-label': 'Day 1 date',
+    onChange: e => {
+      const r = L.setStartDate(app.state, app.today(), e.target.value, Date.now());
+      if (!r.ok) return fail(app, 'start', r.error);
+      refusal = null;
+      app.set(() => r.state);
+      rerender(); // the same state does not re-render by itself; this also clears a shown refusal
+    } });
+  return row(label('Day 1', sub), input);
+}
+
+const stepRow = (app, key, title, sub) => {
+  const { min, max } = L.SETTING_BOUNDS[key];
+  return row(label(title, sub), stepper({ value: app.state.settings[key], min, max, label: title,
+    onChange: n => app.set(s => (key === 'zeroDay' ? L.setZeroDay(s, n) : L.setMedPerWeek(s, n))) }));
+};
+
+// Returns a list of nodes (section, two footnotes).
+function dataSection(app) {
+  const line = L.backupLine(app.state, app.today());
+  return [
+    h('section', { class: 'set-sec' }, sectionHeading('Data'), h('div', { class: 'plate list' },
+      row(h('div', { class: 'a' }, h('b', null, 'Last backup'), h('span', null, line.text),
+        line.overdue && h('span', { class: 'set-overdue' }, 'Overdue. Export a backup now.'))),
+      actionRow('set-export', 'Export backup', () => exportBackup(app)),
+      actionRow('set-import', 'Import backup', () => pickFile('set-backup-file', f => importBackupFile(app, f)))), alertPlate(app, 'backup')),
+    h('p', { class: 't3 set-foot' }, 'Deleting the Home Screen icon deletes all data. Export is the only backup.'),
+    h('p', { class: 't3 set-foot' }, `Version ${app.version}`),
+  ];
 }
 
 export function renderSettings(app) {
-  const s = app.state;
-  const { days, overdue } = backupStatus(s, app.today());
-  const fileInput = h('input', { type: 'file', accept: 'application/json,.json', hidden: true, onChange: e => importFile(app, e.target) });
-  return h('section', null,
-    h('h1', { class: 'large-title' }, 'Settings'),
-    // The only place the logo appears (spec §3.1); decorative, the wordmark beside it is the text.
-    h('div', { class: 'group brand' }, h('img', { class: 'brand-logo', src: 'icons/icon-192.png', alt: '', width: '64', height: '64' }), h('p', { class: 'wordmark' }, 'Lock In')),
-
-    header('Goals'),
-    h('div', { class: 'group' }, s.goals.map(g => navRow(`goal-${g.id}`,
-      h('span', { class: `row-main goal-line g-${g.id}` }, h('span', { class: 'badge' }, icon(g.icon)),
-        h('span', null, h('span', { class: 'goal-name' }, g.name), h('span', { class: 'subhead block' }, goalSummary(g)))),
-      null, () => openGoalSheet(app, g)))),
-
-    header('Red lines'),
-    h('div', { class: 'group' },
-      s.redLines.map(l => h('div', { class: 'row' }, h('div', { class: 'row-main' }, h('p', null, l.name), l.limit !== undefined && h('p', { class: 'subhead' }, `Limit ${l.limit} ${l.unit} a day`)),
-        h('button', { type: 'button', class: 'icon-btn', id: `red-more-${l.id}`, 'aria-label': `Actions for ${l.name}`, onClick: () => openActionSheet([
-          { label: 'Edit', onSelect: () => openRedLineSheet(app, l) },
-          { label: 'Delete', destructive: true, onSelect: () => openActionSheet([{ label: 'Delete Red Line', destructive: true,
-            onSelect: () => app.set(st => ({ ...st, redLines: st.redLines.filter(x => x.id !== l.id) })) }],
-            { message: 'Its past marks stay saved but no longer count in Progress.' }) },
-        ]) }, icon('ellipsis')))),
-      h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn btn-text', id: 'add-red-line', onClick: () => openRedLineSheet(app) }, icon('plus'), 'Add Red Line'))),
-
-    header('Weight'),
-    h('div', { class: 'group' }, navRow('weight-target', h('span', { class: 'row-main' }, 'Weight target'),
-      s.targetWeightKg == null ? 'Not set' : `${s.targetWeightKg.toFixed(1)} kg`, () => openWeightTargetSheet(app))),
-
-    header('Reminders'),
-    h('div', { class: 'group' }, navRow('reminders', h('span', { class: 'row-main' }, 'Set Up Reminders'), null, () => openRemindersSheet())),
-    h('p', { class: 'footnote section-footer' }, 'Three daily notifications through the iOS Shortcuts app.'),
-
-    header('Data'),
-    h('div', { class: 'group' },
-      h('div', { class: 'row' }, h('p', { class: `row-main${overdue ? ' overdue' : ' subhead'}` },
-        days === null ? 'Never backed up' : days === 0 ? 'Last backup: today' : `Last backup: ${days} ${days === 1 ? 'day' : 'days'} ago`,
-        overdue && '. Back up now.')), // words, not only red (spec §3.10)
-      h('button', { type: 'button', class: 'row row-btn action', id: 'export', onClick: () => exportBackup(app) }, 'Export Backup'),
-      h('button', { type: 'button', class: 'row row-btn action', id: 'import', onClick: () => fileInput.click() }, 'Import Backup'),
-      h('button', { type: 'button', class: 'row row-btn action destructive', id: 'erase', onClick: () => openActionSheet([{ label: 'Erase All Data', destructive: true,
-        onSelect: () => app.set(() => defaultState(app.today())) }], { message: 'This deletes every block, log, red line and weigh-in on this phone. Export a backup first if you might want them.' }) }, 'Erase All Data'),
-      fileInput),
-    h('p', { class: 'form-error import-error', id: 'import-error', role: 'alert' }, importError),
-    h('p', { class: 'footnote section-footer' }, 'Deleting the Home Screen icon deletes all data. Export is the only backup.'),
-
-    h('p', { class: 'footnote version' }, `Lock In v${app.version}`));
-}
-
-async function importFile(app, input) {
-  const file = input.files[0];
-  input.value = '';
-  if (!file) return;
-  const result = validateImport(await file.text());
-  importError = result.ok ? '' : `Import failed: ${result.error} Nothing was changed.`;
-  document.getElementById('import-error').textContent = importError;
-  if (!result.ok) return;
-  openActionSheet([{ label: 'Replace All Data', destructive: true, onSelect: () => app.set(() => result.state) }],
-    { message: 'Replace all current data with this backup?' });
+  const { state } = app;
+  const { protocols, redLines } = L.lists(state);
+  return [
+    eyebrow('Lock In'),
+    screenTitle('Settings'),
+    h('section', { class: 'set-sec' }, sectionHeading('Protocols'), h('div', { class: 'plate list' },
+      protocols.map(p => navRow(`set-protocol-${p.id}`, p.title, p.med ? 'MED version set' : 'No MED version', () => openProtocolSheet(app, p))),
+      addRow('set-add-protocol', 'Add protocol', () => openProtocolSheet(app)))),
+    h('section', { class: 'set-sec' }, sectionHeading('Red lines'), h('div', { class: 'plate list' },
+      redLines.map(r => navRow(`set-redline-${r.id}`, r.name, 'Crossing it is a Reset', () => openRedLineSheet(app, r))),
+      addRow('set-add-redline', 'Add red line', () => openRedLineSheet(app)))),
+    h('section', { class: 'set-sec' }, sectionHeading('Challenge'), h('div', { class: 'plate list' },
+      startRow(app),
+      stepRow(app, 'zeroDay', 'Zero Day threshold', 'Missed protocols in one day that make it a Reset'),
+      stepRow(app, 'medPerWeek', 'MED per week', 'Declared in the morning only'),
+      row(label('Challenge pack', L.packSummary(state)),
+        h('button', { type: 'button', id: 'set-pack', class: 'set-link gt', 'aria-label': state.pack ? 'Re-import pack' : 'Import pack',
+          onClick: () => pickFile('set-pack-file', f => importPackFile(app, f)) }, state.pack ? 'Re-import' : 'Import pack'))), alertPlate(app, 'start'), alertPlate(app, 'pack')),
+    h('section', { class: 'set-sec' }, sectionHeading('Reminders'), h('div', { class: 'plate list' },
+      navRow('set-reminders', 'Set up reminders', 'Morning, afternoon and night, through Shortcuts', openRemindersSheet))),
+    ...dataSection(app),
+  ];
 }

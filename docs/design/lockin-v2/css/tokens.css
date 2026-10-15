@@ -1,0 +1,18 @@
+/* Lock In v2 — design tokens ("Iron" dark, extended Spartan). Source of truth: the 9 boards. */
+:root{
+  /* surfaces */
+  --bg:#0A0A0B; --plate-top:#1c1b20; --plate-bot:#141317; --plate-alt:#151418; --field:#111014;
+  /* text (contrast on #141317: bone 16.0, t2 8.9, t3 6.9) */
+  --bone:#F3EEE4; --t2:#B9B3A8; --t3:#A39D93; --tab-idle:#BDB6AA;
+  /* gold */
+  --gold-hi:#FCE29A; --gold:#F2BE5C; --gold-mid:#C99139; --gold-lo:#B08539; --gold-ink:#1a1205; --eyebrow:#D9A646;
+  --gold-grad:linear-gradient(180deg,#FCE29A 0%,#F2BE5C 42%,#C99139 78%,#B08539 100%);
+  /* bronze / crimson */
+  --bronze:#9a6b2c; --bronze-lt:#B88A3A; --crimson:#E4576B; --crimson-lt:#F08A99; --crimson-dk:#B8374B;
+  /* gold-tinted hairlines (replace neutral greys) */
+  --line:rgba(242,190,92,.15); --line-soft:rgba(242,190,92,.10); --line-strong:rgba(242,190,92,.24); --line-tab:rgba(242,190,92,.30);
+  /* shape */
+  --r-plate:24px; --r-pill:999px; --gutter:20px;
+  /* fonts (self-host woff2 in assets/fonts) */
+  --f-title:'Cinzel',serif; --f-serif:'Cormorant Garamond',serif; --f-body:'Alegreya Sans',system-ui,sans-serif;
+}

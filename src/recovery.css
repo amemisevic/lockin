@@ -1,0 +1,24 @@
+/* ==== Recovery Protocol (Task 17). Board: static/Recovery.html inline styles + css/Recovery.css. Tokens from styles.css :root;
+   rgba only where :root has no exact value. Questions = shared .fq (screens.css); chips, .in, .ta, .btn-gold shared. */
+.rc-ttl{color:var(--crimson-lt)}
+.rc-top{margin-top:20px;padding:22px 20px}
+.rc-hd{display:flex;align-items:center;gap:12px}
+.rc-hd svg{flex:none}
+.rc-day{margin:0;font-family:var(--f-title);font-weight:700;font-size:26px;line-height:30px;letter-spacing:.1em;color:var(--crimson-lt);overflow-wrap:anywhere}
+.rc-quote{margin:12px 0 0;font-family:var(--f-serif);font-style:italic;font-weight:700;font-size:25px;line-height:28px}
+.rc-fx{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:13px;line-height:18px;font-weight:600}
+.rc-fx span{padding:6px 12px;border-radius:var(--r-pill);background:rgba(255,255,255,.04);border:1px solid var(--line-strong)}
+.rc-cd{margin-top:14px;padding:16px 18px}
+.rc-cdr{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px}
+.rc-left{font-family:var(--f-title);font-weight:600;font-size:20px;line-height:24px;color:var(--accent)}
+.rc-left.over{color:var(--crimson-lt)}
+.rc-bar{height:8px;border-radius:4px;background:var(--line-soft);margin-top:12px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.55)}
+.rc-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold-lo),var(--accent));box-shadow:0 0 10px rgba(242,190,92,.40)}
+.rc-bar i.over{background:var(--crimson);box-shadow:0 0 10px rgba(228,87,107,.40)}
+.rc-sec{margin:28px 4px 0}
+.fq .rc-hint{margin:6px 0 0 36px;font-size:13px;line-height:18px;color:var(--text-3)}
+.ta.bad{border-color:var(--crimson-dk)}
+.fq .rc-nudge{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;line-height:18px;font-weight:600;color:var(--crimson-lt)}
+.fq .rc-nudge:empty{display:none}
+.fq .rc-ans{margin:8px 0 0 36px;white-space:pre-wrap;overflow-wrap:anywhere}
+.rc-foot{margin:12px 0 0;text-align:center;font-size:13px;line-height:18px;color:var(--text-3)}
