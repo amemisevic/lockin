@@ -167,6 +167,19 @@ test('n:null starts at challenge.startDate (same as n:7 here)', () => {
   assert.equal(all(S, { endDate: END, n: null }), all(S, R7));
 });
 
+test('n:null for habits and tasks starts at the first taskLog date, not the challenge start', () => {
+  // Challenge starts 10-05, history from 10-01. Recomputed by a raw loop over taskLog: All tasks 4/1/1/2, weekdays below.
+  const L = deepFreeze({ ...S, challenge: { ...S.challenge, startDate: '2026-10-05' } });
+  const r = { endDate: END, n: null };
+  assert.deepEqual(taskTotals(L, r), { done: 4, failed: 1, stalled: 1, open: 2 });
+  assert.deepEqual(weekdayRates(L, r), wk([0, 1], [0, 1], [0, 1], [1, 1], [1, 1], [0, 1], [1, 1]));
+  // All is never smaller than 30d.
+  assert.deepEqual(taskTotals(L, r), taskTotals(L, { endDate: END, n: 30 }));
+  assert.deepEqual(weekdayRates(L, r), weekdayRates(L, { endDate: END, n: 30 }));
+  // Challenge-bound selectors still start at the challenge start (10-05 reset, 10-06 and 10-07 open).
+  assert.deepEqual(resultCounts(L, r), { passed: 0, redo: 0, reset: 1, open: 2 });
+});
+
 test('n:10 reaches 09-28 but dates before the first log / the challenge add nothing', () => {
   // Call 1: 09-28..10-07. Call 3: 09-28..09-30 are phase 'before' -> not open. Call 7: those dates are before
   // the first taskLog key (10-01), so weekdayRates and taskTotals ignore them (Mon/Tue/Wed stay 0/1).

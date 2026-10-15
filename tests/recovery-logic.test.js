@@ -90,9 +90,8 @@ test('canFile: all five fields non-blank after trim', () => {
   assert.equal(canFile({ ...GOOD, change: 'Be stronger' }), true); // vague is core's refusal, not the gate
 });
 
-test('errorText: a plain sentence for every fileAutopsy code; vague ones are the exact core nudge', () => {
+test('errorText: a plain sentence for every fileAutopsy code; vague-change is the exact core nudge', () => {
   assert.equal(errorText('vague-change'), NUDGE);
-  assert.equal(errorText('vague-decision'), NUDGE);
   for (const code of ['incomplete', 'no-recovery', 'already-filed']) {
     const t = errorText(code);
     assert.equal(typeof t, 'string');

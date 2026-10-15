@@ -9,7 +9,7 @@ import { addDays, weekdayIdx } from '../src/logic.js';
 // (no stats.js / scoring.js selector is called for an expected value), plus literal hand-computed anchors.
 // Hand state: challenge 2026-08-25 (Tue) .. 09-23 (30 days); endDate E = 2026-09-27 (Sun), after the challenge end, so
 // 7d = 09-21..09-27, 30d = 08-29..09-27, All = 08-25..09-27 all differ. First taskLog 08-20 is before the start, so the
-// task windows differ too (All starts at the challenge start, call 7 / R3 of Task 7). Heatmap = 08-31 (Mon) .. 09-27.
+// task windows differ too (All starts at the first log, owner ruling 2026-10-15). Heatmap = 08-31 (Mon) .. 09-27.
 const deepFreeze = o => { Object.values(o).forEach(v => v && typeof v === 'object' && deepFreeze(v)); return Object.freeze(o); };
 const S = '2026-08-25', E = '2026-09-27', FIRST = '2026-08-20';
 
@@ -71,7 +71,7 @@ const chDates = (s, n) => (s.challenge ? span(cut(n) ?? s.challenge.startDate, E
 const tkDates = (s, n) => {
   const first = Object.keys(s.taskLog).sort()[0];
   if (!first) return [];
-  return span(cut(n) ?? (s.challenge ? s.challenge.startDate : first), E).filter(d => d >= first);
+  return span(cut(n) ?? first, E).filter(d => d >= first);
 };
 const due = (t, d) => !t.archived && !t.skip.includes(d) && ({ daily: true, weekdays: weekdayIdx(d) < 5,
   custom: t.repeat.days.includes(weekdayIdx(d)), none: t.date === d })[t.repeat.type];

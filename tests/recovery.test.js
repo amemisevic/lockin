@@ -118,16 +118,26 @@ test('fileAutopsy: incomplete for each field blank, whitespace-only or not a str
   }
 });
 
-test('fileAutopsy: incomplete beats vague; vague-change beats vague-decision', () => {
+test('fileAutopsy: incomplete beats vague-change; the decision is never vague-checked', () => {
   const s = st({ [TUE]: entry(DUE) });
   // Plan: "change:'Be stronger' → 'vague-change'".
   assert.equal(refused(s, TUE, { ...VALID, change: 'Be stronger' }, at(1, 9)), 'vague-change');
   // incomplete and vague-change both apply: "incomplete, vague-change" order → incomplete.
   assert.equal(refused(s, TUE, { ...VALID, place: ' ', change: 'Be stronger' }, at(1, 9)), 'incomplete');
-  // Rules: "`change` and `decision` go through `checkVague`"; decision alone vague → vague-decision.
-  assert.equal(refused(s, TUE, { ...VALID, decision: 'try harder' }, at(1, 9)), 'vague-decision');
-  // Both vague: "vague-change, vague-decision" order → vague-change.
+  // Owner ruling 2026-10-15: only `change` goes through `checkVague`; a keyword-less decision is accepted.
+  assert.equal(R.fileAutopsy(s, TUE, { ...VALID, decision: 'try harder' }, at(1, 9)).ok, true);
+  // Both keyword-less: only the change is refused.
   assert.equal(refused(s, TUE, { ...VALID, decision: 'try harder', change: 'Be stronger' }, at(1, 9)), 'vague-change');
+});
+
+test('fileAutopsy: a decision without a keyword is accepted and stored as typed', () => {
+  const r = R.fileAutopsy(st({ [TUE]: entry(DUE) }), TUE, { ...VALID, decision: 'Picked up the phone' }, at(1, 9));
+  assert.equal(r.ok, true);
+  assert.equal(r.state.recovery[TUE].decision, 'Picked up the phone');
+});
+
+test('fileAutopsy: a vague change is still refused with vague-change', () => {
+  assert.equal(refused(st({ [TUE]: entry(DUE) }), TUE, { ...VALID, change: 'Be stronger' }, at(1, 9)), 'vague-change');
 });
 
 test('fileAutopsy: time is free text (no format check)', () => {

@@ -160,9 +160,9 @@ test('File the autopsy is disabled until all five fields are non-blank; typing u
   assert.ok(!isDisabled(btn));
 });
 
-for (const [field, id] of [['change', 'rc-change'], ['decision', 'rc-decision']]) {
+for (const [field, id] of [['change', 'rc-change']]) {
   test(`vague ${field}: the exact core nudge after the first blur, then live`, () => {
-    const day = field === 'change' ? '2027-05-04' : '2027-05-05';
+    const day = '2027-05-04';
     const app = fakeApp(reset(day));
     let nodes = renderRecovery(app, [day]);
     type(nodes, id, 'Be stronger');
@@ -180,9 +180,23 @@ for (const [field, id] of [['change', 'rc-change'], ['decision', 'rc-decision']]
   });
 }
 
-for (const [code, opts] of [['vague-change', { change: 'Be stronger' }], ['vague-decision', { decision: 'Be stronger' }]]) {
+test('decision without a keyword: no nudge after blur, no error, the autopsy files', () => {
+  const day = '2027-05-05';
+  const app = fakeApp(reset(day));
+  let nodes = renderRecovery(app, [day]);
+  type(nodes, 'rc-decision', 'Be stronger');
+  fire(byId(nodes, 'rc-decision'), 'blur');
+  assert.ok(!text(nodes).includes(NUDGE));
+  assert.ok(!hasClass(byId(nodes, 'rc-decision'), 'bad'));
+  nodes = fillAll(app, day, { decision: 'Be stronger' });
+  fire(gold(nodes), 'click');
+  assert.equal(app.state.recovery[day].filedAt != null, true);
+  assert.deepEqual(app.navs, [`#warlog/autopsy-${day}`]);
+});
+
+for (const [code, opts] of [['vague-change', { change: 'Be stronger' }]]) {
   test(`${code}: core refuses, the sentence shows under the button as an alert`, () => {
-    const day = code === 'vague-change' ? '2027-05-06' : '2027-05-07';
+    const day = '2027-05-06';
     const app = fakeApp(reset(day));
     const s0 = app.state;
     let nodes = fillAll(app, day, opts);
