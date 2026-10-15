@@ -930,3 +930,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Review: the `opus` alias returned model_not_found (HTTP 404); review ran on the session model (Sonnet 5.5). No Critical, no Important. Minors deferred (owner Armin): decision textarea lost its unused `aria-describedby` (correct); `touched` draft key now only used for change; `.filter(d => d >= first)` redundant for n null (kept for finite n); "All never smaller than 30d" test holds because the fixture's first log is inside the 30-day window.
 - Closes Task 19 Needs-owner-ruling item 5 (both parts).
 - Needs owner ruling: review model (opus unavailable, same as Task 19).
+
+## Pushes recorded before Task 20 (2026-10-15)
+
+- Task 19 pushed to origin/v2 (up to `29a3ffe`, the Day 1 control ruling).
+- Core fix pushed to origin/v2 (`4f5d7fd`): the Decision field is no longer vague-checked (core `fileAutopsy`, `views/recovery.js`, `views/recoveryLogic.js` and the matching test assertions, listed in the "Core fixes" entry above); "All" for habits and tasks now covers the whole task history.
+- Day 1 date control kept as is. Task 21 replaces the input with a plain text row.
+- Pause switch and Erase all data not built. Task 10 m3 (thumb slide after a re-render) closed as moot, because there is no switch.
