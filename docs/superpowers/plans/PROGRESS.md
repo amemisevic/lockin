@@ -861,3 +861,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - New inline SVG shapes (own, same flat style, listed per CLAUDE.md): stacked/share bar rects, weekday column rects, heatmap disc / ring / dot circles and their legend marks. No new icon file.
 - iPhone checks for later (installed app, after Task 19): Analytics tab opens on 30d; tap 7d / All → numbers change; leave and come back → still the chosen range until the app is closed; VoiceOver on the tiles reads every number including streaks; heatmap marks readable outdoors.
 - Next: Task 19.
+
+## Task 18 push and Task 19 start (docs only)
+
+- Task 18 pushed to origin/v2 (`5ac90b1`); main untouched (`556b55a`).
+- Owner rulings on Task 18: R8 accepted (three expected-label lines in tests/analytics-logic.test.js, same kind as Task 17 R7). Reset bar both crimson: Minor, deferred to Task 21, owner Armin (fix: hatched or dashed bronze for "missed protocols"). The 16 differences from the board accepted as listed; 90D range and the completion line chart are out of scope.
+- STILL OPEN, owner has not ruled (both "Needs owner ruling", NOT part of Task 19; src/core/stats.js and src/core/recovery.js stay untouched): (1) "All" for habits/tasks starts at the challenge start, so All can show fewer than 30d (core stats.js taskDates + frozen tests); (2) the vague-DECISION keyword rule in core fileAutopsy.
+- Task 19 starts. Owner-authorised core edits, exactly these: (a) model.js validates an optional top-level `setup: {protocols, redLines}` (absent = valid, not in defaultState); (b) model.js validateState refuses a day with closedAt set and result null, and a warLog key outside contract, funeral, code, redlines-w1, autopsy-YYYY-MM-DD, day-<n>; (c) store.js validateImport must not throw on non-string input, backupStatus treats a future lastBackup as overdue with days null.
