@@ -16,6 +16,7 @@ import { renderMorning } from './views/checkinMorning.js';
 import { renderAfternoon } from './views/checkinAfternoon.js';
 import { renderNight } from './views/checkinNight.js';
 import { renderRecovery } from './views/recovery.js';
+import { renderAnalytics } from './views/analytics.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
 let storage;
@@ -57,7 +58,7 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17); placeholder screens for the rest (Tasks 18–19 replace them). Text nodes only.
+// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17), Analytics (Task 18); placeholder screen for Settings (Task 19 replaces it). Text nodes only.
 function screen(r) {
   if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
@@ -67,6 +68,7 @@ function screen(r) {
   if (r.name === 'checkin' && r.params[0] === 'afternoon') return renderAfternoon(app);
   if (r.name === 'checkin' && r.params[0] === 'night') return renderNight(app, r.params.slice(1));
   if (r.name === 'recovery') return renderRecovery(app, r.params);
+  if (r.name === 'analytics') return renderAnalytics(app);
   if (r.name === 'warlog') return r.params.length ? renderWarEntry(app, r.params) : renderWarLog(app);
   if (!r.pushed) return [h('p', { class: 'eyebrow' }, 'Lock In'), h('h1', { class: 'ttl' }, r.name[0].toUpperCase() + r.name.slice(1))];
   return [

@@ -58,11 +58,11 @@ function dayMark(n, length) {
 
 // R8: closed cells show the glyph instead of the number; every cell is labelled.
 // Fix round 2 (owner): an open today with a declared Redo gets the bronze ring (.dr); number, result and legend stay.
-const cell = (c, dr) => h('div', { class: dr && c.kind === 'today' ? `${CELL.today} dr` : CELL[c.kind], role: 'img',
+export const cell = (c, dr) => h('div', { class: dr && c.kind === 'today' ? `${CELL.today} dr` : CELL[c.kind], role: 'img',
   'aria-label': `Day ${c.n}, ${LABEL[c.kind]}${dr && c.kind === 'today' ? ', Redo declared' : ''}` },
   GLYPH[c.kind] ? GLYPH[c.kind]() : h('span', { 'aria-hidden': 'true' }, String(c.n)));
 
-const legendItem = (kind, label, count) => h('span', { class: 'lg' },
+export const legendItem = (kind, label, count) => h('span', { class: 'lg' },
   h('i', { class: CELL[kind], 'aria-hidden': 'true' }, GLYPH[kind]()), `${label} ${count}`);
 
 function hero(state, n, cells, counts, dr) {
