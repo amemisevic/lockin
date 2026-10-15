@@ -15,9 +15,10 @@ function overview(state, range) {
   const { passed, redo, reset } = resultCounts(state, range);
   if (passed + redo + reset === 0) return null;
   const rate = rateLabel(passRate(state, range));
+  const current = currentStreak(state), longest = longestStreak(state);
   return { passed: S(passed), redo: S(redo), reset: S(reset), rate,
-    current: S(currentStreak(state)), longest: S(longestStreak(state)),
-    label: `Passed ${passed}, redo ${redo}, reset ${reset}, pass rate ${rate}` };
+    current: S(current), longest: S(longest),
+    label: `Passed ${passed}, redo ${redo}, reset ${reset}, pass rate ${rate}, current streak ${current}, longest streak ${longest}` };
 }
 
 function protocols(state, range) {

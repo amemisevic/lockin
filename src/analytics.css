@@ -1,5 +1,5 @@
 /* ==== Analytics (Task 18). Board: static/Analytics.html (.tile, .br/.brh/.trk, .col, .hm). Tokens from styles.css :root.
-   Chart geometry is the SVG viewBox (analyticsParts.js); only the weekday column height is fixed here. */
+   Chart geometry is the SVG viewBox (analyticsParts.js); fixed here: the bar height (8px) and the weekday column height (96px). */
 .an-range{margin-top:16px}
 .an-sec{margin-top:28px}
 .an-sec>.plate{margin-top:12px}

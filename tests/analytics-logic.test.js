@@ -164,7 +164,7 @@ function assertModel(s, n) {
   const ch = expectedChallenge(s, n), { counts: c } = ch, st = streaks(s);
   const closedN = c.passed + c.redo + c.reset;
   assert.deepEqual(m.overview, closedN ? { passed: String(c.passed), redo: String(c.redo), reset: String(c.reset),
-    rate: pct(c.passed, closedN), current: String(st.current), longest: String(st.longest), label: ch.overviewLabel } : null, at);
+    rate: pct(c.passed, closedN), current: String(st.current), longest: String(st.longest), label: `${ch.overviewLabel}, current streak ${st.current}, longest streak ${st.longest}` } : null, at);
   if (s.challenge) {
     const whole = { passed: 0, redo: 0, reset: 0 };
     for (const d of span(s.challenge.startDate, addDays(s.challenge.startDate, s.challenge.length - 1))) {
@@ -216,9 +216,9 @@ for (const n of [7, 30, null]) {
 test('literal anchors: pass rate rounding, streaks, overview labels per range', () => {
   // 7d: 09-21 passed, 09-22 redo, 09-23 reset -> 1/3 = 33%. 30d: passed 09-01,10,21; redo 09-02,15,22; reset 09-03,23 -> 3/8.
   // All adds 08-25 passed, 08-26 reset, 08-27 passed -> 5/11 = 45%. Streaks over all results: current 0, longest 2.
-  assert.equal(analytics(STATE, E, 7).overview.label, 'Passed 1, redo 1, reset 1, pass rate 33%');
+  assert.equal(analytics(STATE, E, 7).overview.label, 'Passed 1, redo 1, reset 1, pass rate 33%, current streak 0, longest streak 2');
   assert.equal(analytics(STATE, E, 7).overview.rate, '33%');
-  assert.equal(analytics(STATE, E, 30).overview.label, 'Passed 3, redo 3, reset 2, pass rate 38%');
+  assert.equal(analytics(STATE, E, 30).overview.label, 'Passed 3, redo 3, reset 2, pass rate 38%, current streak 0, longest streak 2');
   const all = analytics(STATE, E, null).overview;
   assert.deepEqual([all.rate, all.current, all.longest], ['45%', '0', '2']);
   // 2 passed of 5 closed -> 40%.
