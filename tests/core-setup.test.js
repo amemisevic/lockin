@@ -41,7 +41,7 @@ test('warLog: only the known keys are accepted', () => {
   const e = { text: 'x', updatedAt: 1 };
   const ok = ['contract', 'funeral', 'code', 'redlines-w1', 'autopsy-2026-10-01', 'day-1', 'day-30'];
   assert.equal(validateState({ ...defaultState(), warLog: Object.fromEntries(ok.map(k => [k, e])) }), null);
-  for (const k of ['secret', 'autopsy-2026-1-1', 'autopsy-', 'day-', 'day-x', 'day-1x', 'Contract', 'redlines-w2', '__proto__x'])
+  for (const k of ['secret', 'autopsy-2026-1-1', 'autopsy-', 'day-', 'day-x', 'day-1x', 'Contract', 'redlines-w2', '__proto__x', 'day-0', 'day-31', 'day-100'])
     assert.equal(validateState({ ...defaultState(), warLog: { [k]: e } }), "The backup's war log is damaged.", k);
 });
 

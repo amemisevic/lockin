@@ -29,7 +29,9 @@ export const events = [];
 globalThis.document = { activeElement: null, body: new El('body'), createElement: t => new El(t), createElementNS: (_, t) => new El(t),
   importNode: n => n };
 globalThis.DOMParser = class { parseFromString() { const s = new El('svg'); s.append(new El('path')); return { documentElement: s }; } };
-globalThis.window = { dispatchEvent(e) { events.push(e.type); return true; }, addEventListener() {} };
+export const windowListeners = {};
+globalThis.location = { hash: '#settings' };
+globalThis.window = { dispatchEvent(e) { events.push(e.type); return true; }, addEventListener(t, fn) { (windowListeners[t] ??= []).push(fn); } };
 globalThis.Event = class { constructor(type) { this.type = type; } };
 
 export const all = nodes => [...walk(nodes)];

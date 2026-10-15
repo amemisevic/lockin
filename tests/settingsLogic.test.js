@@ -139,31 +139,39 @@ test('startEditable: only with a challenge and no closed day', () => {
   assert.equal(L.startEditable(odd), false);
 });
 
-test('setStartDate: moves Day 1 when nothing is orphaned', () => {
+// Day 1 may move back only to a day whose 04:00 grace has not passed at nowMs (core settleMissed would close it as Redo).
+test('setStartDate: moves Day 1 to yesterday before 04:00, nothing is settled', () => {
   const s = live();
-  const r = L.setStartDate(s, WED, TUE);
+  const r = L.setStartDate(s, MON, '2026-10-11', at(0, 2));
   assert.equal(r.ok, true);
-  assert.equal(r.state.challenge.startDate, TUE);
+  assert.equal(r.state.challenge.startDate, '2026-10-11');
   assert.equal(validateState(r.state), null);
-  assert.equal(L.setStartDate(s, WED, MON).state, s);
+  assert.equal(L.setStartDate(s, WED, MON, at(2, 12)).state, s);
+});
+
+test('setStartDate refuses a move back that the core would settle as Redo days (the whole challenge could be lost)', () => {
+  const err = 'Day 1 cannot move back to a day that has already ended.';
+  assert.deepEqual(L.setStartDate(live(), WED, TUE, at(2, 12)), { ok: false, error: err });
+  assert.deepEqual(L.setStartDate(live(), WED, '2026-09-01', at(2, 12)), { ok: false, error: err });
+  assert.deepEqual(L.setStartDate(live(), MON, '2026-10-11', at(0, 5)), { ok: false, error: err });
 });
 
 test('setStartDate refuses: no challenge, closed day, bad date, future date', () => {
-  assert.equal(L.setStartDate(defaultState(), WED, TUE).error, 'The challenge has not started.');
-  assert.equal(L.setStartDate(close(live(), MON, 22), WED, TUE).error, 'Day 1 cannot change once a day is closed.');
-  for (const d of ['', 'x', '2026-13-40', '2026-2-3', null]) assert.equal(L.setStartDate(live(), WED, d).error, 'Choose a valid date.', String(d));
-  assert.equal(L.setStartDate(live(), WED, '2026-10-15').error, 'Day 1 cannot be in the future.');
+  assert.equal(L.setStartDate(defaultState(), WED, TUE, at(2, 12)).error, 'The challenge has not started.');
+  assert.equal(L.setStartDate(close(live(), MON, 22), WED, TUE, at(2, 12)).error, 'Day 1 cannot change once a day is closed.');
+  for (const d of ['', 'x', '2026-13-40', '2026-2-3', null]) assert.equal(L.setStartDate(live(), WED, d, at(2, 12)).error, 'Choose a valid date.', String(d));
+  assert.equal(L.setStartDate(live(), WED, '2026-10-15', at(2, 12)).error, 'Day 1 cannot be in the future.');
 });
 
 test('setStartDate refuses a move that would orphan a filed day or the declared Redo', () => {
   const filed = submitMorning(live(), MON, { target: 't', risk: '', med: [] }, at(0, 8)).state;
   const err = 'Day 1 cannot move there: a day you already filed would fall outside the 30 days.';
-  assert.deepEqual(L.setStartDate(filed, WED, TUE), { ok: false, error: err });
-  assert.equal(L.setStartDate(filed, WED, '2026-10-10').ok, true);
+  assert.deepEqual(L.setStartDate(filed, WED, TUE, at(2, 12)), { ok: false, error: err });
+  assert.equal(L.setStartDate(filed, MON, '2026-10-11', at(0, 2)).ok, true);
   const late = { ...filed, days: { '2026-11-11': { ...filed.days[MON] } } };
-  assert.equal(L.setStartDate(late, '2026-11-11', '2026-10-11').ok, false);
+  assert.equal(L.setStartDate(late, '2026-11-11', '2026-10-11', at(2, 12)).ok, false);
   const redo = { ...live(), challenge: { ...live().challenge, redoUsed: MON } };
-  assert.deepEqual(L.setStartDate(redo, WED, TUE), { ok: false, error: err });
+  assert.deepEqual(L.setStartDate(redo, WED, TUE, at(2, 12)), { ok: false, error: err });
 });
 
 test('packSummary and backupLine', () => {
@@ -205,9 +213,23 @@ test('runExport: share ok marks the backup', async () => {
   assert.deepEqual(i.calls, [['canShare', 'lockin-2026-10-14.json'], ['share', 'lockin-2026-10-14.json']]);
 });
 
-test('runExport: a cancelled or failed share does NOT mark a backup', async () => {
-  const r = await L.runExport(defaultState(), WED, io({ share: async () => { throw new Error('AbortError'); } }));
+const abort = () => Object.assign(new Error('cancelled'), { name: 'AbortError' });
+
+test('runExport: a cancelled share (AbortError) does NOT mark a backup and does not download', async () => {
+  const i = io({ share: async () => { throw abort(); } });
+  const r = await L.runExport(defaultState(), WED, i);
   assert.deepEqual(r, { outcome: 'cancelled' });
+  assert.deepEqual(i.calls.map(c => c[0]), ['canShare']);
+});
+
+test('runExport: a share that fails for another reason falls back to download and then marks', async () => {
+  const i = io({ share: async () => { throw Object.assign(new Error('gesture expired'), { name: 'NotAllowedError' }); } });
+  const r = await L.runExport(defaultState(), WED, i);
+  assert.equal(r.outcome, 'downloaded');
+  assert.equal(r.state.settings.lastBackup, WED);
+  assert.deepEqual(i.calls.map(c => c[0]), ['canShare', 'download']);
+  const bad = io({ share: async () => { throw new Error('x'); }, download: () => { throw new Error('y'); } });
+  assert.deepEqual(await L.runExport(defaultState(), WED, bad), { outcome: 'cancelled' });
 });
 
 test('runExport: no share support falls back to download and then marks', async () => {

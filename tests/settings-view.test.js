@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { all, texts, fire, byText, byLabel, headings, hasClass } from './fakedom.js';
+import { all, texts, fire, byText, byLabel, headings, hasClass, windowListeners } from './fakedom.js';
 import { renderSettings, exportBackup, importBackupFile, importPackFile } from '../src/views/settings.js';
 import { renderDay0 } from '../src/views/day0.js';
 import { defaultState } from '../src/core/model.js';
@@ -29,7 +29,7 @@ test('sections in order, with the setup lists before Day 1', () => {
   const app = mkApp({ ...defaultState(), setup: { protocols: [P], redLines: [R] } });
   const out = renderSettings(app);
   assert.deepEqual(headings(out), ['Protocols', 'Red lines', 'Challenge', 'Reminders', 'Data']);
-  assert.ok(byText(out, 'button', 'Protocol A') || all(out).some(n => n.id === 'set-protocol-p1'));
+  assert.ok(texts(all(out).filter(n => n.id === 'set-protocol-p1')).includes('Protocol A'));
   assert.ok(all(out).some(n => n.id === 'set-redline-r1'));
   assert.ok(texts(out).includes('Add protocol') && texts(out).includes('Add red line'));
   assert.equal(all(out).some(n => n.id === 'set-start'), false);
@@ -193,4 +193,37 @@ test('only the latest refusal is on screen, whichever list it came from', async 
   assert.deepEqual(alerts(renderSettings(app)), ['The file is empty.']);
   await importPackFile(app, file(JSON.stringify({ v: 1, missions: [], tactics: [] })), () => {});
   assert.deepEqual(alerts(renderSettings(app)), []);
+});
+
+test('changing Day 1 back to a day that already ended is refused with the sentence, state untouched', () => {
+  const app = mkApp(live());
+  fire(all(renderSettings(app)).find(n => n.id === 'set-start'), 'change', { target: { value: '2026-09-01' } });
+  assert.equal(app.sets.length, 0);
+  assert.deepEqual(alerts(renderSettings(app)), ['Day 1 cannot move back to a day that has already ended.']);
+});
+
+test('the Day 1 input has a lower bound of yesterday and an upper bound of today', () => {
+  const input = all(renderSettings(mkApp(live()))).find(n => n.id === 'set-start');
+  assert.equal(input.getAttribute('min'), '2026-10-13');
+  assert.equal(input.getAttribute('max'), TODAY);
+});
+
+test('a refusal is announced once: later renders keep the text but not role=alert', async () => {
+  const app = mkApp(live());
+  await importBackupFile(app, file(''), noConfirm);
+  assert.deepEqual(alerts(renderSettings(app)), ['The file is empty.']);
+  const again = renderSettings(app);
+  assert.deepEqual(alerts(again), []);
+  assert.ok(texts(again).includes('The file is empty.'));
+});
+
+test('leaving Settings clears the refusal', async () => {
+  const app = mkApp(live());
+  await importBackupFile(app, file(''), noConfirm);
+  assert.ok(windowListeners.hashchange?.length > 0);
+  globalThis.location.hash = '#today';
+  for (const fn of windowListeners.hashchange) fn({ type: 'hashchange' });
+  globalThis.location.hash = '#settings';
+  assert.deepEqual(alerts(renderSettings(app)), []);
+  assert.equal(texts(renderSettings(app)).includes('The file is empty.'), false);
 });
