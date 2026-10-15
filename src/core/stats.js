@@ -18,13 +18,13 @@ const challengeDates = (state, { endDate, n }) => windowDates(endDate, n, state.
 // Calls 2 and 11: closed days (stored result) in the window, oldest first.
 const closedDays = (state, range) => challengeDates(state, range).map(d => state.days[d]).filter(d => d?.result != null);
 
-// ponytail: Task has no created date, so task functions count only from the first taskLog date (owner call 7).
-// A habit created after that still gets its earlier days counted; add Task.created if rates look wrong (Task 18).
+// Task has no created date, so task functions count only from the first taskLog date (owner call 7); All = that whole history.
+// ponytail: a habit created after that still gets its earlier days counted; add Task.created if rates look wrong.
 const firstLog = state => Object.keys(state.taskLog).sort()[0];
 function taskDates(state, { endDate, n }) {
   const first = firstLog(state);
   if (!first) return [];
-  return windowDates(endDate, n, state.challenge ? state.challenge.startDate : first).filter(d => d >= first);
+  return windowDates(endDate, n, first).filter(d => d >= first);
 }
 
 const habitsDue = (state, date) => state.tasks.filter(t => t.repeat.type !== 'none' && isDue(t, date));

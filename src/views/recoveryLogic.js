@@ -51,7 +51,6 @@ const NUDGE = checkVague('');
 const ERRORS = {
   incomplete: 'Answer all five questions.',
   'vague-change': NUDGE,
-  'vague-decision': NUDGE,
   'no-recovery': 'There is no Recovery for this day.',
   'already-filed': 'This autopsy is already filed.',
 };

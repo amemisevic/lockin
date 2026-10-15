@@ -95,7 +95,7 @@ export function renderRecovery(app, [date] = []) {
     question(2, Q.time, 'rc-time', time),
     question(3, Q.place, null, chips({ options: opts(PLACES), value: d.place, onPick: tap('place') })),
     question(4, Q.decision, 'rc-decision', h('p', { class: 'rc-hint' }, 'Not "I was weak." The exact sequence.'),
-      vagueField('rc-decision', 'decision', d, refreshGate)),
+      h('textarea', { id: 'rc-decision', class: 'ta', onInput: e => { d.decision = e.target.value; refreshGate(); } }, d.decision)),
     question(5, Q.change, 'rc-change', vagueField('rc-change', 'change', d, refreshGate)),
     h('div', { class: 'ci-go' }, btn, d.error && h('p', { class: 'form-error', role: 'alert' }, errorText(d.error))),
     h('p', { class: 'rc-foot' }, `Your autopsy and fix go into the War Log under Day ${dayNo(state, date)}.`),

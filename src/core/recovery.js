@@ -20,7 +20,7 @@ export function pendingRecovery(state, nowMs) {
   return { date, dueAt, msLeft: Math.max(0, dueAt - nowMs), overdue: nowMs > dueAt };
 }
 
-// Error order (owner call 1): no-recovery, already-filed, incomplete, vague-change, vague-decision.
+// Error order (owner call 1): no-recovery, already-filed, incomplete, vague-change. The decision is not vague-checked (owner 2026-10-15).
 // Answers are stored as given; the War Log copy goes through setWarEntry.
 export function fileAutopsy(state, date, form, nowMs) {
   const r = Object.hasOwn(state.recovery, date) ? state.recovery[date] : undefined; // not 'toString' etc.
@@ -28,7 +28,6 @@ export function fileAutopsy(state, date, form, nowMs) {
   if (r.filedAt != null) return fail('already-filed');
   if (FIELDS.some(([k]) => typeof form?.[k] !== 'string' || form[k].trim() === '')) return fail('incomplete');
   if (checkVague(form.change)) return fail('vague-change');
-  if (checkVague(form.decision)) return fail('vague-decision');
   const answers = Object.fromEntries(FIELDS.map(([k]) => [k, form[k]]));
   const next = { ...state, recovery: { ...state.recovery, [date]: { ...r, ...answers, filedAt: nowMs } } };
   const text = FIELDS.map(([k, label]) => `${label}: ${form[k]}`).join('\n');

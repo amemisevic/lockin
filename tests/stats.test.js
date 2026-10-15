@@ -163,7 +163,7 @@ test('n:3 covers 10-05..10-07 only', () => {
 });
 
 test('n:null starts at challenge.startDate (same as n:7 here)', () => {
-  // Call 1: n null -> from challenge.startDate (10-01) to endDate; R3: task functions start there too.
+  // Call 1: n null -> from challenge.startDate (10-01) to endDate; the first taskLog date is also 10-01 here.
   assert.equal(all(S, { endDate: END, n: null }), all(S, R7));
 });
 
