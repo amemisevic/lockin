@@ -1,6 +1,6 @@
 // Settings tab (plan Task 19). Layout = static/Settings.html; state changes = settingsLogic.js; sheets = settingsSheets.js.
 // The board's per-protocol pause switch is not built: the data model has no paused flag (owner ruling pending).
-// Refusals (date, pack, backup) are module memory shown in an alert plate while the state is the one they were made on
+// The latest refusal (date, pack or backup) is module memory shown in an alert plate while the state is the one it was made on
 // (any change to it, or the next attempt, removes the plate); never saved.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
@@ -12,9 +12,9 @@ import { dayLabel } from './tasksLogic.js';
 import * as L from './settingsLogic.js';
 import { openProtocolSheet, openRedLineSheet, openRemindersSheet, confirmSheet } from './settingsSheets.js';
 
-const errors = { start: null, pack: null, backup: null }; // key -> { text, state }
-const fail = (app, key, text) => { errors[key] = { text, state: app.state }; rerender(); };
-const clear = key => { if (errors[key]) { errors[key] = null; rerender(); } };
+let refusal = null; // { key: 'start' | 'pack' | 'backup', text, state }
+const fail = (app, key, text) => { refusal = { key, text, state: app.state }; rerender(); };
+const clear = () => { if (refusal) { refusal = null; rerender(); } };
 const readText = async file => { try { return await file.text(); } catch { return null; } };
 
 const browserIo = {
@@ -42,7 +42,7 @@ export async function importBackupFile(app, file, ask = confirmSheet) {
   const text = await readText(file);
   const r = text === null ? { ok: false, error: 'The file could not be read.' } : validateImport(text);
   if (!r.ok) return fail(app, 'backup', r.error);
-  clear('backup');
+  clear();
   ask('Replace everything?', () => app.set(() => r.state), 'Replace everything');
 }
 
@@ -50,11 +50,11 @@ export async function importPackFile(app, file, ask = confirmSheet) {
   const text = await readText(file);
   const r = text === null ? { ok: false, error: 'The file could not be read.' } : validatePack(text);
   if (!r.ok) return fail(app, 'pack', r.error);
-  clear('pack');
+  clear();
   ask('Replace the current pack?', () => app.set(s => importPack(s, r.pack)), 'Replace pack');
 }
 
-const alertPlate = (app, key) => errors[key]?.state === app.state && plate.warn(h('p', { class: 'set-err', role: 'alert' }, errors[key].text));
+const alertPlate = (app, key) => refusal?.key === key && refusal.state === app.state && plate.warn(h('p', { class: 'set-err', role: 'alert' }, refusal.text));
 const row = (...children) => h('div', { class: 'sr' }, children);
 const label = (title, sub) => h('div', { class: 'a' }, h('b', null, title), sub != null && h('span', null, sub));
 const chevron = () => { const c = icon('chevronRight'); c.setAttribute('class', 'set-chev'); return c; };
@@ -74,7 +74,7 @@ function startRow(app) {
     onChange: e => {
       const r = L.setStartDate(app.state, app.today(), e.target.value);
       if (!r.ok) return fail(app, 'start', r.error);
-      errors.start = null;
+      refusal = null;
       app.set(() => r.state);
       rerender(); // the same state does not re-render by itself; this also clears a shown refusal
     } });

@@ -185,3 +185,12 @@ test('Day 0: Begin Day 1 is enabled once the oath and both setup lists exist', (
   assert.equal(app.state.challenge.startDate, TODAY);
   assert.equal('setup' in app.state, false);
 });
+
+test('only the latest refusal is on screen, whichever list it came from', async () => {
+  const app = mkApp(live());
+  await importBackupFile(app, file('nope'), noConfirm);
+  await importPackFile(app, file(''), noConfirm);
+  assert.deepEqual(alerts(renderSettings(app)), ['The file is empty.']);
+  await importPackFile(app, file(JSON.stringify({ v: 1, missions: [], tactics: [] })), () => {});
+  assert.deepEqual(alerts(renderSettings(app)), []);
+});
