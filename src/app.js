@@ -84,7 +84,7 @@ function render() {
   const key = [r.name, ...r.params].join('/');
   // R8: a tick re-render would rebuild the editor from stored state, wiping unsaved typing and dropping the iOS keyboard.
   const a = document.activeElement;
-  if (key === shown && a?.tagName === 'TEXTAREA' && view.contains(a)) return;
+  if (key === shown && (a?.tagName === 'TEXTAREA' || a?.type === 'date') && view.contains(a)) return; // iOS date picker too
   const y = key === shown ? window.scrollY : 0; // keep position on re-render, top on route change
   const focusId = view.contains(document.activeElement) && document.activeElement.id;
   view.replaceChildren(...screen(r));

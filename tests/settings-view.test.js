@@ -146,7 +146,7 @@ const io = over => ({ makeFile: (name, text) => ({ name, text }), canShare: () =
 
 test('exportBackup: a cancelled share does not mark; a completed one marks through app.set', async () => {
   const a = mkApp(defaultState());
-  await exportBackup(a, io({ share: async () => { throw new Error('AbortError'); } }));
+  await exportBackup(a, io({ share: async () => { throw Object.assign(new Error('cancelled'), { name: 'AbortError' }); } }));
   assert.equal(a.sets.length, 0);
   const b = mkApp(defaultState());
   await exportBackup(b, io());

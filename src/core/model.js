@@ -52,7 +52,7 @@ const dayOk = d => isObj(d) && morningOk(d.morning) && afternoonOk(d.afternoon) 
 
 const recoveryOk = byDate(r => isObj(r) && isNum(r.dueAt) && orNull(isNum)(r.filedAt)
   && strs(r, 'state', 'time', 'place', 'decision', 'change'));
-const WAR_KEY = /^(contract|funeral|code|redlines-w1|autopsy-\d{4}-\d{2}-\d{2}|day-\d+)$/;
+const WAR_KEY = /^(contract|funeral|code|redlines-w1|autopsy-\d{4}-\d{2}-\d{2}|day-([1-9]|[12]\d|30))$/;
 const warLogOk = w => isObj(w) && Object.entries(w).every(([k, e]) => WAR_KEY.test(k) && isObj(e) && isStr(e.text) && isNum(e.updatedAt));
 // Pre-Day-1 protocols and red lines (the only place they live before startChallenge copies them); absent is valid.
 const setupOk = x => x === undefined || (isObj(x) && listOf(protocolOk)(x.protocols) && listOf(redLineOk)(x.redLines));

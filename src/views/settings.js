@@ -8,12 +8,15 @@ import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chr
 import { stepper } from '../ui/controls.js';
 import { validateImport, markBackup } from '../core/store.js';
 import { validatePack, importPack } from '../core/pack.js';
+import { addDays } from '../logic.js';
 import { dayLabel } from './tasksLogic.js';
 import * as L from './settingsLogic.js';
 import { openProtocolSheet, openRedLineSheet, openRemindersSheet, confirmSheet } from './settingsSheets.js';
 
-let refusal = null; // { key: 'start' | 'pack' | 'backup', text, state }
-const fail = (app, key, text) => { refusal = { key, text, state: app.state }; rerender(); };
+let refusal = null; // { key: 'start' | 'pack' | 'backup', text, state, announced }
+// Leaving Settings drops the refusal (registered before app.js's own listener, so it runs before the re-render).
+window.addEventListener('hashchange', () => { if (location.hash !== '#settings') refusal = null; });
+const fail = (app, key, text) => { refusal = { key, text, state: app.state, announced: false }; rerender(); };
 const clear = () => { if (refusal) { refusal = null; rerender(); } };
 const readText = async file => { try { return await file.text(); } catch { return null; } };
 
@@ -54,15 +57,27 @@ export async function importPackFile(app, file, ask = confirmSheet) {
   ask('Replace the current pack?', () => app.set(s => importPack(s, r.pack)), 'Replace pack');
 }
 
-const alertPlate = (app, key) => refusal?.key === key && refusal.state === app.state && plate.warn(h('p', { class: 'set-err', role: 'alert' }, refusal.text));
+// role=alert only on the first display: the 30 s tick rebuilds the screen and must not make VoiceOver repeat it.
+function alertPlate(app, key) {
+  if (refusal?.key !== key || refusal.state !== app.state) return null;
+  const role = refusal.announced ? null : 'alert';
+  refusal.announced = true;
+  return plate.warn(h('p', { class: 'set-err', role }, refusal.text));
+}
 const row = (...children) => h('div', { class: 'sr' }, children);
 const label = (title, sub) => h('div', { class: 'a' }, h('b', null, title), sub != null && h('span', null, sub));
 const chevron = () => { const c = icon('chevronRight'); c.setAttribute('class', 'set-chev'); return c; };
 const navRow = (id, title, sub, onClick) => h('button', { type: 'button', id, class: 'sr set-btn', onClick }, label(title, sub), chevron());
 const addRow = (id, text, onClick) => h('button', { type: 'button', id, class: 'sr set-btn gt', onClick }, icon('plus'), text);
 const actionRow = (id, text, onClick) => h('button', { type: 'button', id, class: 'sr set-btn gt', onClick }, text);
-const picker = (id, onFile) => h('input', { type: 'file', id, accept: 'application/json,.json', hidden: true,
-  onChange: e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) onFile(f); } });
+// Built on tap and kept in <body> until it answers, so a screen rebuild while the Files sheet is open cannot detach it.
+function pickFile(id, onFile) {
+  const input = h('input', { type: 'file', id, accept: 'application/json,.json', hidden: true,
+    onChange: e => { const f = e.target.files?.[0]; input.remove(); if (f) onFile(f); },
+    onCancel: () => input.remove() });
+  document.body.append(input);
+  input.click();
+}
 
 function startRow(app) {
   const { state } = app;
@@ -70,9 +85,9 @@ function startRow(app) {
   if (!state.challenge) return row(label('Day 1', sub), h('span', { class: 't2' }, 'Starts when you begin'));
   const date = state.challenge.startDate;
   if (!L.startEditable(state)) return row(label('Day 1', sub), h('span', { class: 't2' }, dayLabel(date)));
-  const input = h('input', { type: 'date', id: 'set-start', class: 'in set-date', value: date, max: app.today(), 'aria-label': 'Day 1 date',
+  const input = h('input', { type: 'date', id: 'set-start', class: 'in set-date', value: date, min: addDays(app.today(), -1), max: app.today(), 'aria-label': 'Day 1 date',
     onChange: e => {
-      const r = L.setStartDate(app.state, app.today(), e.target.value);
+      const r = L.setStartDate(app.state, app.today(), e.target.value, Date.now());
       if (!r.ok) return fail(app, 'start', r.error);
       refusal = null;
       app.set(() => r.state);
@@ -90,14 +105,12 @@ const stepRow = (app, key, title, sub) => {
 // Returns a list of nodes (section, two footnotes).
 function dataSection(app) {
   const line = L.backupLine(app.state, app.today());
-  const backupPicker = picker('set-backup-file', f => importBackupFile(app, f));
   return [
     h('section', { class: 'set-sec' }, sectionHeading('Data'), h('div', { class: 'plate list' },
       row(h('div', { class: 'a' }, h('b', null, 'Last backup'), h('span', null, line.text),
         line.overdue && h('span', { class: 'set-overdue' }, 'Overdue. Export a backup now.'))),
       actionRow('set-export', 'Export backup', () => exportBackup(app)),
-      actionRow('set-import', 'Import backup', () => backupPicker.click()),
-      backupPicker), alertPlate(app, 'backup')),
+      actionRow('set-import', 'Import backup', () => pickFile('set-backup-file', f => importBackupFile(app, f)))), alertPlate(app, 'backup')),
     h('p', { class: 't3 set-foot' }, 'Deleting the Home Screen icon deletes all data. Export is the only backup.'),
     h('p', { class: 't3 set-foot' }, `Version ${app.version}`),
   ];
@@ -106,7 +119,6 @@ function dataSection(app) {
 export function renderSettings(app) {
   const { state } = app;
   const { protocols, redLines } = L.lists(state);
-  const packPicker = picker('set-pack-file', f => importPackFile(app, f));
   return [
     eyebrow('Lock In'),
     screenTitle('Settings'),
@@ -121,8 +133,8 @@ export function renderSettings(app) {
       stepRow(app, 'zeroDay', 'Zero Day threshold', 'Missed protocols in one day that make it a Reset'),
       stepRow(app, 'medPerWeek', 'MED per week', 'Declared in the morning only'),
       row(label('Challenge pack', L.packSummary(state)),
-        h('button', { type: 'button', id: 'set-pack', class: 'set-link gt', onClick: () => packPicker.click() }, state.pack ? 'Re-import' : 'Import pack'),
-        packPicker)), alertPlate(app, 'start'), alertPlate(app, 'pack')),
+        h('button', { type: 'button', id: 'set-pack', class: 'set-link gt', 'aria-label': state.pack ? 'Re-import pack' : 'Import pack',
+          onClick: () => pickFile('set-pack-file', f => importPackFile(app, f)) }, state.pack ? 'Re-import' : 'Import pack'))), alertPlate(app, 'start'), alertPlate(app, 'pack')),
     h('section', { class: 'set-sec' }, sectionHeading('Reminders'), h('div', { class: 'plate list' },
       navRow('set-reminders', 'Set up reminders', 'Morning, afternoon and night, through Shortcuts', openRemindersSheet))),
     ...dataSection(app),

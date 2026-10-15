@@ -3,6 +3,7 @@
 import { uid, addDays, dateKey, keyToDate } from '../logic.js';
 import { defaultState, validateState } from '../core/model.js';
 import { exportJson, markBackup, backupStatus } from '../core/store.js';
+import { settleMissed } from '../core/scoring.js';
 import { setupLists } from './challengeLogic.js';
 
 const no = error => ({ ok: false, error });
@@ -63,9 +64,11 @@ const isClosed = d => d?.closedAt != null || d?.result != null;
 export const startEditable = state => !!state.challenge && !Object.values(state.days).some(isClosed);
 
 const ORPHAN = 'Day 1 cannot move there: a day you already filed would fall outside the 30 days.';
+const ENDED = 'Day 1 cannot move back to a day that has already ended.';
 const realDate = d => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && dateKey(keyToDate(d)) === d;
 
-export function setStartDate(state, today, date) {
+// nowMs: a start the core would settle (days already past their 04:00 grace become Redo, then Day 1 locks) is refused.
+export function setStartDate(state, today, date, nowMs) {
   if (!state.challenge) return no('The challenge has not started.');
   if (!startEditable(state)) return no('Day 1 cannot change once a day is closed.');
   if (!realDate(date)) return no('Choose a valid date.');
@@ -74,7 +77,8 @@ export function setStartDate(state, today, date) {
   const last = addDays(date, state.challenge.length - 1);
   const inside = d => d >= date && d <= last;
   if (Object.keys(state.days).some(d => !inside(d)) || (state.challenge.redoUsed && !inside(state.challenge.redoUsed))) return no(ORPHAN);
-  return yes({ ...state, challenge: { ...state.challenge, startDate: date } });
+  const next = { ...state, challenge: { ...state.challenge, startDate: date } };
+  return settleMissed(next, nowMs) === next ? yes(next) : no(ENDED);
 }
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
@@ -98,13 +102,21 @@ export const REMINDERS = [
 export const backupName = today => `lockin-${today}.json`;
 
 // io: { makeFile(name, text), canShare(file), share(file), download(file) }. Marked only after share or download ran;
-// a cancelled or failed share (or a download that throws) is { outcome: 'cancelled' } with no state.
+// a cancelled share (AbortError), or a download that throws, is { outcome: 'cancelled' } with no state; any other share
+// failure (e.g. an expired tap) falls back to download.
 export async function runExport(state, today, io) {
   const marked = markBackup(state, today);
   const file = io.makeFile(backupName(today), exportJson(marked));
-  let outcome;
+  let outcome = 'shared';
   try {
-    if (io.canShare(file)) { await io.share(file); outcome = 'shared'; } else { io.download(file); outcome = 'downloaded'; }
-  } catch { return { outcome: 'cancelled' }; }
+    if (!io.canShare(file)) outcome = 'downloaded';
+    else await io.share(file);
+  } catch (e) {
+    if (e?.name === 'AbortError') return { outcome: 'cancelled' };
+    outcome = 'downloaded';
+  }
+  if (outcome === 'downloaded') {
+    try { io.download(file); } catch { return { outcome: 'cancelled' }; }
+  }
   return { outcome, state: marked };
 }
