@@ -10,11 +10,16 @@ import { addDays } from '../logic.js';
 export const CHALLENGE_LENGTH = startChallenge({ challenge: null }, '',
   { protocols: [0], redLines: [0], oathComplete: true }).state.challenge.length;
 
-// Owner ruling 2026-10-13: pre-Day-1 protocols / red lines are deferred; Task 19 replaces this with the real lists.
-export const setupLists = () => ({ protocols: [], redLines: [] });
+// Pre-Day-1 protocols and red lines live in state.setup (Task 19); this is the single seam Day 0 and Settings read.
+export const setupLists = state => ({ protocols: state?.setup?.protocols ?? [], redLines: state?.setup?.redLines ?? [] });
 
-export const begin = (state, today, lists = setupLists(state)) =>
-  startChallenge(state, today, { ...lists, oathComplete: oathComplete(state) });
+// On success the challenge owns the lists, so the pre-Day-1 copy is dropped.
+export function begin(state, today, lists = setupLists(state)) {
+  const r = startChallenge(state, today, { ...lists, oathComplete: oathComplete(state) });
+  if (!r.ok) return r;
+  const { setup, ...rest } = r.state;
+  return { ok: true, state: rest };
+}
 
 // The core decides; the first missing reason is its error (oath, protocols, red lines).
 export function beginStatus(state, today, lists = setupLists(state)) {

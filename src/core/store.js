@@ -25,7 +25,7 @@ export function save(storage, state) {
 export const exportJson = state => JSON.stringify(state, null, 2);
 
 export function validateImport(text) {
-  if (!text?.trim()) return { ok: false, error: 'The file is empty.' };
+  if (typeof text !== 'string' || !text.trim()) return { ok: false, error: 'The file is empty.' };
   let obj;
   try { obj = JSON.parse(text); } catch { return { ok: false, error: 'The file is not valid JSON. Choose a Lock In backup file.' }; }
   if (obj?.v === 1) return { ok: false, error: 'This is a Lock In v1 backup. v2 cannot import it.' };
@@ -39,5 +39,6 @@ export function backupStatus(state, today) {
   const last = state.settings.lastBackup;
   if (!last) return { days: null, overdue: true };
   const days = daysBetween(last, today);
+  if (days < 0) return { days: null, overdue: true }; // a future date is never shown as a negative count
   return { days, overdue: days > 7 };
 }

@@ -14,6 +14,7 @@ export class El {
   append(...cs) { for (const c of cs) { const n = typeof c === 'string' ? new Text(c) : c; n.parent = this; this.children.push(n); } }
   remove() { if (this.parent) this.parent.children = this.parent.children.filter(c => c !== this); this.parent = null; }
   cloneNode() { const c = new El(this.tagName); c.attrs = { ...this.attrs }; return c; }
+  get classList() { return { add: c => { this.className = `${this.className} ${c}`.trim(); } }; }
   click() {}
   focus() {}
   blur() {}

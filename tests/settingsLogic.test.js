@@ -161,7 +161,7 @@ test('setStartDate refuses a move that would orphan a filed day or the declared 
   assert.deepEqual(L.setStartDate(filed, WED, TUE), { ok: false, error: err });
   assert.equal(L.setStartDate(filed, WED, '2026-10-10').ok, true);
   const late = { ...filed, days: { '2026-11-11': { ...filed.days[MON] } } };
-  assert.equal(L.setStartDate(late, '2026-11-11', '2026-10-12').ok, false);
+  assert.equal(L.setStartDate(late, '2026-11-11', '2026-10-11').ok, false);
   const redo = { ...live(), challenge: { ...live().challenge, redoUsed: MON } };
   assert.deepEqual(L.setStartDate(redo, WED, TUE), { ok: false, error: err });
 });

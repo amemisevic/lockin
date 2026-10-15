@@ -1,14 +1,10 @@
 // Day 0 (plan Task 13 step 1, rulings R2-R5): shown while there is no challenge. Layout = static/Onboarding.html.
-// Lists come only from setupLists (owner ruling 2026-10-13), so Begin Day 1 stays disabled until Task 19.
+// Lists come only from setupLists (state.setup, edited in Settings); the rows go to Settings.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
-import { openActionSheet } from '../sheet.js';
 import { screenTitle, eyebrow, sectionHeading } from '../ui/chrome.js';
 import { goldButton, shieldSvg } from '../ui/controls.js';
 import { CHALLENGE_LENGTH, setupLists, beginStatus, begin, oathRows } from './challengeLogic.js';
-
-// Stub until Task 19 (openProtocolSheet / openRedLineSheet replace it).
-const settingsStub = () => openActionSheet([], { message: 'Available in Settings', cancel: 'OK' });
 
 // R2: the board's outline laurel = the gold laurel without gradients and veins; screens.css strokes every part.
 function outlineLaurel() {
@@ -26,7 +22,7 @@ const oathGlyph = done => h('div', { class: done ? 'ch-sh on' : 'ch-sh', 'aria-h
 const oathRow = r => h('a', { href: r.href, id: `ch-oath-${r.key}`, class: 'st ch-row' }, oathGlyph(r.done),
   h('div', null, h('b', null, r.title), h('span', null, r.done ? 'Written' : 'Not written yet')));
 
-const listRow = (id, title, items) => h('button', { type: 'button', id, class: 'st ch-row', onClick: settingsStub },
+const listRow = (id, title, items) => h('a', { href: '#settings', id, class: 'st ch-row' },
   h('div', null, h('b', null, title), h('span', null, items.length ? `${items.length} added` : 'None yet')));
 
 export function renderDay0(app) {

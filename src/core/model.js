@@ -47,11 +47,15 @@ const nightOk = orNull(n => isObj(n) && isNum(n.at)
   && isResult(n.suggested) && orNull(o => isObj(o) && isResult(o.result) && isStr(o.reason))(n.override));
 const dayOk = d => isObj(d) && morningOk(d.morning) && afternoonOk(d.afternoon) && nightOk(d.night)
   && isBool(d.declaredRedo) && isStr(d.slipNote) && isBool(d.incompleteMorning)
-  && oneOf(null, 'no-night')(d.auto) && orNull(isResult)(d.result) && orNull(isNum)(d.closedAt);
+  && oneOf(null, 'no-night')(d.auto) && orNull(isResult)(d.result) && orNull(isNum)(d.closedAt)
+  && !(d.closedAt !== null && d.result === null); // closed without a result cannot be scored
 
 const recoveryOk = byDate(r => isObj(r) && isNum(r.dueAt) && orNull(isNum)(r.filedAt)
   && strs(r, 'state', 'time', 'place', 'decision', 'change'));
-const warLogOk = w => isObj(w) && Object.values(w).every(e => isObj(e) && isStr(e.text) && isNum(e.updatedAt));
+const WAR_KEY = /^(contract|funeral|code|redlines-w1|autopsy-\d{4}-\d{2}-\d{2}|day-\d+)$/;
+const warLogOk = w => isObj(w) && Object.entries(w).every(([k, e]) => WAR_KEY.test(k) && isObj(e) && isStr(e.text) && isNum(e.updatedAt));
+// Pre-Day-1 protocols and red lines (the only place they live before startChallenge copies them); absent is valid.
+const setupOk = x => x === undefined || (isObj(x) && listOf(protocolOk)(x.protocols) && listOf(redLineOk)(x.redLines));
 const packOk = orNull(p => isObj(p)
   && listOf(m => isObj(m) && isNum(m.day) && strs(m, 'title', 'body'))(p.missions)
   && listOf(t => isObj(t) && strs(t, 'archetype', 'name'))(p.tactics));
@@ -65,6 +69,7 @@ const CHECKS = [
   ['recovery', recoveryOk, "The backup's recovery entries are damaged."],
   ['warLog', warLogOk, "The backup's war log is damaged."],
   ['pack', packOk, "The backup's pack is damaged."],
+  ['setup', setupOk, "The backup's setup is damaged."],
 ];
 
 // null = valid, else a plain sentence.

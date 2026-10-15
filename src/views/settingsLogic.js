@@ -1,0 +1,110 @@
+// Settings logic (plan Task 19). Pure and DOM-free: state transforms, validation, backup filename and export flow.
+// Before Day 1 the lists live in state.setup (via setupLists); once the challenge runs they live in state.challenge.
+import { uid, addDays, dateKey, keyToDate } from '../logic.js';
+import { defaultState, validateState } from '../core/model.js';
+import { exportJson, markBackup, backupStatus } from '../core/store.js';
+import { setupLists } from './challengeLogic.js';
+
+const no = error => ({ ok: false, error });
+const yes = state => ({ ok: true, state });
+
+// The core validator is the one place the bounds live: probe it instead of repeating the numbers.
+function bounds(key) {
+  const fits = n => validateState({ ...defaultState(), settings: { ...defaultState().settings, [key]: n } }) === null;
+  const ok = Array.from({ length: 31 }, (_, i) => i - 5).filter(fits);
+  return { min: ok[0], max: ok.at(-1) };
+}
+export const SETTING_BOUNDS = { zeroDay: bounds('zeroDay'), medPerWeek: bounds('medPerWeek') };
+
+export const lists = state => (state.challenge
+  ? { protocols: state.challenge.protocols, redLines: state.challenge.redLines } : setupLists(state));
+
+const write = (state, patch) => (state.challenge
+  ? { ...state, challenge: { ...state.challenge, ...patch } }
+  : { ...state, setup: { ...setupLists(state), ...patch } });
+
+// Add (id null) or rename one list entry. item: the stored shape; label names it in the error.
+function put(state, key, item, id, label) {
+  const list = lists(state)[key];
+  if (id === null) return yes(write(state, { [key]: [...list, item] }));
+  if (!list.some(x => x.id === id)) return no(`That ${label} no longer exists.`);
+  return yes(write(state, { [key]: list.map(x => (x.id === id ? { ...item, id } : x)) }));
+}
+
+// Delete only edits the live list: finished days keep their night.protocols / night.redLines snapshots.
+function drop(state, key, id, label) {
+  const list = lists(state)[key];
+  if (state.challenge && list.length === 1 && list[0].id === id) return no(`A challenge needs at least one ${label}.`);
+  return yes(write(state, { [key]: list.filter(x => x.id !== id) }));
+}
+
+export function saveProtocol(state, { title, med }, id = null, newId = uid) {
+  const t = title?.trim();
+  if (!t) return no('Give the protocol a title.');
+  return put(state, 'protocols', { id: newId(), title: t, med: med?.trim() || null }, id, 'protocol');
+}
+export function saveRedLine(state, { name }, id = null, newId = uid) {
+  const n = name?.trim();
+  if (!n) return no('Give the red line a name.');
+  return put(state, 'redLines', { id: newId(), name: n }, id, 'red line');
+}
+export const deleteProtocol = (state, id) => drop(state, 'protocols', id, 'protocol');
+export const deleteRedLine = (state, id) => drop(state, 'redLines', id, 'red line');
+
+const setting = key => (state, n) => {
+  const { min, max } = SETTING_BOUNDS[key];
+  return !Number.isInteger(n) || n < min || n > max || state.settings[key] === n
+    ? state : { ...state, settings: { ...state.settings, [key]: n } };
+};
+export const setZeroDay = setting('zeroDay');
+export const setMedPerWeek = setting('medPerWeek');
+
+const isClosed = d => d?.closedAt != null || d?.result != null;
+export const startEditable = state => !!state.challenge && !Object.values(state.days).some(isClosed);
+
+const ORPHAN = 'Day 1 cannot move there: a day you already filed would fall outside the 30 days.';
+const realDate = d => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && dateKey(keyToDate(d)) === d;
+
+export function setStartDate(state, today, date) {
+  if (!state.challenge) return no('The challenge has not started.');
+  if (!startEditable(state)) return no('Day 1 cannot change once a day is closed.');
+  if (!realDate(date)) return no('Choose a valid date.');
+  if (date > today) return no('Day 1 cannot be in the future.');
+  if (date === state.challenge.startDate) return yes(state);
+  const last = addDays(date, state.challenge.length - 1);
+  const inside = d => d >= date && d <= last;
+  if (Object.keys(state.days).some(d => !inside(d)) || (state.challenge.redoUsed && !inside(state.challenge.redoUsed))) return no(ORPHAN);
+  return yes({ ...state, challenge: { ...state.challenge, startDate: date } });
+}
+
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+export const packSummary = state => (state.pack
+  ? `${plural(state.pack.missions.length, 'mission')} · ${plural(state.pack.tactics.length, 'tactic')} · imported` : 'No pack imported');
+
+export function backupLine(state, today) {
+  const { days, overdue } = backupStatus(state, today);
+  const head = days === null ? (state.settings.lastBackup ? 'The last backup date is in the future' : 'No backup yet')
+    : days === 0 ? 'Today' : days === 1 ? 'Yesterday' : `${days} days ago`;
+  return { text: `${head} · export one weekly`, overdue };
+}
+
+// [name, time, text]: shown in the Reminders sheet (Shortcuts automations, no in-app notifications).
+export const REMINDERS = [
+  ['Morning', '07:00', 'Morning check-in. Open Lock In and file it.'],
+  ['Afternoon', '13:00', 'Midday. Still on track? Log it.'],
+  ['Night', '21:30', 'Night check-in. Close the day.'],
+];
+
+export const backupName = today => `lockin-${today}.json`;
+
+// io: { makeFile(name, text), canShare(file), share(file), download(file) }. Marked only after share or download ran;
+// a cancelled or failed share (or a download that throws) is { outcome: 'cancelled' } with no state.
+export async function runExport(state, today, io) {
+  const marked = markBackup(state, today);
+  const file = io.makeFile(backupName(today), exportJson(marked));
+  let outcome;
+  try {
+    if (io.canShare(file)) { await io.share(file); outcome = 'shared'; } else { io.download(file); outcome = 'downloaded'; }
+  } catch { return { outcome: 'cancelled' }; }
+  return { outcome, state: marked };
+}
