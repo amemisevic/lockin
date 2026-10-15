@@ -24,6 +24,6 @@ export const question = (n, label, forId, ...body) =>
 // on a button tap, and the R8 guard skips the re-render while one is focused.
 export const rerender = () => {
   const a = document.activeElement;
-  if (a?.tagName === 'TEXTAREA' || a?.type === 'date') a.blur();
+  if (a?.tagName === 'TEXTAREA') a.blur();
   window.dispatchEvent(new Event('hashchange'));
 };
