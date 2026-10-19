@@ -7,6 +7,8 @@ Single-user iPhone web app (PWA): the 5-tab PM Challenge app (Today · Tasks · 
 2. `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`
 3. `docs/design/lockin-v2/DESIGN-SPEC.md`
 
+Gym work (v2.1, branch `gym`): also read `docs/superpowers/plans/v2.1-gym-plan.md` (plan) and `docs/superpowers/plans/gym-plan-draft.md` (task breakdown). Log it in `docs/superpowers/plans/PROGRESS-GYM.md` (not PROGRESS.md); its Decisions section holds the owner rulings.
+
 ## Hard rules
 - Follow the plan task by task. Do not add features, screens, settings, abstractions or libraries that are not in the spec or plan. If something seems missing or ambiguous, ask the user.
 - Vanilla HTML/CSS/JS (ES modules). No frameworks, no bundler, no runtime dependencies, no `npm install` into the project.
