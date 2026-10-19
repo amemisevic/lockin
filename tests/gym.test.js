@@ -136,7 +136,7 @@ test('an exercise id that is not in the bundled list is valid; an empty or non-s
   check(gym({ workouts: [wk({ items: [item([set()], 'no-such-exercise')] })] }), ok);
   check(gym({ routines: [routine({ items: [{ exerciseId: 'no-such-exercise', sets: [] }] })] }), ok);
   for (const exerciseId of ['', 5, null, undefined]) {
-    check(gym({ workouts: [wk({ items: [item([set()], exerciseId)] })] }), no('id'));
+    check(gym({ workouts: [wk({ items: [{ exerciseId, sets: [set()] }] })] }), no('id')); // not item(): its default would swallow undefined
     check(gym({ routines: [routine({ items: [{ exerciseId, sets: [] }] })] }), no('id'));
   }
 });
