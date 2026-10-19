@@ -12,7 +12,7 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 7. Editing a finished workout may change its date. Removing its last working set is refused with `no-sets`.
 8. G1: Code downloads free-exercise-db at a pinned commit and records the hash in `SOURCE.md`. Null/empty muscle or equipment becomes "other". The list loads on first Gym open.
 9. G2: API shapes accepted as in the G2 STATUS (`validateGym`, `loadGym`, `saveGym`). Fixture fix `be748cb` kept.
-10. A new set defaults to reps 1, weight 0 (the 1-999 rule stays). Sets can be removed any time, including the last one. G3 must include `removeSet`; the finished-workout rule stays "at least one done non-warm-up set".
+10. A new set defaults to reps 1, weight 0 (the 1-999 rule stays). In an OPEN workout any set can be removed, even the last one. In a finished workout the last working set cannot be removed (ruling 7, `no-sets`). G3 must include `removeSet`.
 11. `app.gym` / `app.setGym` wiring waits for G7.
 
 ## Entries
