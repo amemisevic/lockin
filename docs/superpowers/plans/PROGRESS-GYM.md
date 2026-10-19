@@ -85,3 +85,9 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 - Choices: only finished workouts count everywhere (volume functions take any workout); a visit is the workout's `date`; PR baseline = the first workout with a qualifying set (none of its sets is marked), later sets are marked per set against the running best, including earlier sets of the same workout.
 - Needs ruling: see docs/STATUS.md.
 - Next: G6.
+
+### G5 addendum — e1rmSeries (ruling 16)
+- Commits: red WIP `tests/gymstats-series.test.js` (8 tests, frozen), then implementation. Frozen G5 tests not edited.
+- Added `e1rmSeries(gym, exerciseId)` to `src/core/gymstats.js` (86 lines): `[{workoutId, date, startedAt, e1rm}]`, one point per finished workout with a qualifying set, `e1rm` = best qualifying set of that workout (unrounded, merged across items), oldest first by `startedAt`.
+- Red: ImportError (no export `e1rmSeries`). Green: 8 pass; `npm test` 804 pass, 0 fail (796 + 8); exit 0. TZ runs Sarajevo, Los Angeles, Auckland: 8 pass each. Forbidden-date-API grep: no hits.
+- Next: G6.
