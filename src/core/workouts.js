@@ -63,6 +63,9 @@ export function prefillSets(gym, exerciseId, template = null, excludeId = null) 
 export const addExercise = (gym, id, exerciseId) =>
   change(gym, id, w => ({ ...w, items: [...w.items, { exerciseId, sets: prefillSets(gym, exerciseId, null, w.id) }] }));
 
+// Open workout: any exercise. Finished workout: validateGym refuses it with no-sets if no done working set is left.
+export const removeExercise = (gym, id, ii) => change(gym, id, w => (inRange(w.items, ii) ? { ...w, items: w.items.filter((_, j) => j !== ii) } : 'bad-index'));
+
 export const addSet = (gym, id, ii) => changeItem(gym, id, ii, it => ({ ...it, sets: [...it.sets, newSet(1, 0)] }));
 
 // Open workout: any set. Finished workout: validateGym refuses the last done working set with no-sets.

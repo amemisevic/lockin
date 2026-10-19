@@ -59,3 +59,9 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 - Not done (not in the G3 scope given): Volume (plan Tasks table puts it in G5; the draft's G3 test line also lists it); Save as routine and Repeat last (G4); `app.gym` / `app.setGym` (G7, ruling 11).
 - Needs ruling: (a) there is no way to remove an exercise from a workout (not in the task list); with `removeSet` an empty card stays. Add `removeExercise`? (b) Volume in G3 or G5? (c) Prefill: should last time's sets count only if `done`?
 - Next: G4.
+
+### G3 addendum — removeExercise (ruling 12)
+- Commits: `465a5c9` docs (rulings 12-14); `b1b9e1d` failing removeExercise tests (7, appended to `tests/workouts.test.js`, frozen); implementation commit follows. Earlier G3 commits unchanged and pushed (`3ff57a8`).
+- Added `removeExercise(gym, id, ii)` to `src/core/workouts.js` (97 lines): drops the item at index `ii`. Open workout: any item. Finished workout: `validateGym` refuses with `no-sets` when no done working set is left. Own refusals: `bad-index`, `unknown-workout`.
+- Red: 7 fail (`removeExercise` not a function), 54 pass. Green: `npm test` 727 pass, 0 fail (720 + 7); exit 0.
+- Rulings 13 (Volume stays in G5) and 14 (Prefill may use last time's undone sets) need no code: the G3 behaviour already matches.
