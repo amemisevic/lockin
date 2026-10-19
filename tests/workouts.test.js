@@ -387,3 +387,47 @@ test('workouts.js is pure: no DOM, no storage global, no forbidden date APIs', (
   assert.ok(!/\b(document|window|localStorage|location|navigator)\b/.test(src));
   assert.ok(!/toISOString|getUTC|Date\.parse|new Date\(\s*['"`]|Date\.now|Math\.random/.test(src));
 });
+
+// ---------- removeExercise (ruling 12) ----------
+test('removeExercise in an OPEN workout: any exercise, even one with done sets or the only one; others keep their order', () => {
+  const g = gym(open({ items: [bench(set()), item([set({ done: false })], 'row'), item([set()], 'squat')] }));
+  const s = good(W.removeExercise(g, 'w9', 1));
+  assert.deepEqual(s.workouts[0].items.map(i => i.exerciseId), ['bench-press', 'squat']);
+  const first = good(W.removeExercise(deepFreeze(s), 'w9', 0));
+  assert.deepEqual(good(W.removeExercise(deepFreeze(first), 'w9', 0)).workouts[0].items, []);
+});
+
+test('removeExercise in an open workout removes an exercise left with no sets', () => {
+  const g = gym(open({ items: [{ exerciseId: 'bench-press', sets: [] }] }));
+  assert.deepEqual(good(W.removeExercise(g, 'w9', 0)).workouts[0].items, []);
+});
+
+test('removeExercise touches only its workout', () => {
+  const g = gym(done(), open({ items: [bench(set({ done: false }))] }));
+  const s = good(W.removeExercise(g, 'w9', 0));
+  assert.deepEqual(s.workouts[0], g.workouts[0]);
+  assert.deepEqual(s.workouts[1].items, []);
+});
+
+test('removeExercise in a FINISHED workout: refused with no-sets if it leaves no done working set, state unchanged', () => {
+  refuse(gym(done()), x => W.removeExercise(x, 'w1', 0), 'no-sets');
+  // Other exercise has only a warm-up and an undone set: still no done working set left.
+  const g = gym(done({ items: [bench(set()), item([set({ warmup: true }), set({ done: false })], 'row')] }));
+  refuse(g, x => W.removeExercise(x, 'w1', 0), 'no-sets');
+});
+
+test('removeExercise in a finished workout is fine when another exercise keeps a done working set', () => {
+  const g = gym(done({ items: [bench(set()), item([set({ reps: 5 })], 'row')] }));
+  assert.deepEqual(good(W.removeExercise(g, 'w1', 0)).workouts[0].items, [item([set({ reps: 5 })], 'row')]);
+});
+
+test('removeExercise in a finished workout: an exercise with no done working set can always go', () => {
+  const g = gym(done({ items: [bench(set()), item([set({ warmup: true }), set({ done: false })], 'row')] }));
+  assert.deepEqual(good(W.removeExercise(g, 'w1', 1)).workouts[0].items, [bench(set())]);
+});
+
+test('removeExercise: item index must be an integer in range (bad-index); workout id must exist (unknown-workout)', () => {
+  const g = gym(open({ items: [bench(set({ done: false }))] }));
+  for (const bad of [1, -1, 0.5, '0', '__proto__', 'length', undefined, null, NaN]) refuse(g, x => W.removeExercise(x, 'w9', bad), 'bad-index');
+  for (const id of ['nope', 'toString', '__proto__', 'constructor']) refuse(g, x => W.removeExercise(x, id, 0), 'unknown-workout');
+});
