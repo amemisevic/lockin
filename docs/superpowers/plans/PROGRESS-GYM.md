@@ -18,6 +18,7 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 13. G3: Volume stays in G5.
 14. G3: Prefill may use last time's undone sets (no `done` requirement).
 15. G4: defaults accepted as in the G4 STATUS "Needs ruling" items 1-7. Routine name 1-60 after trim, duplicates allowed. Ids `r-<nowMs>`. A routine item with no sets is refused (`set-count`). Save-as-routine counts all non-warm-up sets, done or not, and drops warm-up-only exercises. `editRoutine` replaces the whole item list. `startRoutine` names the workout after the routine; `repeatLast` leaves the name empty. Refusal codes: `name-length`, `set-count`, `unknown-routine`, `unknown-workout`, `not-finished`, `no-history`.
+16. G5: accepted as in the G5 STATUS "Needs ruling" items 1-5. (1) PR baseline = the whole first workout with a qualifying set; no markers come from it. (2) PR is per set. (3) Only finished workouts feed PRs and muscle sets. (4) Visits use the workout `date` field. (5) Defaults 12 weeks / 12 months; months with no visit are listed. Output shapes as in the G5 STATUS. Item 6 (1RM time series) answered by `e1rmSeries` in G5.
 
 ## Entries
 
