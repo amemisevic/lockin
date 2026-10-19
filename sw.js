@@ -18,6 +18,7 @@ const ASSETS = [
   'src/core/pack.js',
   'src/core/stats.js',
   'src/core/exercises.js',
+  'src/core/gym.js',
   'src/data/exercises.json',
   'src/data/SOURCE.md',
   'src/bg/frieze@2x.webp',
