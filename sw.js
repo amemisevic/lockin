@@ -21,6 +21,7 @@ const ASSETS = [
   'src/core/gym.js',
   'src/core/workouts.js',
   'src/core/routines.js',
+  'src/core/gymstats.js',
   'src/data/exercises.json',
   'src/data/SOURCE.md',
   'src/bg/frieze@2x.webp',
