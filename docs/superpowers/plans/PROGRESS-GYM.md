@@ -46,3 +46,13 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 
 ### Minor (owner-noted, G2)
 - A second corrupt load overwrites the earlier `GYM_CORRUPT` copy.
+
+### G3 — workouts core
+- Commits: `a641b6d` docs (ruling 10 reworded); `0343efb` failing WIP `tests/workouts.test.js` (frozen, untouched since); G3 implementation commit follows on `gym`. `src/core/gym.js` not edited.
+- Added `src/core/workouts.js` (94 lines) and `tests/workouts.test.js` (54 tests). `sw.js` ASSETS: `src/core/workouts.js`. VERSION untouched.
+- Red: `node --test tests/workouts.test.js` failed with ERR_MODULE_NOT_FOUND (exit 1). Green: 54 pass; `npm test` 720 pass, 0 fail (666 + 54); exit 0. Forbidden-date-API grep on the new file: no hits.
+- API (plan silent, chosen): success `{ok:true, state, id?}`, refusal `{ok:false, reason}`. Workouts by id, items and sets by integer index. Every change is re-checked with `validateGym`, so its codes pass through (`no-sets`, `reps`, `weight`, `date`, `shape`, `id`). Own codes: `workout-open`, `unknown-workout`, `bad-index`, `already-finished`, `not-open`, `not-finished`. Exports: `openWorkout`, `startWorkout(gym, nowMs, name?)`, `prefillSets(gym, exerciseId, templateItem?, excludeId?)`, `addExercise`, `addSet`, `removeSet`, `editSet(patch {reps, weight})`, `toggleDone`, `toggleWarmup`, `finishWorkout`, `discardWorkout` (open only), `deleteWorkout` (finished only), `editWorkout(patch {name, date})`.
+- Choices: id = `w-<nowMs>` (`-2`, `-3` if taken); date = local date of `nowMs`; `finishWorkout` clamps `finishedAt` up to `startedAt`; Prefill counts a workout "containing" the exercise only if it has a working set of it, and does not require `done` on last time's sets; a finished workout's own sets never feed its own Prefill; removing the last set of an exercise in an open workout leaves the exercise with `sets: []` (valid).
+- Not done (not in the G3 scope given): Volume (plan Tasks table puts it in G5; the draft's G3 test line also lists it); Save as routine and Repeat last (G4); `app.gym` / `app.setGym` (G7, ruling 11).
+- Needs ruling: (a) there is no way to remove an exercise from a workout (not in the task list); with `removeSet` an empty card stays. Add `removeExercise`? (b) Volume in G3 or G5? (c) Prefill: should last time's sets count only if `done`?
+- Next: G4.
