@@ -17,6 +17,7 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 12. G3: `removeExercise` is added. In an open workout any exercise can be removed. In a finished workout it is refused with `no-sets` if it would leave no done working set.
 13. G3: Volume stays in G5.
 14. G3: Prefill may use last time's undone sets (no `done` requirement).
+15. G4: defaults accepted as in the G4 STATUS "Needs ruling" items 1-7. Routine name 1-60 after trim, duplicates allowed. Ids `r-<nowMs>`. A routine item with no sets is refused (`set-count`). Save-as-routine counts all non-warm-up sets, done or not, and drops warm-up-only exercises. `editRoutine` replaces the whole item list. `startRoutine` names the workout after the routine; `repeatLast` leaves the name empty. Refusal codes: `name-length`, `set-count`, `unknown-routine`, `unknown-workout`, `not-finished`, `no-history`.
 
 ## Entries
 
