@@ -54,7 +54,6 @@ navigator.storage?.persist?.().catch(() => {});
 // iOS ignores user-scalable=no for pinch; zoom is locked by the owner's choice (spec §2).
 document.addEventListener('gesturestart', e => e.preventDefault());
 
-history.scrollRestoration = 'manual'; // iOS must not restore an old scroll position; render() owns it
 const view = document.getElementById('view');
 const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
@@ -86,7 +85,6 @@ function render() {
   // R8: a tick re-render would rebuild the editor from stored state, wiping unsaved typing and dropping the iOS keyboard.
   const a = document.activeElement;
   if (key === shown && a?.tagName === 'TEXTAREA' && view.contains(a)) return;
-  const shown0 = shown;
   const y = key === shown ? window.scrollY : 0; // keep position on re-render, top on route change
   const focusId = view.contains(document.activeElement) && document.activeElement.id;
   view.replaceChildren(...screen(r));
@@ -97,7 +95,6 @@ function render() {
   tabBar.hidden = r.pushed; // the parent tab stays highlighted underneath
   shown = key;
   window.scrollTo(0, y);
-  if (key !== shown0) requestAnimationFrame(() => window.scrollTo(0, 0)); // again after layout: a route change always opens at the top
 }
 
 // On load, every tick and on return to the app (owner ruling I1): auto-close days whose 04:00 grace
