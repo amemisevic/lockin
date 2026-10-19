@@ -14,6 +14,9 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 9. G2: API shapes accepted as in the G2 STATUS (`validateGym`, `loadGym`, `saveGym`). Fixture fix `be748cb` kept.
 10. A new set defaults to reps 1, weight 0 (the 1-999 rule stays). In an OPEN workout any set can be removed, even the last one. In a finished workout the last working set cannot be removed (ruling 7, `no-sets`). G3 must include `removeSet`.
 11. `app.gym` / `app.setGym` wiring waits for G7.
+12. G3: `removeExercise` is added. In an open workout any exercise can be removed. In a finished workout it is refused with `no-sets` if it would leave no done working set.
+13. G3: Volume stays in G5.
+14. G3: Prefill may use last time's undone sets (no `done` requirement).
 
 ## Entries
 
