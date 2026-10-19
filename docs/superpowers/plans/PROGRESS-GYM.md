@@ -91,3 +91,13 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 - Added `e1rmSeries(gym, exerciseId)` to `src/core/gymstats.js` (86 lines): `[{workoutId, date, startedAt, e1rm}]`, one point per finished workout with a qualifying set, `e1rm` = best qualifying set of that workout (unrounded, merged across items), oldest first by `startedAt`.
 - Red: ImportError (no export `e1rmSeries`). Green: 8 pass; `npm test` 804 pass, 0 fail (796 + 8); exit 0. TZ runs Sarajevo, Los Angeles, Auckland: 8 pass each. Forbidden-date-API grep: no hits.
 - Next: G6.
+
+### G6 — backup export and import with gym data
+- Commits: `a0475b8` failing WIP `tests/gym-backup.test.js` (13 tests, frozen, untouched since); G6 implementation commit follows on `gym`. No existing test edited. `app.js`, views and `sw.js` not touched (no new file under `src/`).
+- Edited `src/core/store.js` only (+9/-2, now 51 lines): `exportJson(state, gym)` (gym optional), `validateImport` returns `{ok, state, gym?}`; imports `validateGym` from `gym.js`.
+- Format (backward compatible): the v2 state object plus one extra top-level key `gym` holding the whole gym state (`lockin.v2.gym` content). A v2.0.0 file has no `gym` and imports as before; v2.0.0 ignores the key if it ever reads a new file.
+- Import rules: `validateState` runs first, then, only if the file has an own `gym` key, `validateGym`. Any failure returns `{ok:false, error}` with no state and no gym. Gym error text: `The backup's gym data is damaged.` On success `state` has `gym` stripped (so `lockin.v2` never gets the key); `gym` is absent from the result when the file has no section (caller leaves existing gym data alone, ruling 3).
+- Backup status: unchanged. `lastBackup` stays in `lockin.v2` settings; one export stamps it and writes both parts into the same file, so a backup made today covers both.
+- Red: 8 fail, 5 pass. Green: 13 pass; `npm test` 817 pass, 0 fail (804 + 13); exit 0. Forbidden-date-API grep on `store.js`: no hits. `origin/gym` is an ancestor of HEAD.
+- Needs ruling: see docs/STATUS.md.
+- Next: G7 (wires `runExport` 4th arg, the import write of both keys, `app.gym` / `app.setGym`).
