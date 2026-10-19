@@ -65,3 +65,12 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 - Added `removeExercise(gym, id, ii)` to `src/core/workouts.js` (97 lines): drops the item at index `ii`. Open workout: any item. Finished workout: `validateGym` refuses with `no-sets` when no done working set is left. Own refusals: `bad-index`, `unknown-workout`.
 - Red: 7 fail (`removeExercise` not a function), 54 pass. Green: `npm test` 727 pass, 0 fail (720 + 7); exit 0.
 - Rulings 13 (Volume stays in G5) and 14 (Prefill may use last time's undone sets) need no code: the G3 behaviour already matches.
+
+### G4 — routines core
+- Commits: `e58789f` failing WIP `tests/routines.test.js` (33 tests, frozen, untouched since); G4 implementation commit follows on `gym`. `gym.js` and `workouts.js` not edited.
+- Added `src/core/routines.js` (101 lines). `sw.js` ASSETS: `src/core/routines.js`. VERSION untouched.
+- Red: `node --test tests/routines.test.js` failed with ERR_MODULE_NOT_FOUND. Green: 33 pass; `npm test` 760 pass, 0 fail (727 + 33); exit 0. `sw.test.js` 4 pass. Forbidden-date-API grep on the new file: no hits. `origin/gym` is an ancestor of HEAD.
+- API (plan silent, chosen): success `{ok:true, state, id?}`, refusal `{ok:false, reason}`; every result re-checked with `validateGym`. Exports: `createRoutine(gym, nowMs, name, items=[])`, `saveRoutineFromWorkout(gym, workoutId, nowMs, name)`, `editRoutine(gym, id, patch {name, items})`, `deleteRoutine(gym, id)`, `startRoutine(gym, id, nowMs)`, `repeatLastWorkout(gym, nowMs)`. Own codes: `name-length`, `set-count`, `unknown-routine`, `unknown-workout`, `not-finished`, `no-history`; `workout-open` comes from `startWorkout`.
+- Choices: name = string, 1-60 UTF-16 units after trim, stored trimmed, duplicates allowed; id `r-<nowMs>` (`-2`, `-3` if taken); routine items keep only `exerciseId` and `{reps, weight}`; an item with no sets is refused (`set-count`); save-as-routine counts all non-warm-up sets (done or not, as ruling 14) and leaves out an exercise that was only warm-ups; `editRoutine` replaces the whole item list (order, counts, add, remove in one patch); `startRoutine` names the workout after the routine, sets `routineId`; `repeatLastWorkout` leaves name empty and `routineId` null, ties on `startedAt` go to the later workout in the list, an exercise that was only warm-ups in the latest workout stays in with older values or one empty set.
+- Needs ruling: see docs/STATUS.md (name rules, ids, set-count, undone sets in save, whole-list edit, workout name).
+- Next: G5.
