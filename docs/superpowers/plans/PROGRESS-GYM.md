@@ -11,6 +11,9 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 6. A 1 s view-local timer is allowed (rest, elapsed). G9 also guards a focused INPUT from the 30 s re-render.
 7. Editing a finished workout may change its date. Removing its last working set is refused with `no-sets`.
 8. G1: Code downloads free-exercise-db at a pinned commit and records the hash in `SOURCE.md`. Null/empty muscle or equipment becomes "other". The list loads on first Gym open.
+9. G2: API shapes accepted as in the G2 STATUS (`validateGym`, `loadGym`, `saveGym`). Fixture fix `be748cb` kept.
+10. A new set defaults to reps 1, weight 0 (the 1-999 rule stays). Sets can be removed any time, including the last one. G3 must include `removeSet`; the finished-workout rule stays "at least one done non-warm-up set".
+11. `app.gym` / `app.setGym` wiring waits for G7.
 
 ## Entries
 
@@ -40,3 +43,6 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 - Needs ruling: (a) can a set row be saved with blank/0 reps? The plan says reps 1 to 999 always, but Prefill says "else one empty set". Proposed: an empty set is reps 1, weight 0. (b) the API shapes above.
 - Deferred minors: a custom exercise with empty name/muscle/equipment passes validate (limits live in `addCustom`); negative `startedAt` accepted; routine items with `sets: []` accepted; custom ids need not look like `custom-N`; `date` is not tied to `startedAt` (ruling 7); years 0000-0099 rejected by the round-trip check; an unserialisable unknown key (BigInt, cycle) reports `storage`; unknown keys holding NaN/undefined are altered on save; a second corrupt load overwrites the first `.corrupt` copy (same as v2 store), and `corrupt: true` repeats every launch until the first successful save, so the UI must cope; test gaps: routine `createdAt` NaN/null/undefined, custom exercise with missing muscle/equipment, second-corrupt overwrite, `getItem` throwing then save, a spy on `removeItem`.
 - Next: G3 (after the rulings above).
+
+### Minor (owner-noted, G2)
+- A second corrupt load overwrites the earlier `GYM_CORRUPT` copy.
