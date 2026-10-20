@@ -18,7 +18,8 @@ import { renderAfternoon } from './views/checkinAfternoon.js';
 import { renderNight } from './views/checkinNight.js';
 import { renderRecovery } from './views/recovery.js';
 import { renderAnalytics } from './views/analytics.js';
-import { renderGym } from './views/gym.js';
+import { renderGymHome } from './views/gymHome.js';
+import { renderPicker } from './views/gymPicker.js';
 import { renderSettings } from './views/settings.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
@@ -77,7 +78,7 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17), Analytics (Task 18), Gym shell (v2.1 G7), Settings (Task 19). Text nodes only.
+// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17), Analytics (Task 18), Gym home and exercise picker (v2.1 G7, G8), Settings (Task 19). Text nodes only.
 function screen(r) {
   if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
@@ -88,7 +89,7 @@ function screen(r) {
   if (r.name === 'checkin' && r.params[0] === 'night') return renderNight(app, r.params.slice(1));
   if (r.name === 'recovery') return renderRecovery(app, r.params);
   if (r.name === 'analytics') return renderAnalytics(app);
-  if (r.name === 'gym') return renderGym(app);
+  if (r.name === 'gym') return r.params[0] === 'exercises' ? renderPicker(app) : renderGymHome(app);
   if (r.name === 'settings') return renderSettings(app);
   if (r.name === 'warlog') return r.params.length ? renderWarEntry(app, r.params) : renderWarLog(app);
   return [
@@ -102,8 +103,9 @@ function render() {
   const r = app.route();
   const key = [r.name, ...r.params].join('/');
   // R8: a tick re-render would rebuild the editor from stored state, wiping unsaved typing and dropping the iOS keyboard.
+  // The Gym picker's search field (type=search) is guarded the same way; it repaints its own list.
   const a = document.activeElement;
-  if (key === shown && a?.tagName === 'TEXTAREA' && view.contains(a)) return;
+  if (key === shown && (a?.tagName === 'TEXTAREA' || a?.type === 'search') && view.contains(a)) return;
   const y = key === shown ? window.scrollY : 0; // keep position on re-render, top on route change
   const focusId = view.contains(document.activeElement) && document.activeElement.id;
   view.replaceChildren(...screen(r));
