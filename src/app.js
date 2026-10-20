@@ -23,6 +23,9 @@ import { renderPicker } from './views/gymPicker.js';
 import { renderWorkout, pickExercise } from './views/gymWorkout.js';
 import { renderRoutine, pickRoutineExercise } from './views/gymRoutine.js';
 import { routineIdFromParam } from './views/gymRoutineLogic.js';
+import { renderHistory } from './views/gymHistory.js';
+import { renderWorkoutDetail } from './views/gymWorkoutDetail.js';
+import { workoutIdFromParam } from './views/gymHistoryLogic.js';
 import { renderSettings } from './views/settings.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
@@ -81,7 +84,7 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17), Analytics (Task 18), Gym home, exercise picker, workout and routine screens (v2.1 G7–G10), Settings (Task 19). Text nodes only.
+// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17), Analytics (Task 18), Gym home, exercise picker, workout, routine, history and workout detail screens (v2.1 G7–G11), Settings (Task 19). Text nodes only.
 function screen(r) {
   if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
@@ -95,6 +98,7 @@ function screen(r) {
   if (r.name === 'gym') {
     const p = r.params[0];
     if (p === 'exercises') return renderPicker(app);
+    if (p === 'history') return r.params[1] ? renderWorkoutDetail(app, workoutIdFromParam(r.params[1])) : renderHistory(app);
     if (p === 'pick') return renderPicker(app, { onPick: id => pickExercise(app, id) });
     if (p === 'routine') {
       const rid = routineIdFromParam(r.params[1]);

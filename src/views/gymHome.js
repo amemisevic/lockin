@@ -1,6 +1,6 @@
 // Gym home (gym plan G8, G9): this week's visits against the target, Start (asks for a name first) / Resume workout and Repeat last workout,
-// the exercise list entry, routines (each row opens the routine, G10; New routine asks for a name) and the last workouts.
-// Logic in gymHomeLogic.js. Workout rows are read-only until G11.
+// the exercise list entry, routines (each row opens the routine, G10; New routine asks for a name), the last workouts
+// (each row opens its detail, G11) and a History row for the full list. Logic in gymHomeLogic.js.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
@@ -14,6 +14,8 @@ import { routineHref } from './gymRoutineLogic.js';
 import { GYM_CORRUPT_NOTICE, weekStrip, visitsText, recentWorkouts, routineRows, isCurrentWeek, shiftWeek, weekHeading } from './gymHomeLogic.js';
 import { ensureExerciseData } from './gymData.js';
 import { resetPicker } from './gymPicker.js';
+import { historyRow } from './gymHistory.js';
+import { historySummary } from './gymHistoryLogic.js';
 
 // The shown week is view state only (null = today's week); it is not saved and the 30 s re-render keeps it.
 let shown = null;
@@ -82,9 +84,10 @@ export function renderGymHome(app, { load = ensureExerciseData, now = Date.now, 
           h('div', null, h('div', { class: 'gm-rwn' }, r.name), h('div', { class: 'rn' }, r.summary)), icon('chevronRight')))))
         : h('p', { class: 'tk-empty' }, 'No routines yet')]),
     section('Recent workouts', null, recent.length
-      ? list(recent.map(w => h('li', { class: 'gm-rw' },
-        h('div', null, h('div', { class: 'gm-rwn' }, w.title), h('div', { class: 'rn' }, w.summary)),
-        h('span', { class: 'gm-rwd' }, w.date))))
+      ? list(recent.map(historyRow))
       : h('p', { class: 'tk-empty' }, 'No workouts yet')),
+    h('a', { href: '#gym/history', id: 'gm-history', class: 'plate list gm-link' },
+      h('div', null, h('div', { class: 'gm-lt' }, 'History'), h('p', { class: 't2 gm-ls' }, historySummary(gym))),
+      icon('chevronRight')),
   ].filter(Boolean);
 }

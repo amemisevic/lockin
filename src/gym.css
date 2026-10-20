@@ -76,3 +76,7 @@
 .gr-mv,.gr-n{display:flex;align-items:center;gap:4px}
 .gr-c{min-width:64px;text-align:center;font-size:16px;font-weight:700}
 .gr-why{margin:0}
+/* Workout detail (G11): reuses the .gw card and set rows; weight and reps are plain inputs here (no steppers), 44 px or more. */
+.gh-in{width:100%;min-height:44px;text-align:center;font-size:18px}
+.gh-date{min-height:44px}
+.gh-len,.gh-saved{margin:0}
