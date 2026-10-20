@@ -37,7 +37,7 @@ const browserIo = {
 // Shared with nothing else yet; the backup is marked only after the share or download ran (a cancelled share is not a backup).
 export async function exportBackup(app, io = browserIo) {
   const today = app.today();
-  const r = await L.runExport(app.state, today, io);
+  const r = await L.runExport(app.state, today, io, app.gym);
   if (r.outcome !== 'cancelled') app.set(s => markBackup(s, today));
 }
 
@@ -46,7 +46,9 @@ export async function importBackupFile(app, file, ask = confirmSheet) {
   const r = text === null ? { ok: false, error: 'The file could not be read.' } : validateImport(text);
   if (!r.ok) return fail(app, 'backup', r.error);
   clear();
-  ask('Replace everything?', () => app.set(() => r.state), 'Replace everything');
+  ask('Replace everything?', () => {
+    if (!L.applyImport(app, r)) fail(app, 'backup', 'The backup could not be saved. Nothing was changed.');
+  }, 'Replace everything');
 }
 
 export async function importPackFile(app, file, ask = confirmSheet) {

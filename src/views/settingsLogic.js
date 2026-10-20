@@ -4,6 +4,7 @@ import { uid, addDays, dateKey, keyToDate } from '../logic.js';
 import { defaultState, validateState } from '../core/model.js';
 import { exportJson, markBackup, backupStatus } from '../core/store.js';
 import { settleMissed } from '../core/scoring.js';
+import { GYM_KEY } from '../core/gym.js';
 import { setupLists } from './challengeLogic.js';
 
 const no = error => ({ ok: false, error });
@@ -104,9 +105,9 @@ export const backupName = today => `lockin-${today}.json`;
 // io: { makeFile(name, text), canShare(file), share(file), download(file) }. Marked only after share or download ran;
 // a cancelled share (AbortError), or a download that throws, is { outcome: 'cancelled' } with no state; any other share
 // failure (e.g. an expired tap) falls back to download.
-export async function runExport(state, today, io) {
+export async function runExport(state, today, io, gym) {
   const marked = markBackup(state, today);
-  const file = io.makeFile(backupName(today), exportJson(marked));
+  const file = io.makeFile(backupName(today), exportJson(marked, gym));
   let outcome = 'shared';
   try {
     if (!io.canShare(file)) outcome = 'downloaded';
@@ -119,4 +120,23 @@ export async function runExport(state, today, io) {
     try { io.download(file); } catch { return { outcome: 'cancelled' }; }
   }
   return { outcome, state: marked };
+}
+
+// Import write (owner ruling 17). Gym first: a failed gym write aborts with nothing changed. If the v2 write then fails, the
+// previous gym TEXT goes back (removed if there was none) and the previous v2 state returns to memory. r = validateImport result.
+// A file without a gym section only replaces v2 (ruling 3). Returns true when everything was written.
+export function applyImport(app, r) {
+  if (r.gym === undefined) { app.set(() => r.state); return true; }
+  const oldState = app.state, oldGym = app.gym;
+  let oldText;
+  try { oldText = app.storage.getItem(GYM_KEY); } catch { return false; }
+  const undo = () => {
+    app.setGym(() => oldGym);
+    try { if (oldText == null) app.storage.removeItem(GYM_KEY); else app.storage.setItem(GYM_KEY, oldText); } catch { /* storage is failing: the old text was never overwritten */ }
+    app.set(() => oldState);
+    return false;
+  };
+  if (!app.setGym(() => r.gym)) return undo();
+  app.set(() => r.state);
+  return app.saveFailed ? undo() : true;
 }

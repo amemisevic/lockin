@@ -2,6 +2,7 @@
 import { dateKey, addDays } from '../logic.js';
 import { NIGHT_FROM, nextAction, yesterdayOpen, forcedFullPass } from '../core/challenge.js';
 import { pendingRecovery } from '../core/recovery.js';
+import { visitsInWeek } from '../core/gymstats.js';
 
 // Ordered card descriptors { kind, href }; recovery also carries { date, msLeft, overdue }.
 export function todayCards(state, nowMs, { afternoonDismissed = false } = {}) {
@@ -25,6 +26,9 @@ export function timeLeft(msLeft) {
   const h = Math.floor(min / 60), m = min % 60;
   return h >= 1 ? `${h}h ${m}m left` : `${m}m left`;
 }
+
+// Gym card line (gym plan): finished-workout visits this Monday-Sunday week against the weekly target.
+export const gymLine = (gym, today) => `Gym ${visitsInWeek(gym, today)}/${gym.settings.weeklyTarget} this week`;
 
 // Owner ruling Q3: "Night opens" shows only before NIGHT_FROM (local time of nowMs).
 export const nightLineVisible = nowMs => new Date(nowMs).getHours() < NIGHT_FROM;

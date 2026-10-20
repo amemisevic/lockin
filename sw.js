@@ -61,6 +61,7 @@ const ASSETS = [
   'src/views/checkinNight.js',
   'src/views/checkinNightLogic.js',
   'src/views/day0.js',
+  'src/views/gym.js',
   'src/views/mission.js',
   'src/views/recovery.js',
   'src/views/recoveryLogic.js',

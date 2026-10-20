@@ -33,12 +33,13 @@
     0 0 0 1px rgba(0,0,0,.55), 0 18px 36px rgba(0,0,0,.65), 0 0 36px rgba(242,190,92,.07);
 }
 .tab {
-  position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  border-radius: 30px; font-size: 11px; line-height: 13px; font-weight: 600; letter-spacing: .02em; color: #BDB6AA;
+  position: relative; flex: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: 30px; color: #BDB6AA;
   border: 1px solid transparent; transition: color .2s;
   -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
-/* Active tab (boards: .tab.on): soft gold glow, 3 px light bar on top, gold icon and label. */
+/* Active tab (boards: .tab.on): soft gold glow, 3 px light bar on top, gold icon. Icon-only bar (v2.1): the icon also fills
+   (fill-opacity) and draws heavier, so the state does not rest on colour alone. */
 .tab[aria-current="page"] {
   color: #FCE29A; border-color: rgba(242,190,92,.20);
   background: radial-gradient(70% 90% at 50% 0%, rgba(242,190,92,.17), rgba(242,190,92,.04) 60%, rgba(242,190,92,0) 100%);
@@ -48,7 +49,7 @@
   background: linear-gradient(90deg, rgba(252,226,154,0), #FCE29A 30%, #FCE29A 70%, rgba(252,226,154,0));
   box-shadow: 0 0 8px 1px rgba(242,190,92,.5);
 }
-.tab[aria-current="page"] svg { filter: drop-shadow(0 0 4px rgba(242,190,92,.5)); }
+.tab[aria-current="page"] svg { filter: drop-shadow(0 0 4px rgba(242,190,92,.5)); fill: currentColor; fill-opacity: .28; stroke-width: 2.2; }
 .tab svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Reduce Transparency / Increase Contrast (spec §6): solid bar. The ~50 % wall fade is deferred to Task 21. */

@@ -1,5 +1,5 @@
 // Hash router: '#name/param…' → {name, params, tab, pushed}. Pure except nav(). Unknown → Today.
-const TABS = ['today', 'tasks', 'challenge', 'analytics', 'settings'];
+const TABS = ['today', 'tasks', 'challenge', 'analytics', 'gym', 'settings'];
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function parseRoute(hash) {

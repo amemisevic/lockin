@@ -1,6 +1,7 @@
 // App container (state, set, subscribe, viewDate), hash router, clock tick, mount.
 import { dateKey } from './logic.js';
 import { load, save } from './core/store.js';
+import { loadGym, saveGym } from './core/gym.js';
 import { settleMissed } from './core/scoring.js';
 import { parseRoute, nav } from './router.js';
 import { VERSION } from './version.js';
@@ -17,6 +18,7 @@ import { renderAfternoon } from './views/checkinAfternoon.js';
 import { renderNight } from './views/checkinNight.js';
 import { renderRecovery } from './views/recovery.js';
 import { renderAnalytics } from './views/analytics.js';
+import { renderGym } from './views/gym.js';
 import { renderSettings } from './views/settings.js';
 
 // Some browsers throw on the localStorage getter itself when storage is blocked.
@@ -28,9 +30,14 @@ const notify = () => subscribers.forEach(fn => fn());
 let requestedDate = null; // ephemeral, never saved
 
 const today = () => dateKey(new Date());
+const gymLoaded = loadGym(storage);
+const showBanner = failed => { document.getElementById('save-banner').hidden = !failed; };
 
 export const app = {
+  storage,
   state: load(storage, today()),
+  gym: gymLoaded.state, // own key (lockin.v2.gym): a gym fault never touches the challenge data
+  gymCorrupt: gymLoaded.corrupt,
   saveFailed: false,
   version: VERSION,
   today,
@@ -41,8 +48,19 @@ export const app = {
     if (next === this.state) return; // nothing changed: no save, no re-render
     this.state = next;
     this.saveFailed = !save(storage, this.state);
-    document.getElementById('save-banner').hidden = !this.saveFailed;
+    showBanner(this.saveFailed);
     notify();
+  },
+  // Same contract as set (the new value stays in memory, the banner shows if the write failed); returns whether it was saved.
+  setGym(updater) {
+    const next = updater(this.gym);
+    if (next === this.gym) return true;
+    this.gym = next;
+    const ok = saveGym(storage, next).ok;
+    this.saveFailed = !ok;
+    showBanner(!ok);
+    notify();
+    return ok;
   },
   subscribe(fn) { subscribers.add(fn); return () => subscribers.delete(fn); },
   nav,
@@ -59,7 +77,7 @@ const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];
 let shown = null;
 
-// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17), Analytics (Task 18), Settings (Task 19). Text nodes only.
+// Today (Task 12), Tasks (Task 11), Challenge / Day 0 (Task 13), Mission, War Log and entry editor (Task 14), check-ins (Tasks 15–16), Recovery (Task 17), Analytics (Task 18), Gym shell (v2.1 G7), Settings (Task 19). Text nodes only.
 function screen(r) {
   if (r.name === 'today') return renderToday(app);
   if (r.name === 'tasks') return renderTasks(app);
@@ -70,6 +88,7 @@ function screen(r) {
   if (r.name === 'checkin' && r.params[0] === 'night') return renderNight(app, r.params.slice(1));
   if (r.name === 'recovery') return renderRecovery(app, r.params);
   if (r.name === 'analytics') return renderAnalytics(app);
+  if (r.name === 'gym') return renderGym(app);
   if (r.name === 'settings') return renderSettings(app);
   if (r.name === 'warlog') return r.params.length ? renderWarEntry(app, r.params) : renderWarLog(app);
   return [
