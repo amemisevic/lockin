@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { emptyGym } from '../src/core/gym.js';
 import { openWorkout, addExercise } from '../src/core/workouts.js';
 import {
-  begin, parseWeight, parseReps, stepWeight, stepReps, fmtClock, elapsedSec, restState, lastTimeText, REST_CHOICES, DEFAULT_REST,
+  begin, parseWeight, parseReps, stepWeight, stepReps, lastTimeText,
 } from '../src/views/gymWorkoutLogic.js';
 
 // Gym G9, workout screen logic. Pure and DOM-free. Expected values worked out by hand.
@@ -13,11 +13,6 @@ const set = (reps, weight, extra = {}) => ({ reps, weight, warmup: false, done: 
 const hist = (id, startedAt, items) => ({ id, date: '2026-10-10', startedAt, finishedAt: startedAt + 3_600_000, name: '', routineId: null, items });
 const BENCH = [set(10, 40, { warmup: true }), set(8, 80), set(8, 80), set(7, 77.5)];
 const gymWith = (...workouts) => ({ ...emptyGym(), workouts });
-
-test('constants: rest choices and the default', () => {
-  assert.deepEqual(REST_CHOICES, [60, 90, 120, 180]);
-  assert.equal(DEFAULT_REST, 90);
-});
 
 // ---- begin: start or repeat, on a day that is a parameter ----
 test('begin: the date defaults to the local date of now; startedAt = now; one open workout', () => {
@@ -96,29 +91,6 @@ test('stepReps: 1 rep steps, clamped to 1 and 999', () => {
   assert.equal(stepReps(8, -1), 7);
   assert.equal(stepReps(1, -1), 1);
   assert.equal(stepReps(999, 1), 999);
-});
-
-// ---- clocks ----
-test('fmtClock: m:ss under an hour, h:mm:ss from one hour, never negative', () => {
-  const cases = [[0, '0:00'], [5, '0:05'], [59, '0:59'], [60, '1:00'], [90, '1:30'], [3599, '59:59'], [3600, '1:00:00'], [3725, '1:02:05'], [-4, '0:00']];
-  for (const [s, text] of cases) assert.equal(fmtClock(s), text, String(s));
-});
-
-test('elapsedSec: whole seconds since the start, from timestamps; a clock set back gives 0', () => {
-  assert.equal(elapsedSec(1000, 62_999), 61);
-  assert.equal(elapsedSec(1000, 1000), 0);
-  assert.equal(elapsedSec(5000, 1000), 0);
-  assert.equal(elapsedSec(T, T + 3_725_000), 3725);
-});
-
-test('restState: from the stored end time. None = idle; seconds round up; at or past the end = over', () => {
-  assert.deepEqual(restState(null, T), { kind: 'idle' });
-  assert.deepEqual(restState(T + 90_000, T), { kind: 'running', secs: 90, text: '1:30' });
-  assert.deepEqual(restState(T + 90_000, T + 1), { kind: 'running', secs: 90, text: '1:30' }); // 89.999 s left
-  assert.deepEqual(restState(T + 90_000, T + 30_000), { kind: 'running', secs: 60, text: '1:00' });
-  assert.deepEqual(restState(T + 90_000, T + 89_999), { kind: 'running', secs: 1, text: '0:01' });
-  assert.deepEqual(restState(T + 90_000, T + 90_000), { kind: 'over', text: 'Rest over' });
-  assert.deepEqual(restState(T + 90_000, T + 600_000), { kind: 'over', text: 'Rest over' }); // the phone slept ten minutes
 });
 
 // ---- last time ----

@@ -37,16 +37,20 @@ const mkApp = gym => {
     setGym(fn) { const n = fn(a.gym); if (n === a.gym) return true; a.gym = n; a.saves++; return true; } };
   return a;
 };
-const home = app => { resetGymHome(); return renderGymHome(app, { load() {}, now: () => T }); };
+const home = (app, extra = {}) => { resetGymHome(); return renderGymHome(app, { load() {}, now: () => T, ...extra }); };
 const click = el => fire(el, 'click');
 const off = b => b.getAttribute('disabled') !== null;
 
 // ---- Gym home buttons ----
-test('home: Start workout is enabled; a tap opens a workout dated today and goes to the workout screen', () => {
+test('home: Start workout is enabled; a tap asks for a name (G9c), then opens a workout dated today and goes to the workout screen', () => {
   const app = mkApp(emptyGym());
-  const b = byText(home(app), 'button', 'Start workout');
+  let asked = 0, answer = null;
+  const b = byText(home(app, { askName: cb => { asked++; answer = cb; } }), 'button', 'Start workout');
   assert.equal(off(b), false);
   click(b);
+  assert.equal(asked, 1);
+  assert.equal(openWorkout(app.gym), null);
+  answer('');
   const w = openWorkout(app.gym);
   assert.equal(w.date, '2026-10-12');
   assert.equal(w.startedAt, T);

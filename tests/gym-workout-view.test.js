@@ -44,21 +44,17 @@ const openGym = (exercises = ['bench']) => {
   return g;
 };
 
-let clock = T, timers = [], stopped = [], asked = null;
-function fresh() { resetWorkoutView(); clock = T; timers = []; stopped = []; asked = null; }
+let asked = null;
+function fresh() { resetWorkoutView(); asked = null; document.activeElement = null; }
 const mkApp = gym => {
   const a = { gym, saves: 0, navs: [], redirects: [], today: () => '2026-10-12', nav: p => a.navs.push(p), redirect: p => a.redirects.push(p),
     setGym(fn) { const n = fn(a.gym); if (n === a.gym) return true; a.gym = n; a.saves++; return true; } };
   return a;
 };
-const screen = (app, opts = {}) => renderWorkout(app, { data: DATA, load() {}, now: () => clock,
-  every: (fn, ms) => { timers.push({ fn, ms }); return timers.length; }, stop: id => stopped.push(id),
-  confirm: (items, o) => { asked = { items, o }; }, ...opts });
-const byClass = (nodes, c) => all(nodes).find(n => hasClass(n, c));
+const screen = (app, opts = {}) => renderWorkout(app, { data: DATA, load() {}, confirm: (items, o) => { asked = { items, o }; }, ...opts });
 const cur = app => openWorkout(app.gym);
 const setOf = (app, ii, si) => cur(app).items[ii].sets[si];
 const click = el => fire(el, 'click');
-const tickNow = () => timers[timers.length - 1].fn();
 
 // ---- frame ----
 test('no open workout: redirect to Gym home, nothing drawn', () => {
@@ -68,14 +64,13 @@ test('no open workout: redirect to Gym home, nothing drawn', () => {
   assert.deepEqual(app.redirects, ['#gym']);
 });
 
-test('header: back button, default title Workout, elapsed clock from startedAt, Finish and Discard', () => {
+test('header: back button, default title Workout, Finish and Discard (G9c: no clock)', () => {
   fresh();
   const app = mkApp(openGym());
-  clock = T + 125_000;
   const out = screen(app);
   assert.ok(byLabel(out, 'Back'));
   assert.ok(texts(out).includes('Workout'));
-  assert.equal(byClass(out, 'gw-clock').textContent, '2:05');
+  assert.equal(texts(out).includes('Elapsed'), false);
   assert.ok(byText(out, 'button', 'Finish'));
   assert.ok(byText(out, 'button', 'Discard'));
 });
@@ -281,17 +276,15 @@ test('Finish without a done working set is refused with a message; the workout s
   assert.equal(msg.textContent, 'Mark at least one working set done to finish.');
 });
 
-test('Finish with a done working set closes the workout at now, goes to Gym home and clears the rest', () => {
+test('Finish with a done working set closes the workout, goes to Gym home (G9c: the length field decides finishedAt, see gym-g9c)', () => {
   fresh();
   const app = mkApp(openGym());
   click(byLabel(screen(app), 'Set 1 done'));
-  clock = T + 1_800_000;
   click(byText(screen(app), 'button', 'Finish'));
   assert.equal(cur(app), null);
   const w = app.gym.workouts.find(x => x.id !== 'h1');
-  assert.equal(w.finishedAt, T + 1_800_000);
+  assert.equal(w.finishedAt, w.startedAt + 3_600_000);
   assert.deepEqual(app.navs, ['#gym']);
-  assert.equal(byClass(screen(mkApp(openGym())), 'gw-rest').children.length, 0);
 });
 
 test('Discard asks first (destructive); confirming deletes the workout and goes to Gym home', () => {
@@ -305,108 +298,4 @@ test('Discard asks first (destructive); confirming deletes the workout and goes 
   assert.equal(cur(app), null);
   assert.equal(app.gym.workouts.length, 1);
   assert.deepEqual(app.navs, ['#gym']);
-});
-
-// ---- rest countdown ----
-test('rest: no rest bar content before a set is done', () => {
-  fresh();
-  assert.equal(byClass(screen(mkApp(openGym())), 'gw-rest').children.length, 0);
-});
-
-test('rest: a working set done starts a 90 s countdown from the stored end time', () => {
-  fresh();
-  const app = mkApp(openGym());
-  click(byLabel(screen(app), 'Set 1 done'));
-  let out = screen(app);
-  assert.equal(byClass(out, 'gw-rest').textContent.includes('1:30'), true);
-  clock = T + 30_000; // a repaint 30 s later, no ticks counted in between
-  out = screen(app);
-  assert.equal(byClass(out, 'gw-rest').textContent.includes('1:00'), true);
-  assert.ok(byText(out, 'button', 'Skip rest'));
-});
-
-test('rest: a warm-up set done, or a set undone, does not start it', () => {
-  fresh();
-  const app = mkApp(openGym());
-  click(byLabel(screen(app), 'Set 1 warm-up'));
-  click(byLabel(screen(app), 'Set 1 done'));
-  assert.equal(byClass(screen(app), 'gw-rest').children.length, 0);
-  click(byLabel(screen(app), 'Set 2 done'));
-  assert.equal(byClass(screen(app), 'gw-rest').textContent.includes('1:30'), true);
-  click(byLabel(screen(app), 'Set 2 done')); // undo: the running countdown is left alone
-  assert.equal(byClass(screen(app), 'gw-rest').textContent.includes('1:30'), true);
-});
-
-test('rest: the 1 s timer repaints the clock and the countdown in place', () => {
-  fresh();
-  const app = mkApp(openGym());
-  click(byLabel(screen(app), 'Set 1 done'));
-  const out = screen(app);
-  assert.equal(timers[timers.length - 1].ms, 1000);
-  clock = T + 61_000;
-  tickNow();
-  assert.equal(byClass(out, 'gw-clock').textContent, '1:01');
-  assert.equal(byClass(out, 'gw-rest').textContent.includes('0:29'), true);
-});
-
-test('rest over: text and an icon, not colour alone; the phone slept past the end', () => {
-  fresh();
-  const app = mkApp(openGym());
-  click(byLabel(screen(app), 'Set 1 done'));
-  clock = T + 10 * 60_000; // ten minutes, the screen was locked: a fresh render reads the stored end time
-  const out = screen(app);
-  const bar = byClass(out, 'gw-rest');
-  assert.equal(bar.textContent.includes('Rest over'), true);
-  assert.equal(all([bar]).some(n => n.tagName === 'SVG'), true);
-  assert.equal(bar.getAttribute('role'), 'status');
-  assert.ok(byText(out, 'button', 'Dismiss'));
-});
-
-test('rest over is also reached by the timer, with no earlier ticks', () => {
-  fresh();
-  const app = mkApp(openGym());
-  click(byLabel(screen(app), 'Set 1 done'));
-  const out = screen(app);
-  clock = T + 90_000;
-  tickNow();
-  assert.equal(byClass(out, 'gw-rest').textContent.includes('Rest over'), true);
-});
-
-test('rest: Skip and Dismiss clear it', () => {
-  fresh();
-  const app = mkApp(openGym());
-  click(byLabel(screen(app), 'Set 1 done'));
-  const out = screen(app);
-  click(byText(out, 'button', 'Skip rest'));
-  assert.equal(byClass(out, 'gw-rest').children.length, 0);
-  assert.equal(byClass(screen(app), 'gw-rest').children.length, 0);
-  click(byLabel(screen(app), 'Set 2 done'));
-  clock = T + 200_000;
-  const late = screen(app);
-  click(byText(late, 'button', 'Dismiss'));
-  assert.equal(byClass(screen(app), 'gw-rest').children.length, 0);
-});
-
-test('rest length: 60, 90, 120, 180 s as pressed buttons; the choice sets the next countdown', () => {
-  fresh();
-  const app = mkApp(openGym());
-  const out = screen(app);
-  const group = byLabel(out, 'Rest length');
-  assert.deepEqual(group.children.map(b => b.textContent), ['60 s', '90 s', '120 s', '180 s']);
-  assert.deepEqual(group.children.map(b => b.getAttribute('aria-pressed')), ['false', 'true', 'false', 'false']);
-  click(group.children[2]);
-  click(byLabel(screen(app), 'Set 1 done'));
-  assert.equal(byClass(screen(app), 'gw-rest').textContent.includes('2:00'), true);
-  assert.equal(byLabel(screen(app), 'Rest length').children[2].getAttribute('aria-pressed'), 'true');
-});
-
-test('timer: stops itself once its screen is gone', () => {
-  fresh();
-  const out = screen(mkApp(openGym()));
-  const clockEl = byClass(out, 'gw-clock');
-  tickNow();
-  assert.deepEqual(stopped, []);
-  clockEl.isConnected = false;
-  tickNow();
-  assert.deepEqual(stopped, [1]);
 });
