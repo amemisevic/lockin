@@ -1,11 +1,13 @@
-// Gym home (gym plan G8): this week's visits against the target, the action buttons, the exercise list entry,
-// routines and the last workouts. Logic in gymHomeLogic.js. Start workout and Repeat last workout wait for the
-// workout screen (G9); routine and workout rows are read-only until G10 / G11.
+// Gym home (gym plan G8, G9): this week's visits against the target, Start / Resume workout and Repeat last workout,
+// the exercise list entry, routines and the last workouts. Logic in gymHomeLogic.js. Routine and workout rows are
+// read-only until G10 / G11.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
 import { goldButton } from '../ui/controls.js';
 import { weekKeys } from '../core/gymstats.js';
+import { openWorkout } from '../core/workouts.js';
+import { begin } from './gymWorkoutLogic.js';
 import { GYM_CORRUPT_NOTICE, weekStrip, visitsText, recentWorkouts, routineRows, isCurrentWeek, shiftWeek, weekHeading } from './gymHomeLogic.js';
 import { ensureExerciseData } from './gymData.js';
 import { resetPicker } from './gymPicker.js';
@@ -24,7 +26,7 @@ const section = (title, aside, body) => h('section', null,
 
 const list = rows => h('ul', { class: 'plate list gm-ul' }, rows);
 
-export function renderGymHome(app, { load = ensureExerciseData } = {}) {
+export function renderGymHome(app, { load = ensureExerciseData, now = Date.now } = {}) {
   load(); // first Gym open: fetch the bundled list so the picker is ready
   const { gym } = app;
   const today = app.today();
@@ -35,6 +37,13 @@ export function renderGymHome(app, { load = ensureExerciseData } = {}) {
   const v = visitsText(gym, key);
   const routines = routineRows(gym);
   const recent = recentWorkouts(gym, 5, weekKeys(key)[6]);
+  const open = openWorkout(gym);
+  // The date is begin's parameter (default today), so a later task can start a workout on a past day.
+  const start = repeat => {
+    const r = begin(app.gym, now(), { repeat });
+    if (r.ok) app.setGym(() => r.state);
+    if (r.ok || r.reason === 'workout-open') app.nav('#gym/workout');
+  };
 
   return [
     h('div', { class: 'tk-hd' }, h('div', null, eyebrow('Lock In'), screenTitle('Gym')),
@@ -48,8 +57,8 @@ export function renderGymHome(app, { load = ensureExerciseData } = {}) {
     section(heading, v.text,
       h('div', { class: 'wks gm-wks', role: 'group', 'aria-label': current ? 'Gym visits this week' : `Gym visits, ${heading}` }, weekStrip(gym, key, today).map(tile))),
     h('div', { class: 'gm-actions' },
-      goldButton('Start workout', null, { disabled: true }),
-      h('button', { type: 'button', class: 'btn-ghost', disabled: true }, 'Repeat last workout')),
+      goldButton(open ? 'Resume workout' : 'Start workout', () => (open ? app.nav('#gym/workout') : start(false))),
+      h('button', { type: 'button', class: 'btn-ghost', disabled: !!open || !gym.workouts.some(w => w.finishedAt !== null), onClick: () => start(true) }, 'Repeat last workout')),
     h('a', { href: '#gym/exercises', id: 'gm-exercises', class: 'plate list gm-link', onClick: resetPicker },
       h('div', null, h('div', { class: 'gm-lt' }, 'Exercises'), h('p', { class: 't2 gm-ls' }, 'Browse the list or create your own')),
       icon('chevronRight')),

@@ -12,7 +12,7 @@ export function parseRoute(hash) {
     if (p.length === 1 && (p[0] === 'morning' || p[0] === 'afternoon')) return pushed('today');
     if (p.length === 2 && p[0] === 'night' && DATE.test(p[1])) return pushed('today');
   }
-  if (name === 'gym' && p.length === 1 && p[0] === 'exercises') return pushed('gym');
+  if (name === 'gym' && p.length === 1 && ['exercises', 'workout', 'pick'].includes(p[0])) return pushed('gym');
   if (name === 'recovery' && p.length === 1 && DATE.test(p[0])) return pushed('challenge');
   if (name === 'mission' && p.length === 1 && /^\d+$/.test(p[0])) return pushed('challenge');
   if (name === 'warlog' && (!p.length || (p.length === 1 && p[0]))) return pushed('challenge');

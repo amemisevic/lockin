@@ -37,3 +37,40 @@
 .chips.gm-scroll{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--gutter));padding:2px var(--gutter) 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chips.gm-scroll::-webkit-scrollbar{display:none}
 .chips.gm-scroll .chip{flex:none;white-space:nowrap}
+.gm-add{min-width:44px;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:14px;font-weight:700}
+/* Workout screen (G9). No animation or transition anywhere, so reduced motion needs no override. Every button and input is 44 px or more. */
+.gw{display:grid;gap:14px;margin-top:14px;padding-bottom:96px}
+.gw-bar{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.gw-clock{font-family:var(--f-title);font-size:28px;font-variant-numeric:tabular-nums}
+/* Rest bar: fixed at the bottom so it never pushes the set rows (a shift would move the next done check under the thumb);
+   ring + icon + words, not colour alone. Empty (idle) = hidden. .gw keeps room below so nothing hides behind it. */
+.gw-rest{position:fixed;left:var(--gutter);right:var(--gutter);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:5;box-shadow:0 8px 24px rgba(0,0,0,.6);display:flex;align-items:center;gap:12px;padding:6px 8px 6px 16px;border:2px solid var(--accent);border-radius:16px;background:var(--plate-bot)}
+.gw-rest:empty{display:none}
+.gw-rest svg{flex:none;width:20px;height:20px;color:var(--accent)}
+.gw-rt{flex:1;font-family:var(--f-title);font-size:22px;font-variant-numeric:tabular-nums}
+.gw-btn{min-height:44px;min-width:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line-strong);background:none;color:var(--text);font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.gw-btn[aria-pressed=true]{border-color:var(--accent);background:rgba(242,190,92,.18);color:var(--accent)}
+.gw-btn svg{width:16px;height:16px}
+.gw-card{padding:14px;display:grid;gap:10px}
+.gw-ch{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gw-en{margin:0;font-size:18px;line-height:24px;font-weight:700;overflow-wrap:anywhere}
+.gw-last{margin:0;font-size:14px;overflow-wrap:anywhere}
+.gw-sets{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.gw-set{padding-top:10px;border-top:1px solid var(--line-soft)}
+.gw-sets>.gw-set:first-child{padding-top:0;border-top:0}
+.gw-top{display:flex;align-items:center;gap:8px}
+.gw-n{flex:1;font-size:16px;font-weight:700}
+.gw-done{min-height:44px;min-width:44px;width:48px;height:48px;border-radius:50%;border:2px solid var(--accent);background:none;color:var(--gold-ink);display:grid;place-items:center}
+.gw-done[aria-pressed=true]{background:var(--gold-grad)}
+.gw-done svg{width:24px;height:24px}
+.gw-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.gw-f{display:grid;gap:2px;justify-items:center}
+.gw-u{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.gw-stp{display:flex;align-items:center;gap:2px}
+.gw-step{min-width:44px;min-height:44px;border-radius:50%;border:1px solid var(--line-strong);background:none;display:grid;place-items:center;color:var(--accent)}
+.gw-step:disabled{opacity:.4}
+.gw-in{min-height:44px;width:52px;padding:0 4px;text-align:center;font-size:18px}
+.gw-add{width:100%;text-decoration:none}
+.gw-len{display:grid;gap:6px}
+.gw-end{display:grid;gap:12px;margin-top:6px}
+.gw-end>*{width:100%}

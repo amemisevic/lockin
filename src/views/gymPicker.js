@@ -1,8 +1,8 @@
 // Exercise picker (gym plan G8), a pushed screen #gym/exercises: search, muscle and equipment chips, Create exercise,
 // the matching rows. Typing and chip taps repaint the list in place (a full re-render would drop the keyboard and
-// reset the chip row's scroll); the query and filters live here so the 30 s re-render keeps them. Browse only for now:
-// picking an exercise into a workout arrives with the workout screen (G9). Custom rows carry a Delete button
-// (confirm first; the core refuses an exercise that a workout or routine uses).
+// reset the chip row's scroll); the query and filters live here so the 30 s re-render keeps them. Browse mode (#gym/exercises):
+// custom rows carry a Delete button (confirm first; the core refuses an exercise that a workout or routine uses).
+// Pick mode (#gym/pick, G9): onPick(id) is given, every row has an Add button and there is no Delete.
 import { h } from '../dom.js';
 import { pushedHeader, rerender } from '../ui/chrome.js';
 import { chips } from '../ui/controls.js';
@@ -16,8 +16,8 @@ const fresh = () => ({ query: '', muscle: null, equipment: null, notice: '' });
 let state = fresh();
 export const resetPicker = () => { state = fresh(); };
 
-export function renderPicker(app, { data = exerciseData(), load = ensureExerciseData, confirm = openActionSheet } = {}) {
-  const header = pushedHeader({ title: 'Exercises', onBack: () => history.back() });
+export function renderPicker(app, { data = exerciseData(), load = ensureExerciseData, confirm = openActionSheet, onPick } = {}) {
+  const header = pushedHeader({ title: onPick ? 'Add exercise' : 'Exercises', onBack: () => history.back() });
   if (!data) {
     if (exerciseDataFailed()) {
       return [header, h('p', { class: 'tk-empty' }, 'The exercise list could not be loaded.'),
@@ -54,9 +54,11 @@ export function renderPicker(app, { data = exerciseData(), load = ensureExercise
     paint();
   };
   const ask = r => confirm([{ label: 'Delete', destructive: true, onSelect: () => remove(r.id) }], { message: `Delete "${r.name}"? This can't be undone.` });
-  const row = r => h('li', { class: 'gm-rw gm-ex' }, h('div', { class: 'gm-rwn' }, r.name), h('div', { class: 'rn' }, r.detail),
-    r.custom && h('div', { class: 'gm-side' }, h('span', { class: 'gm-tag' }, 'Custom'),
-      h('button', { type: 'button', class: 'gm-del', 'aria-label': `Delete ${r.name}`, onClick: () => ask(r) }, 'Delete')));
+  const tag = () => h('span', { class: 'gm-tag' }, 'Custom');
+  const side = r => (onPick
+    ? h('div', { class: 'gm-side' }, r.custom && tag(), h('button', { type: 'button', class: 'gm-add', 'aria-label': `Add ${r.name}`, onClick: () => onPick(r.id) }, 'Add'))
+    : r.custom && h('div', { class: 'gm-side' }, tag(), h('button', { type: 'button', class: 'gm-del', 'aria-label': `Delete ${r.name}`, onClick: () => ask(r) }, 'Delete')));
+  const row = r => h('li', { class: 'gm-rw gm-ex' }, h('div', { class: 'gm-rwn' }, r.name), h('div', { class: 'rn' }, r.detail), side(r));
 
   // The refusal notice lives in `state` so the 30 s re-render keeps it; any search, chip tap or delete clears it.
   function paint(keepNotice) {
