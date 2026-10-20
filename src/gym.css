@@ -23,7 +23,7 @@
 .gm-rw>div{min-width:0}
 .gm-rwn{font-size:17px;line-height:22px;font-weight:600;overflow-wrap:anywhere}
 .gm-rwd{flex:none;font-size:14px;color:var(--text-2)}
-.gm-new{width:100%;margin-bottom:12px}
+.gm-new{width:100%;margin:10px 0 12px}
 /* Routine rows are links: the whole row is the target (56 px or more). The first row has no top rule. */
 .gm-rl{min-height:56px;border-top:0;color:var(--text);text-decoration:none}
 .gm-rl svg{flex:none;color:var(--text-2)}
