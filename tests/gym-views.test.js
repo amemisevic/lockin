@@ -68,12 +68,12 @@ test('home: week strip has 7 tiles; visits on 05, 07 and 11 carry the check mark
   assert.equal(byLabel(out, 'Gym visits this week').getAttribute('role'), 'group');
 });
 
-test('home: Start workout and Repeat last workout are shown but disabled until the workout screen exists (G9)', () => {
+test('home: Start workout and Repeat last workout are enabled now that the workout screen exists (G9; amended with owner approval)', () => {
   const out = home(g(EX));
   for (const label of ['Start workout', 'Repeat last workout']) {
     const b = byText(out, 'button', label);
     assert.ok(b, label);
-    assert.notEqual(b.getAttribute('disabled'), null, label);
+    assert.equal(b.getAttribute('disabled'), null, label);
   }
 });
 
@@ -202,11 +202,11 @@ test('picker: the capped list says how many matched', () => {
 });
 
 // ---- wiring and CSS floors ----
-test('app.js routes #gym to the home and #gym/exercises to the picker; the 30 s re-render skips a focused search field', () => {
+test('app.js routes #gym to the home and #gym/exercises to the picker; the 30 s re-render skips any focused INPUT (G9 ruling 6; amended with owner approval)', () => {
   const src = read('src/app.js');
   assert.match(src, /renderGymHome/);
   assert.match(src, /renderPicker/);
-  assert.match(src, /type === 'search'/);
+  assert.match(src, /tagName === 'INPUT'/);
 });
 
 test('index.html links src/gym.css', () => {
