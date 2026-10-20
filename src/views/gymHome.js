@@ -1,14 +1,16 @@
 // Gym home (gym plan G8, G9): this week's visits against the target, Start (asks for a name first) / Resume workout and Repeat last workout,
-// the exercise list entry, routines and the last workouts. Logic in gymHomeLogic.js. Routine and workout rows are
-// read-only until G10 / G11.
+// the exercise list entry, routines (each row opens the routine, G10; New routine asks for a name) and the last workouts.
+// Logic in gymHomeLogic.js. Workout rows are read-only until G11.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
 import { goldButton } from '../ui/controls.js';
 import { weekKeys } from '../core/gymstats.js';
 import { openWorkout } from '../core/workouts.js';
+import { createRoutine } from '../core/routines.js';
 import { begin } from './gymWorkoutLogic.js';
 import { openNameSheet } from './gymNameSheet.js';
+import { routineHref } from './gymRoutineLogic.js';
 import { GYM_CORRUPT_NOTICE, weekStrip, visitsText, recentWorkouts, routineRows, isCurrentWeek, shiftWeek, weekHeading } from './gymHomeLogic.js';
 import { ensureExerciseData } from './gymData.js';
 import { resetPicker } from './gymPicker.js';
@@ -27,7 +29,9 @@ const section = (title, aside, body) => h('section', null,
 
 const list = rows => h('ul', { class: 'plate list gm-ul' }, rows);
 
-export function renderGymHome(app, { load = ensureExerciseData, now = Date.now, askName = openNameSheet } = {}) {
+const askRoutineName = onDone => openNameSheet(onDone, undefined, { title: 'New routine', action: 'Create', label: 'Name', placeholder: 'Routine name', required: true });
+
+export function renderGymHome(app, { load = ensureExerciseData, now = Date.now, askName = openNameSheet, askNewRoutine = askRoutineName } = {}) {
   load(); // first Gym open: fetch the bundled list so the picker is ready
   const { gym } = app;
   const today = app.today();
@@ -44,6 +48,14 @@ export function renderGymHome(app, { load = ensureExerciseData, now = Date.now, 
     const r = begin(app.gym, now(), { repeat, name });
     if (r.ok) app.setGym(() => r.state);
     if (r.ok || r.reason === 'workout-open') app.nav('#gym/workout');
+  };
+
+  // The new routine opens at once so its exercises can be added.
+  const create = name => {
+    const r = createRoutine(app.gym, now(), name);
+    if (!r.ok) return;
+    app.setGym(() => r.state);
+    app.nav(routineHref(r.id));
   };
 
   return [
@@ -63,9 +75,12 @@ export function renderGymHome(app, { load = ensureExerciseData, now = Date.now, 
     h('a', { href: '#gym/exercises', id: 'gm-exercises', class: 'plate list gm-link', onClick: resetPicker },
       h('div', null, h('div', { class: 'gm-lt' }, 'Exercises'), h('p', { class: 't2 gm-ls' }, 'Browse the list or create your own')),
       icon('chevronRight')),
-    section('Routines', null, routines.length
-      ? list(routines.map(r => h('li', { class: 'gm-rw' }, h('div', null, h('div', { class: 'gm-rwn' }, r.name), h('div', { class: 'rn' }, r.summary)))))
-      : h('p', { class: 'tk-empty' }, 'No routines yet')),
+    section('Routines', null, [
+      h('button', { type: 'button', id: 'gm-new-routine', class: 'btn-ghost gm-new', onClick: () => askNewRoutine(create) }, 'New routine'),
+      routines.length
+        ? list(routines.map(r => h('li', { class: 'gm-rli' }, h('a', { href: routineHref(r.id), class: 'gm-rw gm-rl' },
+          h('div', null, h('div', { class: 'gm-rwn' }, r.name), h('div', { class: 'rn' }, r.summary)), icon('chevronRight')))))
+        : h('p', { class: 'tk-empty' }, 'No routines yet')]),
     section('Recent workouts', null, recent.length
       ? list(recent.map(w => h('li', { class: 'gm-rw' },
         h('div', null, h('div', { class: 'gm-rwn' }, w.title), h('div', { class: 'rn' }, w.summary)),
