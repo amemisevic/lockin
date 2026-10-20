@@ -341,7 +341,7 @@ test('the new view files have no timers and no forbidden date APIs', () => {
     assert.doesNotMatch(src, /setInterval|setTimeout|requestAnimationFrame/, f);
     assert.doesNotMatch(src, /toISOString|getUTC|Date\.parse|new Date\(['"`]/, f);
   }
-  assert.doesNotMatch(read('src/gym.css'), /transition|animation|@keyframes/);
+  assert.doesNotMatch(read('src/gym.css').replace(/\/\*[\s\S]*?\*\//g, ''), /transition|animation|@keyframes/); // rules only: an old comment says "No animation"
 });
 
 test('app.js routes history, and sw.js caches the three new files', () => {
