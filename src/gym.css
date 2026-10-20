@@ -38,16 +38,8 @@
 .chips.gm-scroll::-webkit-scrollbar{display:none}
 .chips.gm-scroll .chip{flex:none;white-space:nowrap}
 .gm-add{min-width:44px;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:14px;font-weight:700}
-/* Workout screen (G9). No animation or transition anywhere, so reduced motion needs no override. Every button and input is 44 px or more. */
-.gw{display:grid;gap:14px;margin-top:14px;padding-bottom:96px}
-.gw-bar{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-.gw-clock{font-family:var(--f-title);font-size:28px;font-variant-numeric:tabular-nums}
-/* Rest bar: fixed at the bottom so it never pushes the set rows (a shift would move the next done check under the thumb);
-   ring + icon + words, not colour alone. Empty (idle) = hidden. .gw keeps room below so nothing hides behind it. */
-.gw-rest{position:fixed;left:var(--gutter);right:var(--gutter);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:5;box-shadow:0 8px 24px rgba(0,0,0,.6);display:flex;align-items:center;gap:12px;padding:6px 8px 6px 16px;border:2px solid var(--accent);border-radius:16px;background:var(--plate-bot)}
-.gw-rest:empty{display:none}
-.gw-rest svg{flex:none;width:20px;height:20px;color:var(--accent)}
-.gw-rt{flex:1;font-family:var(--f-title);font-size:22px;font-variant-numeric:tabular-nums}
+/* Workout screen (G9, G9c). No animation, transition or timer anywhere. Every button and input is 44 px or more. */
+.gw{display:grid;gap:14px;margin-top:14px;padding-bottom:24px}
 .gw-btn{min-height:44px;min-width:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line-strong);background:none;color:var(--text);font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .gw-btn[aria-pressed=true]{border-color:var(--accent);background:rgba(242,190,92,.18);color:var(--accent)}
 .gw-btn svg{width:16px;height:16px}
@@ -71,6 +63,6 @@
 .gw-step:disabled{opacity:.4}
 .gw-in{min-height:44px;width:52px;padding:0 4px;text-align:center;font-size:18px}
 .gw-add{width:100%;text-decoration:none}
-.gw-len{display:grid;gap:6px}
+.gw-name,.gw-len{display:grid;gap:6px}
 .gw-end{display:grid;gap:12px;margin-top:6px}
 .gw-end>*{width:100%}

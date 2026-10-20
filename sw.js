@@ -68,6 +68,7 @@ const ASSETS = [
   'src/views/gymExerciseSheet.js',
   'src/views/gymHome.js',
   'src/views/gymHomeLogic.js',
+  'src/views/gymNameSheet.js',
   'src/views/gymPicker.js',
   'src/views/gymPickerLogic.js',
   'src/views/gymWorkout.js',

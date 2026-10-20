@@ -1,25 +1,24 @@
 // Active workout screen (gym plan G9), a pushed route #gym/workout: a card per exercise with last time's sets, set rows
-// (warm-up, weight, reps, done), Add set / Add exercise, Finish and Discard, the elapsed clock and the rest countdown.
-// Logic in gymWorkoutLogic.js, state changes in src/core/workouts.js. The clock and the countdown are computed from
-// timestamps (the workout's startedAt, the stored rest end), never by counting ticks, so a locked phone cannot make them
-// drift; the 1 s timer only repaints them in place. No sound, no notification: the end of the rest is text plus an icon.
+// (warm-up, weight, reps, done), Add set / Add exercise, a name field, the workout length and Finish / Discard.
+// Logic in gymWorkoutLogic.js, state changes in src/core/workouts.js. No timers, clocks or rest countdown (G9c, owner
+// ruling: the app has no live timers). Finish takes the length in minutes: finishedAt = startedAt + minutes.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { pushedHeader, rerender } from '../ui/chrome.js';
-import { goldButton, segmented } from '../ui/controls.js';
+import { goldButton } from '../ui/controls.js';
 import { openActionSheet } from '../sheet.js';
 import { exerciseMap } from '../core/exercises.js';
-import { openWorkout, addExercise, addSet, removeSet, removeExercise, editSet, toggleDone, toggleWarmup, finishWorkout, discardWorkout } from '../core/workouts.js';
+import { openWorkout, addExercise, addSet, removeSet, removeExercise, editSet, editWorkout, toggleDone, toggleWarmup, finishWorkout, discardWorkout } from '../core/workouts.js';
 import { dayLabel } from './tasksLogic.js';
 import { exerciseData, exerciseDataFailed, ensureExerciseData } from './gymData.js';
 import { resetPicker } from './gymPicker.js';
-import { REST_CHOICES, DEFAULT_REST, parseWeight, parseReps, stepWeight, stepReps, fmtClock, elapsedSec, restState, lastTimeText } from './gymWorkoutLogic.js';
+import { DEFAULT_MINUTES, NAME_MESSAGE, LENGTH_MESSAGE, parseWeight, parseReps, parseMinutes, parseName, finishTime, stepWeight, stepReps, lastTimeText } from './gymWorkoutLogic.js';
 
 export const NO_SETS = 'Mark at least one working set done to finish.';
 
-// View state, not saved: the end time of the running rest (ms) and the chosen length. ponytail: lost if iOS discards the page.
-const rest = { end: null, len: DEFAULT_REST };
-export const resetWorkoutView = () => { rest.end = null; rest.len = DEFAULT_REST; };
+// View state, not saved: the typed workout length, so a repaint (logging a set) does not put the 60 back.
+const view = { length: String(DEFAULT_MINUTES) };
+export const resetWorkoutView = () => { view.length = String(DEFAULT_MINUTES); };
 
 // The picker's pick mode calls this: add the exercise to the open workout (Prefill from last time), then go back to it.
 export function pickExercise(app, id, back = () => history.back()) {
@@ -28,7 +27,7 @@ export function pickExercise(app, id, back = () => history.back()) {
   back();
 }
 
-export function renderWorkout(app, { data = exerciseData(), load = ensureExerciseData, now = Date.now, every = setInterval, stop = clearInterval, confirm = openActionSheet } = {}) {
+export function renderWorkout(app, { data = exerciseData(), load = ensureExerciseData, confirm = openActionSheet } = {}) {
   const w = openWorkout(app.gym);
   if (!w) { app.redirect('#gym'); return []; }
   const wid = w.id;
@@ -43,37 +42,7 @@ export function renderWorkout(app, { data = exerciseData(), load = ensureExercis
   // iOS keeps an input focused when a button is tapped, and the re-render guard would then skip the repaint: blur first.
   const act = fn => () => { const a = document.activeElement; if (a?.tagName === 'INPUT') a.blur(); fn(); };
 
-  // ---- clock and rest, repainted in place ----
-  const clock = h('span', { class: 'gw-clock', role: 'timer' });
-  const bar = h('div', { class: 'gw-rest' });
-  const label = h('span', { class: 'gw-rt' });
-  let shown = null; // the bar is rebuilt only when its state changes: a rebuild every second would swallow a tap on Skip
-  function paint() {
-    const t = now();
-    clock.replaceChildren(fmtClock(elapsedSec(w.startedAt, t)));
-    const r = restState(rest.end, t);
-    if (r.kind !== shown) {
-      shown = r.kind;
-      bar.removeAttribute('role');
-      if (r.kind === 'idle') bar.replaceChildren();
-      else {
-        bar.setAttribute('role', r.kind === 'over' ? 'status' : 'timer');
-        bar.replaceChildren(...[r.kind === 'over' && icon('check'), label,
-          h('button', { type: 'button', class: 'gw-btn', onClick: act(() => { rest.end = null; paint(); }) }, r.kind === 'over' ? 'Dismiss' : 'Skip rest')].filter(Boolean));
-      }
-    }
-    if (r.kind !== 'idle') label.replaceChildren(r.kind === 'over' ? r.text : `Rest ${r.text}`);
-  }
-  paint();
-  const timer = every(() => { if (clock.isConnected === false) stop(timer); else paint(); }, 1000);
-
   // ---- set rows ----
-  const toggleSetDone = (ii, si) => {
-    const s = live(ii, si);
-    if (!s) return;
-    if (!s.done && !s.warmup) rest.end = now() + rest.len * 1000; // before the save: it repaints at once
-    apply(g => toggleDone(g, wid, ii, si));
-  };
 
   function field(ii, si, s, { key, unit, aria, parse, step, inputmode }) {
     const n = si + 1;
@@ -98,7 +67,7 @@ export function renderWorkout(app, { data = exerciseData(), load = ensureExercis
           s.warmup && icon('check'), 'Warm-up'),
         h('button', { type: 'button', class: 'gw-btn gw-x', 'aria-label': `Remove set ${n}`, onClick: act(() => apply(g => removeSet(g, wid, ii, si))) }, icon('xmark')),
         // A tick inside the ring when done, an empty ring when not: shape, not colour.
-        h('button', { type: 'button', class: 'gw-done', 'aria-pressed': String(s.done), 'aria-label': `Set ${n} done`, onClick: act(() => toggleSetDone(ii, si)) }, s.done && icon('check'))),
+        h('button', { type: 'button', class: 'gw-done', 'aria-pressed': String(s.done), 'aria-label': `Set ${n} done`, onClick: act(() => apply(g => toggleDone(g, wid, ii, si))) }, s.done && icon('check'))),
       h('div', { class: 'gw-fields' },
         field(ii, si, s, { key: 'weight', unit: 'kg', aria: 'weight (kg)', parse: parseWeight, step: stepWeight, inputmode: 'decimal' }),
         field(ii, si, s, { key: 'reps', unit: 'reps', aria: 'reps', parse: parseReps, step: stepReps, inputmode: 'numeric' })));
@@ -120,29 +89,48 @@ export function renderWorkout(app, { data = exerciseData(), load = ensureExercis
   // ---- finish, discard ----
   const err = h('p', { class: 'form-error', role: 'alert' });
   const finish = () => {
-    const r = finishWorkout(app.gym, wid, now());
+    err.replaceChildren();
+    const minutes = parseMinutes(view.length);
+    if (minutes === null) { err.replaceChildren(LENGTH_MESSAGE); return; }
+    const r = finishWorkout(app.gym, wid, finishTime(w.startedAt, minutes));
     if (!r.ok) { err.replaceChildren(r.reason === 'no-sets' ? NO_SETS : 'The workout could not be finished.'); return; }
-    rest.end = null;
+    resetWorkoutView();
     app.setGym(() => r.state);
     app.nav('#gym');
   };
   const discard = () => confirm([{ label: 'Discard workout', destructive: true, onSelect: () => {
     const r = discardWorkout(app.gym, wid);
-    if (r.ok) { rest.end = null; app.setGym(() => r.state); }
+    if (r.ok) { resetWorkoutView(); app.setGym(() => r.state); }
     app.nav('#gym');
   } }], { message: 'Discard this workout? Its sets are deleted.' });
 
-  const lengths = segmented({ options: REST_CHOICES.map(v => ({ value: v, label: `${v} s` })), value: rest.len, onPick: v => act(() => { rest.len = v; rerender(); })() });
-  lengths.setAttribute('aria-label', 'Rest length');
+  // Name: every valid keystroke is saved (a focused input is not repainted); blank is allowed and shows "Workout".
+  const header = pushedHeader({ title: w.name || 'Workout', onBack: () => history.back() });
+  const title = header.querySelector('h1');
+  const nameErr = h('p', { class: 'form-error' });
+  // role=alert only while there is a message, so the screen has one empty alert slot (the Finish message) at rest.
+  const say = msg => { nameErr.replaceChildren(msg); if (msg) nameErr.setAttribute('role', 'alert'); else nameErr.removeAttribute('role'); };
+  const nameInput = h('input', { type: 'text', id: 'gw-name', class: 'in', maxlength: '60', autocomplete: 'off', enterkeyhint: 'done', placeholder: 'Workout',
+    value: w.name, 'aria-label': 'Workout name',
+    onInput: e => {
+      const n = parseName(e.target.value);
+      say(n === null ? NAME_MESSAGE : '');
+      if (n === null) return;
+      if (n !== openWorkout(app.gym)?.name) apply(g => editWorkout(g, wid, { name: n }));
+      title.replaceChildren(n || 'Workout');
+    },
+    onBlur: e => { e.target.value = openWorkout(app.gym)?.name ?? w.name; say(''); } });
+  const lengthInput = h('input', { type: 'text', id: 'gw-length', class: 'in', inputmode: 'numeric', autocomplete: 'off', value: view.length,
+    'aria-label': 'Workout length (minutes)', onInput: e => { view.length = e.target.value; } });
 
   return [
-    pushedHeader({ title: w.name || 'Workout', onBack: () => history.back() }),
+    header,
     h('div', { class: 'gw' },
-      h('div', { class: 'gw-bar' }, h('span', { class: 't2' }, w.date === app.today() ? 'Elapsed' : `Started ${dayLabel(w.date)}`), clock),
-      bar,
+      w.date !== app.today() && h('p', { class: 't2' }, `Started ${dayLabel(w.date)}`),
+      h('div', { class: 'gw-name' }, nameInput, nameErr),
       w.items.length ? w.items.map(card) : h('p', { class: 'tk-empty' }, 'No exercises yet. Add one to start.'),
       h('a', { href: '#gym/pick', id: 'gw-add', class: 'btn-ghost gw-add', onClick: resetPicker }, 'Add exercise'),
-      h('div', { class: 'gw-len' }, h('span', { class: 't2' }, 'Rest length'), lengths),
+      h('div', { class: 'gw-len' }, h('span', { class: 'fld-l' }, 'Workout length (minutes)'), lengthInput),
       err,
       h('div', { class: 'gw-end' },
         goldButton('Finish', act(finish)),

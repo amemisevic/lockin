@@ -39,8 +39,9 @@ export function recentWorkouts(gym, limit = 5, upTo) {
     .sort((a, b) => b.w.startedAt - a.w.startedAt || b.i - a.i).slice(0, limit)
     .map(({ w }) => {
       const sets = arr(w.items).flatMap(it => arr(it.sets)).filter(s => s.done && !s.warmup).length;
+      const mins = Math.round((w.finishedAt - w.startedAt) / 60_000); // the length chosen at Finish; left out below one minute
       return { id: w.id, title: w.name || 'Workout', date: shortDate(w.date),
-        summary: `${count(arr(w.items).length, 'exercise', 'exercises')} · ${count(sets, 'set', 'sets')}` };
+        summary: `${count(arr(w.items).length, 'exercise', 'exercises')} · ${count(sets, 'set', 'sets')}${mins >= 1 ? ` · ${mins} min` : ''}` };
     });
 }
 
