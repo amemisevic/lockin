@@ -260,7 +260,8 @@ test('delete: asks first; confirmed it removes only that routine and goes back t
 });
 
 test('delete keeps finished workouts that came from the routine', () => {
-  const w = { id: 'w1', date: '2026-10-05', startedAt: 1, finishedAt: 2, name: 'Push', routineId: 'r-1', items: [] };
+  const w = { id: 'w1', date: '2026-10-05', startedAt: 1, finishedAt: 2, name: 'Push', routineId: 'r-1',
+    items: [{ exerciseId: 'bench', sets: [{ reps: 8, weight: 80, warmup: false, done: true }] }] };
   const app = mkApp(g([routine('r-1', 'Push', [BENCH])], [w]));
   click(byText(screen(app, 'r-1', harness({ confirm: true })), 'button', 'Delete routine'));
   assert.equal(app.gym.routines.length, 0);
