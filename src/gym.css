@@ -3,8 +3,11 @@
 .gm-notice{display:flex;align-items:flex-start;gap:10px;margin:0;font-weight:600}
 .gm-notice svg{flex:none;margin-top:3px}
 .mk + .plate.warn{margin-top:14px}
-/* Week strip: seven read-only tiles. A visit = gold tile + check mark (and the aria-label), not colour alone. */
+/* Week strip: seven read-only tiles. A visit = gold tile + check mark (and the aria-label), not colour alone.
+   Today = a 2 px ring around the tile plus the word TODAY in place of the weekday (shape and label, not colour alone). */
 .gm-wks .wk{height:76px}
+.gm-wks .wk.today{border-width:2px;border-color:var(--accent);letter-spacing:0;font-weight:800;color:var(--accent)}
+.gm-today{width:auto;min-width:44px;padding:0 14px;font-size:14px;font-weight:700}
 .gm-wks .wk svg{width:16px;height:16px;margin-top:1px;color:var(--accent)}
 .gm-wks .wk i{margin:6px 0 5px}
 .gm-actions{display:grid;gap:12px;margin-top:20px}
@@ -21,8 +24,9 @@
 .gm-rwn{font-size:17px;line-height:22px;font-weight:600;overflow-wrap:anywhere}
 .gm-rwd{flex:none;font-size:14px;color:var(--text-2)}
 .gm-ex{display:grid;align-content:center;grid-template-columns:minmax(0,1fr) auto;column-gap:12px}
-.gm-ex>:not(.gm-tag){grid-column:1}
-.gm-ex .gm-tag{grid-column:2;grid-row:1 / 3;align-self:center}
+.gm-ex>:not(.gm-side){grid-column:1}
+.gm-ex .gm-side{grid-column:2;grid-row:1 / 3;align-self:center;display:flex;align-items:center;gap:8px}
+.gm-del{min-width:44px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line-strong);background:none;color:var(--crimson-lt);font-size:14px;font-weight:700}
 .gm-tag{padding:4px 10px;border-radius:var(--r-pill);border:1px solid var(--line-strong);color:var(--text-2);font-size:12px;line-height:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 /* Picker */
 .gm-pk{display:grid;gap:14px;margin-top:14px}

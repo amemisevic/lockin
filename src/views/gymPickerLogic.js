@@ -4,6 +4,7 @@ import { searchExercises, recentIds } from '../core/exercises.js';
 
 export const PICKER_CAP = 50; // 876 rows rebuilt on every key is too many for a phone
 export const NO_MATCH = 'No exercises match.';
+export const IN_USE = "Used in workouts, can't delete.";
 
 export function pickerResults(data, gym, { query, muscle, equipment } = {}) {
   const all = searchExercises(data, gym, { query, muscle, equipment, recents: recentIds(gym.workouts) });

@@ -1,22 +1,22 @@
 // Exercise picker (gym plan G8), a pushed screen #gym/exercises: search, muscle and equipment chips, Create exercise,
 // the matching rows. Typing and chip taps repaint the list in place (a full re-render would drop the keyboard and
 // reset the chip row's scroll); the query and filters live here so the 30 s re-render keeps them. Browse only for now:
-// picking an exercise into a workout arrives with the workout screen (G9).
+// picking an exercise into a workout arrives with the workout screen (G9). Custom rows carry a Delete button
+// (confirm first; the core refuses an exercise that a workout or routine uses).
 import { h } from '../dom.js';
 import { pushedHeader, rerender } from '../ui/chrome.js';
 import { chips } from '../ui/controls.js';
-import { pickerResults, chipOptions, countText, NO_MATCH } from './gymPickerLogic.js';
+import { openActionSheet } from '../sheet.js';
+import { deleteCustom } from '../core/exercises.js';
+import { pickerResults, chipOptions, countText, NO_MATCH, IN_USE } from './gymPickerLogic.js';
 import { exerciseData, exerciseDataFailed, ensureExerciseData, retryExerciseData } from './gymData.js';
 import { openExerciseSheet } from './gymExerciseSheet.js';
 
-const fresh = () => ({ query: '', muscle: null, equipment: null });
+const fresh = () => ({ query: '', muscle: null, equipment: null, notice: '' });
 let state = fresh();
 export const resetPicker = () => { state = fresh(); };
 
-const row = r => h('li', { class: 'gm-rw gm-ex' }, h('div', { class: 'gm-rwn' }, r.name), h('div', { class: 'rn' }, r.detail),
-  r.custom && h('span', { class: 'gm-tag' }, 'Custom'));
-
-export function renderPicker(app, { data = exerciseData(), load = ensureExerciseData } = {}) {
+export function renderPicker(app, { data = exerciseData(), load = ensureExerciseData, confirm = openActionSheet } = {}) {
   const header = pushedHeader({ title: 'Exercises', onBack: () => history.back() });
   if (!data) {
     if (exerciseDataFailed()) {
@@ -43,9 +43,25 @@ export function renderPicker(app, { data = exerciseData(), load = ensureExercise
   const muscle = filter('muscle', 'Muscle', data.muscles);
   const equipment = filter('equipment', 'Equipment', data.equipment);
   const count = h('p', { class: 't2 gm-count', role: 'status' });
+  const notice = h('p', { class: 'form-error', role: 'alert' });
   const results = h('div', { id: 'gm-results' });
 
-  function paint() {
+  // Reads app.gym when confirmed, not when the row was drawn. A refusal leaves everything as it was and says why.
+  const remove = id => {
+    const r = deleteCustom(app.gym, id);
+    if (!r.ok && r.reason === 'in-use') { state.notice = IN_USE; notice.replaceChildren(IN_USE); return; }
+    if (r.ok) app.setGym(() => r.state);
+    paint();
+  };
+  const ask = r => confirm([{ label: 'Delete', destructive: true, onSelect: () => remove(r.id) }], { message: `Delete "${r.name}"? This can't be undone.` });
+  const row = r => h('li', { class: 'gm-rw gm-ex' }, h('div', { class: 'gm-rwn' }, r.name), h('div', { class: 'rn' }, r.detail),
+    r.custom && h('div', { class: 'gm-side' }, h('span', { class: 'gm-tag' }, 'Custom'),
+      h('button', { type: 'button', class: 'gm-del', 'aria-label': `Delete ${r.name}`, onClick: () => ask(r) }, 'Delete')));
+
+  // The refusal notice lives in `state` so the 30 s re-render keeps it; any search, chip tap or delete clears it.
+  function paint(keepNotice) {
+    if (!keepNotice) state.notice = '';
+    notice.replaceChildren(...(state.notice ? [state.notice] : []));
     muscle.sync();
     equipment.sync();
     const r = pickerResults(data, app.gym, state);
@@ -56,9 +72,9 @@ export function renderPicker(app, { data = exerciseData(), load = ensureExercise
   // The new exercise shows up because its name becomes the query. The save already re-rendered, so rebuild once more.
   const created = name => { state = { ...fresh(), query: name }; rerender(); };
   const field = (label, body) => h('div', { class: 'fld' }, h('span', { class: 'fld-l' }, label), body);
-  paint();
+  paint(true);
   return [header, h('div', { class: 'gm-pk' },
     search, field('Muscle', muscle.group), field('Equipment', equipment.group),
     h('button', { type: 'button', id: 'gm-create', class: 'btn-ghost', onClick: () => openExerciseSheet(app, data, created) }, 'Create exercise'),
-    count, results)];
+    notice, count, results)];
 }

@@ -203,8 +203,9 @@ test('renameCustom: only custom ids exist; toString and __proto__ are unknown', 
   refused(X.renameCustom(DATA, undefined, 'custom-1', 'Fine Name'), 'unknown-id');
 });
 
-test('there is no way to delete a custom exercise', () => {
-  assert.deepEqual(Object.keys(X).filter(k => /delete|remove|drop/i.test(k)), []);
+// G8b (owner-approved): deleteCustom is the one allowed way to delete; nothing else may.
+test('the only delete/remove/drop export is deleteCustom', () => {
+  assert.deepEqual(Object.keys(X).filter(k => /delete|remove|drop/i.test(k)), ['deleteCustom']);
 });
 
 // ---------- id lookup ----------

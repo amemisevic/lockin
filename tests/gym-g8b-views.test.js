@@ -240,3 +240,14 @@ test('gym.css: the Delete button is at least 44 x 44', () => {
   assert.match(css, /\.gm-del\{[^}]*min-height:\s*44px/);
   assert.match(css, /\.gm-del\{[^}]*min-width:\s*44px/);
 });
+
+test('picker: the refusal notice survives a re-render (the 30 s tick) and goes when the picker is reset', () => {
+  resetPicker();
+  const { a, sheets, out } = pk({ workouts: used });
+  fire(byLabel(out, 'Delete Cable Fly'), 'click');
+  sheets[0].items[0].onSelect();
+  const again = renderPicker(a, { data: DATA, load() {}, confirm() {} });
+  assert.equal(texts(again).filter(s => s === "Used in workouts, can't delete.").length, 1);
+  resetPicker();
+  assert.equal(texts(renderPicker(a, { data: DATA, load() {}, confirm() {} })).includes("Used in workouts, can't delete."), false);
+});

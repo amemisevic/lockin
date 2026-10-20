@@ -57,6 +57,14 @@ export function addCustom(data, gym, draft) {
   return { ok: true, id, state: { ...gym, customExercises: [...list, e] } };
 }
 
+// Only custom exercises can go (a built-in id is not in customExercises: 'unknown-id'), and only while no workout or routine uses it.
+export function deleteCustom(gym, id) {
+  const list = arr(gym?.customExercises);
+  if (typeof id !== 'string' || !list.some(e => e?.id === id)) return refuse('unknown-id');
+  const used = [...arr(gym.workouts), ...arr(gym.routines)].some(x => arr(x?.items).some(it => it?.exerciseId === id));
+  return used ? refuse('in-use') : { ok: true, state: { ...gym, customExercises: list.filter(e => e?.id !== id) } };
+}
+
 export function renameCustom(data, gym, id, name) {
   const list = arr(gym?.customExercises);
   const old = typeof id === 'string' ? list.find(e => e?.id === id) : undefined;
