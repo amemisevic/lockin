@@ -155,12 +155,14 @@ function render() {
   const a = document.activeElement;
   if (key === shown && (a?.tagName === 'TEXTAREA' || a?.tagName === 'INPUT') && view.contains(a)) return;
   const y = key === shown ? window.scrollY : 0; // keep position on re-render, top on route change
+  view.classList.toggle('enter', shown !== null && key !== shown); // screen fade-in (M2): route change only, not first paint or re-render
   const focusId = view.contains(document.activeElement) && document.activeElement.id;
   view.replaceChildren(...screen(r));
   if (focusId) document.getElementById(focusId)?.focus({ preventScroll: true });
   for (const t of tabs) {
     if (t.hash === `#${r.tab}`) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
   }
+  tabBar.style.setProperty('--i', tabs.findIndex(t => t.hash === `#${r.tab}`)); // the glass pill slides to this tab
   tabBar.hidden = r.pushed; // the parent tab stays highlighted underneath
   shown = key;
   window.scrollTo(0, y);

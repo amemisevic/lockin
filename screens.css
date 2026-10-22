@@ -35,26 +35,44 @@
 .tab {
   position: relative; flex: 1; display: flex; align-items: center; justify-content: center;
   border-radius: 30px; color: #BDB6AA;
-  border: 1px solid transparent; transition: color .2s;
+  border: 1px solid transparent; transition: color var(--dur-ui);
   -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
-/* Active tab (boards: .tab.on): soft gold glow, 3 px light bar on top, gold icon. Icon-only bar (v2.1): the icon also fills
+/* Active tab (M2, spec §10): one liquid-glass pill slides under the tabs (translucent fill, soft inner highlight, thin gold
+   edge). app.js sets --i (the active index) on .tabs; the bar is never re-rendered, so the slide plays. The icon fills
    (fill-opacity) and draws heavier, so the state does not rest on colour alone. */
-.tab[aria-current="page"] {
-  color: #FCE29A; border-color: rgba(242,190,92,.20);
-  background: radial-gradient(70% 90% at 50% 0%, rgba(242,190,92,.17), rgba(242,190,92,.04) 60%, rgba(242,190,92,0) 100%);
+.tabs { overflow: hidden; } /* the spring overshoot stays inside the pill-shaped bar */
+.tab-pill, .tab[aria-current="page"]::before {
+  border: 1px solid rgba(242,190,92,.42); border-radius: 30px;
+  background: linear-gradient(180deg, rgba(252,226,154,.20), rgba(242,190,92,.07) 55%, rgba(242,190,92,.11));
+  box-shadow: inset 0 1px 0 rgba(255,244,214,.5), inset 0 0 14px rgba(255,236,190,.10), 0 2px 10px rgba(0,0,0,.35);
 }
-.tab[aria-current="page"]::before {
-  content: ""; position: absolute; top: -2px; left: 50%; width: 30px; height: 3px; margin-left: -15px; border-radius: 0 0 3px 3px;
-  background: linear-gradient(90deg, rgba(252,226,154,0), #FCE29A 30%, #FCE29A 70%, rgba(252,226,154,0));
-  box-shadow: 0 0 8px 1px rgba(242,190,92,.5);
+.tab-pill {
+  position: absolute; top: 6px; bottom: 6px; left: 6px; width: calc((100% - 12px) / 6); pointer-events: none;
+  transform: translateX(calc(var(--i, 0) * 100%)); transition: transform var(--dur-ui) var(--ease-spring);
 }
+.tab[aria-current="page"] { color: #FCE29A; }
+.tab[aria-current="page"]::before { content: none; } /* Reduce Motion shows the fill here instead (below) */
 .tab[aria-current="page"] svg { filter: drop-shadow(0 0 4px rgba(242,190,92,.5)); fill: currentColor; fill-opacity: .28; stroke-width: 2.2; }
-.tab svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.tab svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--dur-press) var(--ease-out); }
+.tab:active svg { transform: scale(.86); }
+
+/* Screen change (spec §10): the new screen's blocks fade in with an 8 px rise. app.js sets .enter only on a route change, so a
+   re-render of the same screen (a tap, the clock tick) never replays it. The children move, not #view: its ::before is the wall. */
+@keyframes scr-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes scr-fade { from { opacity: 0; } }
+#view.enter > * { animation: scr-in var(--dur-screen) var(--ease-out) backwards; }
 
 /* Reduce Transparency / Increase Contrast (spec §6): solid bar. The ~50 % wall fade is deferred to Task 21. */
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   .tabs { -webkit-backdrop-filter: none; backdrop-filter: none; background: #1a181c; }
+}
+/* Reduce Motion: fades only. No slide, no icon shrink; the glass fill fades in on the new tab, the pill stays out of the way. */
+@media (prefers-reduced-motion: reduce) {
+  .tab-pill { display: none; }
+  .tab[aria-current="page"]::before { content: ""; position: absolute; inset: -1px; z-index: -1; animation: scr-fade var(--dur-ui) both; }
+  .tab:active svg { transform: none; }
+  #view.enter > * { animation-name: scr-fade; }
 }
 
 /* ==== Tasks tab (plan Task 11). Board compact format, copied from static/Tasks.html inline styles and css/Tasks.css;
