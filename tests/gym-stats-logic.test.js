@@ -138,21 +138,29 @@ const EX = g([
 const series = weights => g(weights.map((w, i) => wk(`s${i}`, D(2026, 8, 1 + i), [A('bench', [ws(5, w)])])));
 const ramp = n => series(Array.from({ length: n }, (_, i) => 50 + (i * 5) / 2)); // 50, 52.5, 55 ...
 
-test('weight: options most recently trained first; the first one is selected by default', () => {
+test('weight: nothing is picked at first (G11w2): options newest first, the placeholder is not one of them, no chart data', () => {
   const e = statsModel(DATA, EX, TODAY).weight;
   assert.deepEqual(e.options, [{ id: 'bench', name: 'Barbell Bench Press' }, { id: 'row', name: 'Barbell Row' }]);
-  assert.equal(e.id, 'bench');
-  assert.equal(e.name, 'Barbell Bench Press');
+  assert.equal(e.id, null);
+  for (const k of ['name', 'points', 'xTicks', 'yTicks', 'plot', 'summary', 'dates', 'rows', 'label']) assert.equal(e[k], undefined, k);
   assert.equal(statsModel(DATA, EX, TODAY).exercise, undefined, 'the 1RM model is gone');
 });
 
+test('weight: picking an exercise gives its model; the options stay the same', () => {
+  const e = statsModel(DATA, EX, TODAY, { picked: 'bench' }).weight;
+  assert.deepEqual(e.options.map(o => o.id), ['bench', 'row']);
+  assert.equal(e.id, 'bench');
+  assert.equal(e.name, 'Barbell Bench Press');
+  assert.equal(e.points.length, 4);
+});
+
 test('weight: one point per workout, the heaviest working set, text without a needless .0', () => {
-  const e = statsModel(DATA, EX, TODAY).weight;
+  const e = statsModel(DATA, EX, TODAY, { picked: 'bench' }).weight;
   assert.deepEqual(e.points.map(p => [p.n, p.date, p.kg, p.text]), [[1, '2026-09-20', 80, '80'], [2, '2026-09-27', 60, '60'], [3, '2026-10-05', 85, '85'], [4, '2026-10-12', 82.5, '82.5']]);
 });
 
 test('weight: the box, the plot, the y ticks (60 to 85 step 5) and the x ticks (first and last workout)', () => {
-  const e = statsModel(DATA, EX, TODAY).weight;
+  const e = statsModel(DATA, EX, TODAY, { picked: 'bench' }).weight;
   assert.deepEqual([e.width, e.height, e.wide], [320, 218, false]);
   assert.deepEqual(e.plot, { left: 44, right: 270, top: 24, bottom: 174 });
   assert.deepEqual(e.yTicks.map(t => [t.v, t.text, t.y]), [[60, '60', 174], [65, '65', 144], [70, '70', 114], [75, '75', 84], [80, '80', 54], [85, '85', 24]]);
@@ -160,17 +168,17 @@ test('weight: the box, the plot, the y ticks (60 to 85 step 5) and the x ticks (
 });
 
 test('weight: points are spread evenly, the heaviest at the top tick', () => {
-  const e = statsModel(DATA, EX, TODAY).weight;
+  const e = statsModel(DATA, EX, TODAY, { picked: 'bench' }).weight;
   assert.deepEqual(e.points.map(p => [p.x, p.y]), [[44, 54], [119.33, 174], [194.67, 24], [270, 39]]);
 });
 
 test('weight: first and latest are flagged and labelled; nothing else is (4 workouts, no 5th)', () => {
-  const e = statsModel(DATA, EX, TODAY).weight;
+  const e = statsModel(DATA, EX, TODAY, { picked: 'bench' }).weight;
   assert.deepEqual(e.points.map(p => [p.first, p.last, p.fifth, p.show]), [[true, false, false, true], [false, false, false, false], [false, false, false, false], [false, true, false, true]]);
 });
 
 test('weight: every 5th workout (5, 10, 15 ...) is a labelled dot, with the workout number as its x tick', () => {
-  const e = statsModel(DATA, ramp(12), TODAY).weight;
+  const e = statsModel(DATA, ramp(12), TODAY, { picked: 'bench' }).weight;
   assert.deepEqual(e.points.filter(p => p.show).map(p => [p.n, p.text, p.first, p.last, p.fifth]),
     [[1, '50', true, false, false], [5, '60', false, false, true], [10, '72.5', false, false, true], [12, '77.5', false, true, false]]);
   assert.deepEqual(e.yTicks.map(t => t.v), [50, 60, 70, 80]);
@@ -180,25 +188,25 @@ test('weight: every 5th workout (5, 10, 15 ...) is a labelled dot, with the work
 });
 
 test('weight: the last x tick is left out when it would touch the one before (11 workouts: 1, 5, 10)', () => {
-  assert.deepEqual(statsModel(DATA, ramp(11), TODAY).weight.xTicks.map(t => t.n), [1, 5, 10]);
-  assert.deepEqual(statsModel(DATA, ramp(10), TODAY).weight.xTicks.map(t => t.n), [1, 5, 10]);
+  assert.deepEqual(statsModel(DATA, ramp(11), TODAY, { picked: 'bench' }).weight.xTicks.map(t => t.n), [1, 5, 10]);
+  assert.deepEqual(statsModel(DATA, ramp(10), TODAY, { picked: 'bench' }).weight.xTicks.map(t => t.n), [1, 5, 10]);
 });
 
 test('weight: a 5th workout that is also the latest is flagged last and fifth, and shown once', () => {
-  const e = statsModel(DATA, ramp(5), TODAY).weight;
+  const e = statsModel(DATA, ramp(5), TODAY, { picked: 'bench' }).weight;
   assert.deepEqual(e.points.map(p => [p.first, p.last, p.fifth, p.show]), [[true, false, false, true], [false, false, false, false], [false, false, false, false], [false, false, false, false], [false, true, true, true]]);
 });
 
 test('weight: ALL workouts are shown, none cut; past 17 workouts the chart gets wider and scrolls (14 per gap)', () => {
-  const e = statsModel(DATA, ramp(30), TODAY).weight;
+  const e = statsModel(DATA, ramp(30), TODAY, { picked: 'bench' }).weight;
   assert.equal(e.points.length, 30);
   assert.deepEqual([e.width, e.wide, e.plot.right], [500, true, 450]); // 44 + 29 * 14 + 50
   assert.equal(e.points[29].x, 450);
   assert.equal(e.points[1].x - e.points[0].x, 14);
   assert.deepEqual(e.xTicks.map(t => t.n), [1, 5, 10, 15, 20, 25, 30]);
   assert.equal(e.rows.length, 30);
-  assert.equal(statsModel(DATA, ramp(17), TODAY).weight.wide, false);
-  assert.equal(statsModel(DATA, ramp(18), TODAY).weight.wide, true);
+  assert.equal(statsModel(DATA, ramp(17), TODAY, { picked: 'bench' }).weight.wide, false);
+  assert.equal(statsModel(DATA, ramp(18), TODAY, { picked: 'bench' }).weight.wide, true);
 });
 
 test('weight: one workout sits in the middle; equal weights are level in the middle of a 3 kg axis', () => {
@@ -207,13 +215,13 @@ test('weight: one workout sits in the middle; equal weights are level in the mid
   assert.deepEqual([row.points[0].x, row.points[0].y, row.points[0].first, row.points[0].last], [157, 99, true, true]);
   assert.deepEqual(row.yTicks.map(t => t.v), [49, 50, 51]);
   assert.deepEqual(row.xTicks, [{ n: 1, x: 157 }]);
-  const level = statsModel(DATA, series([60, 60]), TODAY).weight;
+  const level = statsModel(DATA, series([60, 60]), TODAY, { picked: 'bench' }).weight;
   assert.deepEqual(level.points.map(p => [p.x, p.y]), [[44, 99], [270, 99]]);
   assert.deepEqual(level.yTicks.map(t => t.v), [59, 60, 61]);
 });
 
 test('weight: start, now and the change; first and latest date; the list under the chart; the spoken label', () => {
-  const e = statsModel(DATA, EX, TODAY).weight;
+  const e = statsModel(DATA, EX, TODAY, { picked: 'bench' }).weight;
   assert.equal(e.summary, 'Start 80 kg, now 82.5 kg, +2.5 kg');
   assert.equal(e.dates, 'First workout 20 Sep 2026, latest 12 Oct 2026');
   assert.deepEqual(e.rows, ['Workout 1 · 20 Sep 2026 · 80 kg', 'Workout 2 · 27 Sep 2026 · 60 kg', 'Workout 3 · 5 Oct 2026 · 85 kg', 'Workout 4 · 12 Oct 2026 · 82.5 kg']);
@@ -221,17 +229,22 @@ test('weight: start, now and the change; first and latest date; the list under t
 });
 
 test('weight: a drop reads with a minus, no change reads +0, one workout reads "1 workout"', () => {
-  assert.equal(statsModel(DATA, series([100, 90]), TODAY).weight.summary, 'Start 100 kg, now 90 kg, -10 kg');
-  assert.equal(statsModel(DATA, series([60, 70, 60]), TODAY).weight.summary, 'Start 60 kg, now 60 kg, +0 kg');
-  assert.equal(statsModel(DATA, series([22.25, 24]), TODAY).weight.summary, 'Start 22.25 kg, now 24 kg, +1.75 kg');
+  assert.equal(statsModel(DATA, series([100, 90]), TODAY, { picked: 'bench' }).weight.summary, 'Start 100 kg, now 90 kg, -10 kg');
+  assert.equal(statsModel(DATA, series([60, 70, 60]), TODAY, { picked: 'bench' }).weight.summary, 'Start 60 kg, now 60 kg, +0 kg');
+  assert.equal(statsModel(DATA, series([22.25, 24]), TODAY, { picked: 'bench' }).weight.summary, 'Start 22.25 kg, now 24 kg, +1.75 kg');
   const row = statsModel(DATA, EX, TODAY, { picked: 'row' }).weight;
   assert.equal(row.summary, 'Start 50 kg, now 50 kg, +0 kg');
   assert.equal(row.dates, 'First workout 10 Oct 2026, latest 10 Oct 2026');
   assert.equal(row.label, 'Weight progress, Barbell Row, 1 workout, oldest first: 50 kg');
 });
 
-test('weight: an unknown, odd or inherited picked id falls back to the default', () => {
-  for (const picked of ['nope', 'toString', '__proto__', '', null, undefined, 5]) assert.equal(statsModel(DATA, EX, TODAY, { picked }).weight.id, 'bench', String(picked));
+test('weight: an unknown, odd or inherited picked id (and the empty placeholder value) falls back to nothing picked', () => {
+  for (const picked of ['nope', 'toString', '__proto__', '', null, undefined, 5]) {
+    const e = statsModel(DATA, EX, TODAY, { picked }).weight;
+    assert.equal(e.id, null, String(picked));
+    assert.equal(e.points, undefined, String(picked));
+    assert.equal(e.options.length, 2, String(picked));
+  }
 });
 
 test('weight: no working set with a weight above 0 = no chart (warm-up only, 0 kg only)', () => {

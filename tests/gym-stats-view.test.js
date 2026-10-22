@@ -205,7 +205,16 @@ const WSEC = out => section(out, 'Weight progress');
 const wchart = sec => all([sec]).find(n => (n.getAttribute('aria-label') ?? '').startsWith('Weight progress,'));
 const bench30 = g(Array.from({ length: 30 }, (_, i) => wk(`k${i}`, `2026-08-${String(1 + i).padStart(2, '0')}`, [A('bench', [ws(5, 50 + i)])])));
 
-test('exercise picker: a labelled select of exercises with a weight, newest first, the first selected', () => {
+// G11w2: the section starts empty. picked(id) = the screen after choosing `id` in the select (the choice is view state, as in the app).
+const picked = (id, gym = GYM, o) => {
+  const app = mkApp(gym), h = harness(o), sel = all(renderGymStats(app, h.opts)).find(n => n.tagName === 'SELECT');
+  sel.value = id;
+  fire(sel, 'change');
+  return renderGymStats(app, h.opts);
+};
+const EMPTY_LINE = 'Pick an exercise to see your weight progress.';
+
+test('exercise picker: starts on a "Choose an exercise" placeholder, then the exercises with a weight, newest first', () => {
   const sec = WSEC(screen().out);
   const sel = all([sec]).find(n => n.tagName === 'SELECT');
   assert.equal(sel.id, 'gs-ex');
@@ -213,8 +222,54 @@ test('exercise picker: a labelled select of exercises with a weight, newest firs
   const label = all([sec]).find(n => n.tagName === 'LABEL');
   assert.equal(label.getAttribute('for'), 'gs-ex');
   assert.equal(label.textContent, 'Exercise');
-  assert.deepEqual(sel.children.map(o => [o.getAttribute('value'), o.textContent]), [['bench', 'Barbell Bench Press'], ['pushdown', 'Triceps Pushdown'], ['row', 'Barbell Row']]);
-  assert.deepEqual(sel.children.map(o => o.getAttribute('selected') !== null), [true, false, false]);
+  assert.deepEqual(sel.children.map(o => [o.getAttribute('value'), o.textContent]), [['', 'Choose an exercise'], ['bench', 'Barbell Bench Press'], ['pushdown', 'Triceps Pushdown'], ['row', 'Barbell Row']]);
+  assert.deepEqual(sel.children.map(o => o.getAttribute('selected') !== null), [true, false, false, false]);
+});
+
+test('weight section on load: one short line and nothing else (no chart, no Start line, no dates, no list, no swipe hint)', () => {
+  for (const gym of [GYM, bench30]) {
+    const sec = WSEC(screen(gym).out);
+    assert.ok(texts([sec]).includes(EMPTY_LINE));
+    assert.equal(imgs([sec]).length, 0);
+    assert.equal(all([sec]).filter(n => ['gs-sum', 'gs-dates', 'gs-wl', 'gs-hint', 'gs-wchart'].some(c => hasClass(n, c))).length, 0);
+    assert.equal(all([sec]).filter(n => n.tagName === 'SVG' || n.tagName === 'UL').length, 0);
+    assert.ok(!texts([sec]).some(t => /^(Start |First workout|Workout \d|Swipe)/.test(t)));
+  }
+});
+
+test('picking an exercise shows the chart, the text and the list and drops the one-line prompt', () => {
+  const sec = WSEC(picked('bench'));
+  assert.ok(!texts([sec]).includes(EMPTY_LINE));
+  assert.ok(wchart(sec));
+  assert.ok(texts([sec]).includes('Start 80 kg, now 80 kg, +0 kg'));
+  assert.equal(all([sec]).find(n => n.tagName === 'SELECT').children.map(o => o.getAttribute('selected') !== null).join(), 'false,true,false,false');
+});
+
+test('picking the placeholder again clears everything; the choice is view state: resetStatsView starts empty again', () => {
+  const app = mkApp(GYM), h = harness(), sel = all(renderGymStats(app, h.opts)).find(n => n.tagName === 'SELECT');
+  sel.value = 'row';
+  fire(sel, 'change');
+  assert.ok(wchart(WSEC(renderGymStats(app, h.opts))));
+  sel.value = '';
+  fire(sel, 'change');
+  const cleared = WSEC(renderGymStats(app, h.opts));
+  assert.equal(wchart(cleared), undefined);
+  assert.ok(texts([cleared]).includes(EMPTY_LINE));
+  assert.equal(all([cleared]).find(n => n.tagName === 'SELECT').children[0].getAttribute('selected') !== null, true);
+  fire(sel, 'change', { target: { value: 'bench' } });
+  assert.ok(wchart(WSEC(renderGymStats(app, h.opts))));
+  resetStatsView();
+  assert.equal(wchart(WSEC(renderGymStats(app, h.opts))), undefined);
+});
+
+test('the choice is not saved: the view never writes storage and the gym state is untouched', () => {
+  const gym = structuredClone(GYM), before = JSON.stringify(gym), app = { ...mkApp(gym), setGym() { throw new Error('saved'); } };
+  const h = harness(), sel = all(renderGymStats(app, h.opts)).find(n => n.tagName === 'SELECT');
+  sel.value = 'bench';
+  fire(sel, 'change');
+  renderGymStats(app, h.opts);
+  assert.equal(JSON.stringify(gym), before);
+  assert.doesNotMatch(read('src/views/gymStats.js').replace(/\/\/.*$/gm, ''), /localStorage|sessionStorage|setGym/);
 });
 
 test('exercise picker: choosing another exercise redraws the chart for it', () => {
@@ -226,12 +281,12 @@ test('exercise picker: choosing another exercise redraws the chart for it', () =
   fire(sel, 'change');
   assert.ok(events.length > before, 'no re-render requested');
   const again = WSEC(renderGymStats(app, h.opts));
-  assert.deepEqual(all([again]).find(n => n.tagName === 'SELECT').children.map(o => o.getAttribute('selected') !== null), [false, false, true]);
+  assert.deepEqual(all([again]).find(n => n.tagName === 'SELECT').children.map(o => o.getAttribute('selected') !== null), [false, false, false, true]);
   assert.equal(wchart(again).getAttribute('aria-label'), 'Weight progress, Barbell Row, 1 workout, oldest first: 50 kg');
 });
 
 test('weight text above the chart: start, now and the change, then the first and latest date', () => {
-  const sec = WSEC(screen().out);
+  const sec = WSEC(picked('bench'));
   assert.ok(texts([sec]).includes('Start 80 kg, now 80 kg, +0 kg'));
   assert.ok(texts([sec]).includes('First workout 10 Aug 2026, latest 12 Oct 2026'));
   const ps = all([sec]).filter(n => n.tagName === 'P');
@@ -241,13 +296,13 @@ test('weight text above the chart: start, now and the change, then the first and
 });
 
 test('weight list under the chart: every workout, number, date and kg, as text, oldest first', () => {
-  const sec = WSEC(screen().out);
+  const sec = WSEC(picked('bench'));
   const ul = all([sec]).find(n => n.tagName === 'UL' && hasClass(n, 'gs-wl'));
   assert.deepEqual(ul.children.map(li => li.textContent), ['Workout 1 · 10 Aug 2026 · 80 kg', 'Workout 2 · 30 Sep 2026 · 60 kg', 'Workout 3 · 5 Oct 2026 · 82.5 kg', 'Workout 4 · 12 Oct 2026 · 80 kg']);
 });
 
 test('weight chart: role=img with the spoken numbers; svg 320 x 218, hidden from VoiceOver, round dots (no stretching), fits the screen', () => {
-  const wrap = wchart(WSEC(screen().out));
+  const wrap = wchart(WSEC(picked('bench')));
   assert.equal(wrap.getAttribute('aria-label'), 'Weight progress, Barbell Bench Press, 4 workouts, oldest first: 80, 60, 82.5, 80 kg');
   assert.equal(wrap.getAttribute('role'), 'img');
   const svg = kids(wrap, 'svg')[0];
@@ -258,7 +313,7 @@ test('weight chart: role=img with the spoken numbers; svg 320 x 218, hidden from
 });
 
 test('weight chart: one polyline through the four points; first is a square, latest a diamond, the others small circles', () => {
-  const svg = kids(wchart(WSEC(screen().out)), 'svg')[0];
+  const svg = kids(wchart(WSEC(picked('bench'))), 'svg')[0];
   assert.equal(kids(svg, 'polyline', 'gs-line')[0].getAttribute('points'), '44,54 119.33,174 194.67,39 270,54');
   const sq = kids(svg, 'rect', 'gs-end');
   assert.equal(sq.length, 1);
@@ -271,14 +326,14 @@ test('weight chart: one polyline through the four points; first is a square, lat
 });
 
 test('weight chart: only the first and the latest point carry a kg label inside the chart', () => {
-  const lbl = kids(kids(wchart(WSEC(screen().out)), 'svg')[0], 'text', 'gs-lbl');
+  const lbl = kids(kids(wchart(WSEC(picked('bench'))), 'svg')[0], 'text', 'gs-lbl');
   assert.deepEqual(lbl.map(t => t.textContent), ['80', '80']);
   assert.deepEqual(lbl.map(t => ['x', 'y', 'text-anchor'].map(k => t.getAttribute(k))), [['42', '44', 'start'], ['280', '58', 'start']]); // above the first, right of the latest
 });
 
 test('weight chart: every 5th workout is a bigger dot with its kg label (12 workouts: 5 and 10), other points have none', () => {
   const gym = g(Array.from({ length: 12 }, (_, i) => wk(`q${i}`, `2026-09-${String(1 + i).padStart(2, '0')}`, [A('bench', [ws(5, 50 + (i * 5) / 2)])])));
-  const svg = kids(wchart(WSEC(screen(gym).out)), 'svg')[0];
+  const svg = kids(wchart(WSEC(picked('bench', gym))), 'svg')[0];
   assert.deepEqual(kids(svg, 'circle', 'gs-dot5').map(c => [c.getAttribute('cx'), c.getAttribute('cy'), c.getAttribute('r')]), [['126.18', '124', '5'], ['228.91', '61.5', '5']]);
   assert.equal(kids(svg, 'circle', 'gs-pt').length, 12 - 2 - 2);
   const lbl = kids(svg, 'text', 'gs-lbl');
@@ -287,7 +342,7 @@ test('weight chart: every 5th workout is a bigger dot with its kg label (12 work
 });
 
 test('weight chart: drawn axes, ticks, light gridlines and both axis titles', () => {
-  const svg = kids(wchart(WSEC(screen().out)), 'svg')[0];
+  const svg = kids(wchart(WSEC(picked('bench'))), 'svg')[0];
   const axes = kids(svg, 'line', 'gs-axis').map(l => ['x1', 'y1', 'x2', 'y2'].map(k => l.getAttribute(k)).join(' '));
   assert.deepEqual(axes, ['44 174 270 174', '44 24 44 174']); // x axis (workouts), y axis (kg)
   assert.equal(kids(svg, 'line', 'gs-grid').length, 6);
@@ -302,7 +357,7 @@ test('weight chart: drawn axes, ticks, light gridlines and both axis titles', ()
 });
 
 test('weight chart: ALL workouts drawn, none cut; 30 workouts make a wider chart that scrolls inside its box, 1:1', () => {
-  const sec = WSEC(screen(bench30).out);
+  const sec = WSEC(picked('bench', bench30));
   const wrap = wchart(sec);
   const svg = kids(wrap, 'svg')[0];
   assert.equal(svg.getAttribute('viewBox'), '0 0 500 218');
@@ -315,8 +370,8 @@ test('weight chart: ALL workouts drawn, none cut; 30 workouts make a wider chart
 });
 
 test('weight chart: a wide chart says to swipe; a chart that fits does not', () => {
-  assert.ok(texts([WSEC(screen(bench30).out)]).includes('Swipe the chart sideways to see all 30 workouts.'));
-  assert.ok(!texts([WSEC(screen().out)]).some(t => t.startsWith('Swipe')));
+  assert.ok(texts([WSEC(picked('bench', bench30))]).includes('Swipe the chart sideways to see all 30 workouts.'));
+  assert.ok(!texts([WSEC(picked('bench'))]).some(t => t.startsWith('Swipe')));
 });
 
 test('weight block: no weights yet says so and shows no select', () => {
@@ -329,7 +384,7 @@ test('weight block: no weights yet says so and shows no select', () => {
 
 test('weight block while names load: bundled names read Loading… (the chart itself needs no list)', () => {
   const sec = WSEC(screen(GYM, { data: null }).out);
-  assert.deepEqual(all([sec]).find(n => n.tagName === 'SELECT').children.map(o => o.textContent), ['Loading…', 'Loading…', 'Loading…']);
+  assert.deepEqual(all([sec]).find(n => n.tagName === 'SELECT').children.map(o => o.textContent), ['Choose an exercise', 'Loading…', 'Loading…', 'Loading…']);
 });
 
 test('the 1RM chart is gone: no estimated 1RM text, no PR diamond, no tiles', () => {
