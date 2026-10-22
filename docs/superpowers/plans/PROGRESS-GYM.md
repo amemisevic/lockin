@@ -218,3 +218,14 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 - Deviations: one fixture fix in my own new test after the red commit (the empty-state check counted the heading's icon svg; it now counts only svgs with a viewBox). No reviewer subagent run (not asked).
 - Needs ruling: none.
 - Next: push (your call), phone check, then G12 (audit, release).
+
+### G9b — add a workout on a past day from Gym home
+- Commits: `3946f98` failing WIP tests (`gym-g9b-logic` 5, `gym-g9b-view` 9, `gym-g9b-tz` 3; frozen); `d99d402` fixture fix in my own new view test; `05aa4d4` implementation. Precheck first: HEAD `ac26764`, 1169 pass, tree clean (3 untracked docs). Not pushed. `src/core` not edited. VERSION untouched.
+- Edited: `gymHome.js`, `gymHomeLogic.js` (`noonOf`, `dayItems`), `gym.css` (button reset for `.wk`). No new file in src, `sw.js` unchanged, existing icons only.
+- Behaviour: today's tile and every past tile (also in earlier weeks) are buttons (class `wk`, same aria-label and aria-current, 76 px high); future tiles stay inert divs with role img. A tap opens the action sheet titled with the day label: one item per finished workout that day (name or "Workout", oldest first, opens `#gym/history/<id>`), then "Add workout", or "Resume workout" when a workout is open. Add workout: name sheet, then `begin()` for that day, then `#gym/workout`. A past day starts at local noon of that day (`noonOf`: `keyToDate` + `setHours`), so startedAt and date lie on it; today keeps `now()`. Cancelling the name sheet starts nothing.
+- Last time and Recent order: both follow startedAt, so an older-day workout (noon) never replaces a newer one; a test proves it for Last-time text, the prefill and the Recent order.
+- Red: both new files failed (missing exports). Green: `npm test` 1186 pass, 0 fail (1169 + 17); exit 0. The logic file also passes under TZ Europe/Sarajevo, America/Los_Angeles, Pacific/Auckland (offset checked, noon on DST days). Forbidden-date-API grep on the touched files: no hits (a test).
+- Deviations: (1) owner OK: frozen `gym-views.test.js` line 64 (every tile role img) amended to every tile BUTTON with no role, since today is Sunday there and no tile is future; button + role img would hide the control from VoiceOver. No other frozen test touched. (2) `d99d402`: my own new test's fixture lacked a done set (invalid gym state); no assertion changed. (3) No reviewer subagent run, no browser check.
+- Choices (plan silent): two workouts on one day both start at noon (ids get the `-2` suffix); the sheet lists finished workouts only; an open workout dated another day still shows "Resume workout" on every day.
+- Needs ruling: none.
+- Next: phone check, then G12 (audit, release).
