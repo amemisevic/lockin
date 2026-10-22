@@ -107,3 +107,5 @@
 .gs-wchart svg{display:block}
 .gs-hint{margin:6px 0 0;font-size:14px}
 .gs-wl{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:14px;line-height:18px}
+/* G9b: day tiles are buttons (today and past days); same look as the div tiles. */
+.gm-wks button.wk{font-family:inherit;padding:0;margin:0;cursor:pointer;-webkit-appearance:none;appearance:none}

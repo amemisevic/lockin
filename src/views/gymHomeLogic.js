@@ -1,6 +1,6 @@
 // Gym home logic (gym plan G8): week strip, visits line, last workouts, routine rows. Pure, DOM-free.
 import { weekKeys, visitDates, visitsInWeek } from '../core/gymstats.js';
-import { addDays } from '../logic.js';
+import { addDays, keyToDate } from '../logic.js';
 import { DAY_NAMES, dayLabel, weekLabel } from './tasksLogic.js';
 
 export const GYM_CORRUPT_NOTICE = 'Gym data could not be read. A copy was kept.';
@@ -49,3 +49,10 @@ export function recentWorkouts(gym, limit = 5, upTo) {
 }
 
 export const routineRows = gym => arr(gym.routines).map(r => ({ id: r.id, name: r.name, summary: count(arr(r.items).length, 'exercise', 'exercises') }));
+
+// Day sheet (G9b). Local noon of a day key: the start time of a workout added to a past day, so startedAt and date lie on that day.
+export const noonOf = key => { const d = keyToDate(key); d.setHours(12, 0, 0, 0); return d.getTime(); };
+
+// The finished workouts of one day, oldest first, for the day sheet.
+export const dayItems = (gym, key) => arr(gym.workouts).filter(w => w.finishedAt !== null && w.date === key)
+  .sort((a, b) => a.startedAt - b.startedAt).map(w => ({ id: w.id, title: w.name || 'Workout' }));

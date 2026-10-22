@@ -61,7 +61,8 @@ test('home: week strip has 7 tiles; visits on 05, 07 and 11 carry the check mark
   assert.deepEqual(tiles.map(t => t.getAttribute('aria-label')), [
     'Monday 5 October, gym visit', 'Tuesday 6 October, no visit', 'Wednesday 7 October, gym visit', 'Thursday 8 October, no visit',
     'Friday 9 October, no visit', 'Saturday 10 October, no visit', 'Sunday 11 October, gym visit, today']);
-  assert.ok(tiles.every(t => t.getAttribute('role') === 'img'));
+  // G9b (owner OK): today and past tiles are buttons (no role img); only future tiles keep role img. Today is Sunday, so none is future here.
+  assert.ok(tiles.every(t => t.tagName === 'BUTTON' && t.getAttribute('role') === null));
   const marked = tiles.map(t => hasClass(t, 'sel') && all([t]).some(n => n.tagName === 'SVG'));
   assert.deepEqual(marked, [true, false, true, false, false, false, true]);
   assert.ok(texts(out).includes('3 of 4 visits'));
