@@ -79,12 +79,6 @@ export function prMarkers(gym, exerciseId) {
   return out;
 }
 
-// One point per finished workout with a qualifying set of the exercise: its best set, unrounded. Oldest first by startedAt (chart data).
-export const e1rmSeries = (gym, exerciseId) => finished(gym).sort((a, b) => a.startedAt - b.startedAt).flatMap(w => {
-  const all = arr(w.items).filter(it => it.exerciseId === exerciseId).flatMap(it => arr(it.sets).map(est1RM)).filter(e => e !== null);
-  return all.length ? [{ workoutId: w.id, date: w.date, startedAt: w.startedAt, e1rm: Math.max(...all) }] : [];
-});
-
 // Weight progress (G11w). A set has a weight when it is done, not a warm-up, and above 0 kg; reps do not matter.
 const weighted = s => counts(s) && s.weight > 0;
 

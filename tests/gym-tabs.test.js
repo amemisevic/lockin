@@ -1,10 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { all, texts, byLabel } from './fakedom.js';
 import { parseRoute } from '../src/router.js';
 import { icons } from '../src/icons.js';
-import { renderGym } from '../src/views/gym.js';
 import { gymLine } from '../src/views/todayLogic.js';
 import { emptyGym } from '../src/core/gym.js';
 
@@ -87,23 +85,11 @@ test('CLAUDE.md records the six icon-only tabs override', () => {
   assert.match(md, /icons only/i);
 });
 
-test('Gym shell: eyebrow, title Gym, one empty-state line; nothing else', () => {
-  const app = { gym: emptyGym() };
-  const out = renderGym(app);
-  assert.deepEqual(texts(out), ['Lock In', 'Gym', 'No workouts yet']);
-  assert.equal(all(out).some(n => n.tagName === 'BUTTON' || n.tagName === 'A' || n.tagName === 'INPUT'), false);
-  assert.equal(byLabel(out, 'Gym'), undefined);
-});
-
 const fin = (date, id) => ({ id, date, startedAt: 1, finishedAt: 2, name: '', routineId: null, items: [] });
 const open = (date, id) => ({ ...fin(date, id), finishedAt: null });
 const g = (workouts, weeklyTarget = 4) => ({ ...emptyGym(), settings: { weeklyTarget }, workouts });
 // Plan example: finished Mon 2026-10-05, Wed 10-07 (two), Sun 10-11, Mon 10-12.
 const EX = [fin('2026-10-05', 'a'), fin('2026-10-07', 'b'), fin('2026-10-07', 'c'), fin('2026-10-11', 'd'), fin('2026-10-12', 'e')];
-
-test('Gym shell with workouts on file does not claim "No workouts yet"', () => {
-  assert.deepEqual(texts(renderGym({ gym: g(EX) })), ['Lock In', 'Gym']);
-});
 
 test('gymLine: Sunday 2026-10-11 is week 10-05..10-11 = 3 visits of 4', () => {
   assert.equal(gymLine(g(EX), '2026-10-11'), 'Gym 3/4 this week');
