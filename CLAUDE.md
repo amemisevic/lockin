@@ -24,6 +24,7 @@ Gym work (v2.1, branch `gym`): also read `docs/superpowers/plans/v2.1-gym-plan.m
 
 ## Design skills
 Design skills (design-taste-*, high-end-visual-design, redesign-existing-projects, gpt-taste, minimalist-ui, industrial-brutalist-ui, stitch-design-taste, image-to-code, frontend-design, web-artifacts-builder, apple-design, animate) are AUDIT-ONLY. Never apply their suggestions to code unless I explicitly approve each change. DESIGN-SPEC.md and the reference PNGs in docs/design/lockin-v2/ always win over any design skill. No React, no build step, no new dependencies.
+**Motion exception (owner decision 2026-10-23):** for the Motion polish tasks in ROADMAP.md only, the `animate` skill and the Emil Kowalski skills may be applied, to CSS and view JS motion only, inside the ROADMAP scope. Everything else stays audit-only. Motion is plain CSS (transform, opacity, filter, backdrop-filter): no Tailwind, no animation library, no `npm install`. DESIGN-SPEC.md section 10 (Motion) is the rule for it.
 
 ## Commands
 - Test: `npm test` (runs `node --test`)
@@ -32,7 +33,7 @@ Design skills (design-taste-*, high-end-visual-design, redesign-existing-project
 ## Workflow
 - One commit per task using the message in the plan. Never commit failing tests. Never force-push.
 - Stop at every ⛔ CHECKPOINT in the plan and tell the user exactly what to test on the iPhone.
-- **Release rule:** Bump VERSION only in the plan's release task (Task 20), not per task. `VERSION` in `sw.js` and `src/version.js` must match (a test enforces it). Users must fully close and reopen the Home Screen app twice to get an update.
+- **Release rule:** Bump VERSION only in the plan's release task (Task 20, or the last task of a release series such as M5), not per task. `VERSION` in `sw.js` and `src/version.js` must match (a test enforces it). Users must fully close and reopen the Home Screen app twice to get an update.
 
 ## Platform facts
 - A Home Screen web app has its own storage, separate from Safari. Real data is entered only in the installed app.
