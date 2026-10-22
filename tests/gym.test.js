@@ -38,7 +38,7 @@ test('keys are separate from the main state', () => {
 });
 
 test('emptyGym is the plan shape, valid, and a fresh object each call', () => {
-  assert.deepEqual(G.emptyGym(), { v: 1, settings: { weeklyTarget: 4 }, customExercises: [], routines: [], workouts: [] });
+  assert.deepEqual(G.emptyGym(), { v: 1, settings: { weeklyTarget: 4, weeklyTargetOn: true }, customExercises: [], routines: [], workouts: [] });
   check(G.emptyGym(), ok);
   assert.notEqual(G.emptyGym(), G.emptyGym());
   assert.notEqual(G.emptyGym().workouts, G.emptyGym().workouts);

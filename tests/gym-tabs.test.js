@@ -3,10 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parseRoute } from '../src/router.js';
 import { icons } from '../src/icons.js';
-import { gymLine } from '../src/views/todayLogic.js';
-import { emptyGym } from '../src/core/gym.js';
 
-// Gym G7: six icon-only tabs (gym plan "Navigation", decision 11), Gym shell, Today card. Expected values by hand.
+// Gym G7: six icon-only tabs (gym plan "Navigation", decision 11), Gym shell. Expected values by hand. (The Today gym card and its gymLine tests were removed in G13.)
 const read = p => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const html = read('index.html');
 const css = read('screens.css');
@@ -83,29 +81,4 @@ test('CLAUDE.md records the six icon-only tabs override', () => {
   assert.match(md, /six tabs/i);
   assert.match(md, /Gym is the sixth/i);
   assert.match(md, /icons only/i);
-});
-
-const fin = (date, id) => ({ id, date, startedAt: 1, finishedAt: 2, name: '', routineId: null, items: [] });
-const open = (date, id) => ({ ...fin(date, id), finishedAt: null });
-const g = (workouts, weeklyTarget = 4) => ({ ...emptyGym(), settings: { weeklyTarget }, workouts });
-// Plan example: finished Mon 2026-10-05, Wed 10-07 (two), Sun 10-11, Mon 10-12.
-const EX = [fin('2026-10-05', 'a'), fin('2026-10-07', 'b'), fin('2026-10-07', 'c'), fin('2026-10-11', 'd'), fin('2026-10-12', 'e')];
-
-test('gymLine: Sunday 2026-10-11 is week 10-05..10-11 = 3 visits of 4', () => {
-  assert.equal(gymLine(g(EX), '2026-10-11'), 'Gym 3/4 this week');
-});
-
-test('gymLine: Wednesday 2026-10-14 is the week of 10-12 = 1 visit', () => {
-  assert.equal(gymLine(g(EX), '2026-10-14'), 'Gym 1/4 this week');
-});
-
-test('gymLine: target comes from the gym settings; unfinished workouts and an empty history count 0', () => {
-  assert.equal(gymLine(g(EX, 3), '2026-10-11'), 'Gym 3/3 this week');
-  assert.equal(gymLine(g([open('2026-10-14', 'o')]), '2026-10-14'), 'Gym 0/4 this week');
-  assert.equal(gymLine(emptyGym(), '2026-10-14'), 'Gym 0/4 this week');
-});
-
-test('gymLine: more visits than the target shows the honest number', () => {
-  const wk = ['05', '06', '07', '08', '09'].map(d => fin(`2026-10-${d}`, d)); // Mon-Fri of the week of 10-05
-  assert.equal(gymLine(g(wk, 4), '2026-10-09'), 'Gym 5/4 this week');
 });

@@ -6,7 +6,9 @@ import { dateKey, keyToDate } from '../logic.js';
 export const GYM_KEY = 'lockin.v2.gym';
 export const GYM_CORRUPT = 'lockin.v2.gym.corrupt';
 
-export const emptyGym = () => ({ v: 1, settings: { weeklyTarget: 4 }, customExercises: [], routines: [], workouts: [] });
+// weeklyTarget (1 to 7) and weeklyTargetOn (G13). Data saved before G13 has no weeklyTargetOn: absent means on.
+export const WEEKLY_TARGET = { min: 1, max: 7 };
+export const emptyGym = () => ({ v: 1, settings: { weeklyTarget: 4, weeklyTargetOn: true }, customExercises: [], routines: [], workouts: [] });
 
 const isObj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const isStr = x => typeof x === 'string';
@@ -64,8 +66,9 @@ export function validateGym(obj) {
   const no = reason => ({ ok: false, reason });
   if (!isObj(obj)) return no('shape');
   if (obj.v !== 1) return no('version');
-  const t = obj.settings?.weeklyTarget;
-  if (!isObj(obj.settings) || !Number.isInteger(t) || t < 1 || t > 7) return no('settings');
+  const t = obj.settings?.weeklyTarget, on = obj.settings?.weeklyTargetOn;
+  if (!isObj(obj.settings) || !Number.isInteger(t) || t < WEEKLY_TARGET.min || t > WEEKLY_TARGET.max) return no('settings');
+  if (on !== undefined && typeof on !== 'boolean') return no('settings');
   for (const key of ['customExercises', 'routines', 'workouts']) if (!Array.isArray(obj[key])) return no('collection');
   for (const [key, problem] of [['customExercises', customProblem], ['routines', routineProblem], ['workouts', workoutProblem]]) {
     const p = first(obj[key], problem);
@@ -75,6 +78,17 @@ export function validateGym(obj) {
   if (obj.workouts.filter(w => w.finishedAt === null).length > 1) return no('open-workouts');
   return { ok: true };
 }
+
+// What every screen shows: the weekly target, or null when it is switched off (then no screen shows any target text).
+export const weeklyTarget = gym => (gym?.settings?.weeklyTargetOn === false ? null : gym?.settings?.weeklyTarget ?? 4);
+
+// A refused value (validateGym is the one place the bounds live) or an unchanged one returns the same object, so nothing is saved.
+function withSetting(gym, key, value) {
+  const next = { ...gym, settings: { ...gym.settings, [key]: value } };
+  return gym.settings[key] === value || !validateGym(next).ok ? gym : next;
+}
+export const setWeeklyTarget = (gym, n) => withSetting(gym, 'weeklyTarget', n);
+export const setWeeklyTargetOn = (gym, on) => (typeof on === 'boolean' ? withSetting(gym, 'weeklyTargetOn', on) : gym); // validateGym accepts undefined (old data)
 
 // Never throws. Unreadable or invalid data: the text is kept under GYM_CORRUPT, the state is empty and corrupt is true.
 export function loadGym(storage) {

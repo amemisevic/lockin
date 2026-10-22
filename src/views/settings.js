@@ -5,8 +5,9 @@
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
-import { stepper } from '../ui/controls.js';
+import { stepper, switchControl } from '../ui/controls.js';
 import { validateImport, markBackup } from '../core/store.js';
+import { WEEKLY_TARGET, weeklyTarget, setWeeklyTarget, setWeeklyTargetOn } from '../core/gym.js';
 import { validatePack, importPack } from '../core/pack.js';
 import { addDays } from '../logic.js';
 import { dayLabel } from './tasksLogic.js';
@@ -104,6 +105,18 @@ const stepRow = (app, key, title, sub) => {
     onChange: n => app.set(s => (key === 'zeroDay' ? L.setZeroDay(s, n) : L.setMedPerWeek(s, n))) }));
 };
 
+// The weekly gym target (G13): a switch, and the number only while it is on, so an off target shows no number anywhere.
+// The switch has an id because app.js restores focus by id after the re-render.
+function gymSection(app) {
+  const target = weeklyTarget(app.gym), on = target !== null;
+  const sw = switchControl({ on, label: 'Weekly gym target', onToggle: () => app.setGym(g => setWeeklyTargetOn(g, !on)) });
+  sw.id = 'set-gym-target';
+  return h('section', { class: 'set-sec' }, sectionHeading('Gym'), h('div', { class: 'plate list' },
+    row(label('Weekly gym target', 'Compare each week to a number of visits'), sw),
+    on && row(label('Visits a week'), stepper({ value: target, min: WEEKLY_TARGET.min, max: WEEKLY_TARGET.max, label: 'Gym visits a week',
+      onChange: n => app.setGym(g => setWeeklyTarget(g, n)) }))));
+}
+
 // Returns a list of nodes (section, two footnotes).
 function dataSection(app) {
   const line = L.backupLine(app.state, app.today());
@@ -137,6 +150,7 @@ export function renderSettings(app) {
       row(label('Challenge pack', L.packSummary(state)),
         h('button', { type: 'button', id: 'set-pack', class: 'set-link gt', 'aria-label': state.pack ? 'Re-import pack' : 'Import pack',
           onClick: () => pickFile('set-pack-file', f => importPackFile(app, f)) }, state.pack ? 'Re-import' : 'Import pack'))), alertPlate(app, 'start'), alertPlate(app, 'pack')),
+    gymSection(app),
     h('section', { class: 'set-sec' }, sectionHeading('Reminders'), h('div', { class: 'plate list' },
       navRow('set-reminders', 'Set up reminders', 'Morning, afternoon and night, through Shortcuts', openRemindersSheet))),
     ...dataSection(app),

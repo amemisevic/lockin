@@ -8,7 +8,7 @@ import { startChallenge } from '../src/core/challenge.js';
 import { exportJson } from '../src/core/store.js';
 
 // Task 19 Settings view. DOM conventions pinned here (the code must produce them):
-// - h2.sec headings in order Protocols, Red lines, Challenge, Reminders, Data.
+// - h2.sec headings in order Protocols, Red lines, Challenge, Gym (G13), Reminders, Data.
 // - protocol / red line rows are buttons (id set-protocol-<id> / set-redline-<id>); 'Add protocol' / 'Add red line' buttons.
 // - steppers (ui/controls.js) with group aria-label 'Zero Day threshold' and 'MED per week'.
 // - Day 1: an <input type=date id=set-start> while editable, plain text (no input) once a day is closed.
@@ -28,7 +28,7 @@ const noConfirm = () => { throw new Error('confirm must not open'); };
 test('sections in order, with the setup lists before Day 1', () => {
   const app = mkApp({ ...defaultState(), setup: { protocols: [P], redLines: [R] } });
   const out = renderSettings(app);
-  assert.deepEqual(headings(out), ['Protocols', 'Red lines', 'Challenge', 'Reminders', 'Data']);
+  assert.deepEqual(headings(out), ['Protocols', 'Red lines', 'Challenge', 'Gym', 'Reminders', 'Data']);
   assert.ok(texts(all(out).filter(n => n.id === 'set-protocol-p1')).includes('Protocol A'));
   assert.ok(all(out).some(n => n.id === 'set-redline-r1'));
   assert.ok(texts(out).includes('Add protocol') && texts(out).includes('Add red line'));

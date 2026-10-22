@@ -40,7 +40,7 @@ export function renderGymStats(app, { data = exerciseData(), load = ensureExerci
 
   return [
     header,
-    section('Visits per week', h('p', { class: 't2 gs-tg' }, `Target ${m.weeks.target} a week`), barChart(m.weeks)),
+    section('Visits per week', m.weeks.target !== null && h('p', { class: 't2 gs-tg' }, `Target ${m.weeks.target} a week`), barChart(m.weeks)),
     section('Visits per month', barChart(m.months)),
     section('Sets per muscle this week', muscles),
     section('Weight progress', weightBlock),

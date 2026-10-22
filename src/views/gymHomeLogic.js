@@ -1,5 +1,6 @@
 // Gym home logic (gym plan G8): week strip, visits line, last workouts, routine rows. Pure, DOM-free.
 import { weekKeys, visitDates, visitsInWeek } from '../core/gymstats.js';
+import { weeklyTarget } from '../core/gym.js';
 import { addDays, keyToDate } from '../logic.js';
 import { DAY_NAMES, dayLabel, weekLabel } from './tasksLogic.js';
 
@@ -25,9 +26,10 @@ export function weekStrip(gym, shown, today = shown) {
   });
 }
 
+// target and text are null while the weekly target is switched off (G13): the view then draws nothing.
 export function visitsText(gym, today) {
-  const visits = visitsInWeek(gym, today), target = gym.settings.weeklyTarget;
-  return { visits, target, text: `${visits} of ${target} ${target === 1 ? 'visit' : 'visits'}` };
+  const visits = visitsInWeek(gym, today), target = weeklyTarget(gym);
+  return { visits, target, text: target === null ? null : `${visits} of ${target} ${target === 1 ? 'visit' : 'visits'}` };
 }
 
 const shortDate = key => { const [d, n, m] = dayLabel(key).split(' '); return `${d.slice(0, 3)} ${n} ${m.slice(0, 3)}`; };

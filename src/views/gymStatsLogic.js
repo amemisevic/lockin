@@ -2,6 +2,7 @@
 // Numbers become display strings and chart geometry here; the views only draw. The weight chart box is described above `weight()`.
 import { weeklyVisits, monthlyVisits, setsPerMuscle, weightSeries, weightExercises, visitDates } from '../core/gymstats.js';
 import { exerciseMap } from '../core/exercises.js';
+import { weeklyTarget } from '../core/gym.js';
 import { dayLabel } from './tasksLogic.js';
 
 const list = v => v.join(', ');
@@ -14,9 +15,9 @@ const dmy = key => `${dm(key)} ${key.slice(0, 4)}`; // '27 Jul 2026'
 
 function weeks(gym, today) {
   const rows = weeklyVisits(gym, today, 12), values = rows.map(r => r.visits);
-  const target = gym?.settings?.weeklyTarget ?? 4;
-  return { values, starts: rows.map(r => r.start), target, max: Math.max(target, ...values, 1) + 1, first: dm(rows[0].start), last: 'This week',
-    label: `Visits per week for the last 12 weeks, oldest first, target ${target}: ${list(values)}` };
+  const target = weeklyTarget(gym); // null = switched off (G13): no target in the numbers, the scale or the label
+  return { values, starts: rows.map(r => r.start), target, max: Math.max(target ?? 0, ...values, 1) + 1, first: dm(rows[0].start), last: 'This week',
+    label: `Visits per week for the last 12 weeks, oldest first${target === null ? '' : `, target ${target}`}: ${list(values)}` };
 }
 
 function months(gym, today) {

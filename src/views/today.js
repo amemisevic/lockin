@@ -11,7 +11,7 @@ import { taskRow } from '../ui/taskRow.js';
 import { goldButton } from '../ui/controls.js';
 import { dayLabel } from './tasksLogic.js';
 import { openTaskMenu } from './tasks.js';
-import { todayCards, timeLeft, nightLineVisible, medLine, gymLine } from './todayLogic.js';
+import { todayCards, timeLeft, nightLineVisible, medLine } from './todayLogic.js';
 
 // Afternoon "Not now" (ruling R6): in memory only, for one date, never saved.
 let dismissedOn = null;
@@ -110,7 +110,6 @@ export function renderToday(app) {
     h('div', { class: 'mk', 'aria-hidden': 'true' }),
     active && challengePlate(state, today, n, now),
     ...cards.map(c => card(app, c)),
-    linkCard('gym', '', '#gym', gymLine(app.gym, today)),
     h('section', null,
       h('div', { class: 'tk-sh' }, sectionHeading('Today\'s tasks'), views.length > 0 && h('span', { class: 't2' }, `${done} of ${views.length} done`)),
       views.length ? list : h('p', { class: 'tk-empty' }, 'Nothing planned.')),
