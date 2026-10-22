@@ -30,9 +30,12 @@ export function renderGymStats(app, { data = exerciseData(), load = ensureExerci
   const weightBlock = e
     ? [h('label', { class: 't2', for: 'gs-ex' }, 'Exercise'),
       h('select', { id: 'gs-ex', class: 'in gs-sel', onChange: ev => { view.picked = ev.target.value; rerender(); } },
+        h('option', { value: '', selected: e.id === null }, 'Choose an exercise'),
         e.options.map(o => h('option', { value: o.id, selected: o.id === e.id }, o.name))),
-      h('p', { class: 'gs-sum' }, e.summary), h('p', { class: 't2 gs-dates' }, e.dates), weightChart(e), e.wide && h('p', { class: 't2 gs-hint' }, `Swipe the chart sideways to see all ${e.points.length} workouts.`),
-      h('ul', { class: 'gs-wl' }, e.rows.map(r => h('li', null, r)))]
+      ...(e.id === null ? [none('Pick an exercise to see your weight progress.')] : [
+        h('p', { class: 'gs-sum' }, e.summary), h('p', { class: 't2 gs-dates' }, e.dates), weightChart(e),
+        e.wide && h('p', { class: 't2 gs-hint' }, `Swipe the chart sideways to see all ${e.points.length} workouts.`),
+        h('ul', { class: 'gs-wl' }, e.rows.map(r => h('li', null, r)))])]
     : none('No sets with a weight yet. Log a done working set with a weight above 0.');
 
   return [

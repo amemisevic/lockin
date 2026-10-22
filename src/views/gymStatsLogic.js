@@ -31,6 +31,7 @@ function muscles(data, gym, today) {
   return rows.map(r => ({ ...r, name: cap(r.muscle), share: r.sets / top, label: `${cap(r.muscle)}: ${r.sets} ${plural(r.sets, 'set', 'sets')}` }));
 }
 
+// id null = nothing picked (the section starts empty); the options are always there.
 // Weight chart box: 44 left (kg ticks and title), 24 top (labels above the highest point), 150 plot height, 44 bottom (workout ticks and
 // title), 50 right (the latest label sits beside its dot). The plot is 226 wide up to 17 workouts, then 14 per gap and the chart scrolls.
 const PAD = { l: 44, r: 50, t: 24, b: 44 }, PLOT_H = 150, PLOT_MIN = 226, GAP = 14, MIN_TICK_GAP = 24;
@@ -48,7 +49,9 @@ function weight(data, gym, picked, settled) {
   const ids = weightExercises(gym);
   if (!ids.length) return null;
   const names = exerciseMap(data, gym), nameOf = id => names.get(id)?.name || (settled ? 'Unknown exercise' : 'Loading…');
-  const id = typeof picked === 'string' && ids.includes(picked) ? picked : ids[0];
+  const options = ids.map(i => ({ id: i, name: nameOf(i) }));
+  if (typeof picked !== 'string' || !ids.includes(picked)) return { options, id: null }; // nothing picked: the view shows a placeholder
+  const id = picked;
   const series = weightSeries(gym, id), n = series.length, kgs = series.map(p => p.weight);
   const axis = kgAxis(Math.min(...kgs), Math.max(...kgs));
   const plotW = Math.max(PLOT_MIN, (n - 1) * GAP), plot = { left: PAD.l, right: PAD.l + plotW, top: PAD.t, bottom: PAD.t + PLOT_H };
@@ -61,7 +64,7 @@ function weight(data, gym, picked, settled) {
   const xTicks = [1, ...Array.from({ length: Math.floor(n / 5) }, (_, i) => 5 * (i + 1))].filter((v, i, a) => a.indexOf(v) === i && v <= n).map(v => ({ n: v, x: px(v - 1) }));
   if (n > 1 && !xTicks.some(t => t.n === n) && px(n - 1) - xTicks.at(-1).x >= MIN_TICK_GAP) xTicks.push({ n, x: px(n - 1) });
   const name = nameOf(id), delta = r2(kgs.at(-1) - kgs[0]);
-  return { options: ids.map(i => ({ id: i, name: nameOf(i) })), id, name, points, xTicks, plot,
+  return { options, id, name, points, xTicks, plot,
     yTicks: axis.ticks.map(v => ({ v, text: kg(v), y: py(v) })), width: plot.right + PAD.r, height: plot.bottom + PAD.b, wide: plotW > PLOT_MIN,
     summary: `Start ${kg(kgs[0])} kg, now ${kg(kgs.at(-1))} kg, ${delta < 0 ? '-' : '+'}${kg(Math.abs(delta))} kg`,
     dates: `First workout ${dmy(series[0].date)}, latest ${dmy(series.at(-1).date)}`,
