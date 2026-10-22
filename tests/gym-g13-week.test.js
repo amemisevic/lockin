@@ -43,7 +43,7 @@ test('a full 7-visit week across each zone\'s clock change counts 7; off keeps t
 
 test('stats weeks: one visit a week for 12 weeks; on has the target in value, scale and label, off has none of them', () => {
   const today = local(2026, 11, 1, 23, 30); // a Sunday, LA clock change day
-  const mondays = Array.from({ length: 12 }, (_, i) => addDays('2026-08-17', 7 * i)); // week of 17 Aug .. week of 26 Oct
+  const mondays = Array.from({ length: 12 }, (_, i) => addDays('2026-08-10', 7 * i)); // the 12 weeks ending with the week of 26 Oct
   const on = statsModel(null, gymOf(mondays, true, 3), today).weeks;
   assert.deepEqual(on.values, Array(12).fill(1));
   assert.equal(on.target, 3);

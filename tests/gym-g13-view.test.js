@@ -52,6 +52,11 @@ test('Gym home, target on: "3 of 4 visits" sits in the This week row', () => {
   assert.deepEqual(weekRow(out).children.map(c => c.textContent), ['This week', '3 of 4 visits']);
 });
 
+test('Gym home, target on: more visits than the target shows the honest number (kept from the removed Today card tests)', () => {
+  const week = ['05', '06', '07', '08', '09'].map(d => wk(`2026-10-${d}`, d));
+  assert.deepEqual(weekRow(homeOut({ ...setWeeklyTarget(emptyGym(), 4), workouts: week })).children.map(c => c.textContent), ['This week', '5 of 4 visits']);
+});
+
 test('Gym home, target off: no target text anywhere, the This week row is only its heading, the strip still shows the visits', () => {
   const out = homeOut(gymWith(false));
   assert.equal(texts(out).some(t => TARGET_TEXT.test(t)), false, texts(out).filter(t => TARGET_TEXT.test(t)).join(' | '));
@@ -90,7 +95,7 @@ test('Gym Stats, target off: no target text, line, label part or empty paragraph
   assert.equal(all([sec]).filter(n => hasClass(n, 'gs-target') || hasClass(n, 'gs-tg')).length, 0);
   assert.doesNotMatch(all([sec]).find(n => n.getAttribute('role') === 'img').getAttribute('aria-label'), /target/i);
   assert.equal(viewBoxOf(sec), '0 0 12 4'); // peak 3 + 1
-  assert.ok(noEmptyText(out));
+  assert.ok(noEmptyText([sec])); // not the whole screen: the pushed header has an empty spacer span of its own
   assert.equal(all([sec]).filter(n => hasClass(n, 'an-bar')).length, 2); // the bars are still drawn (weeks of 5 Oct and 12 Oct hold visits)
 });
 
