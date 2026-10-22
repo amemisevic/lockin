@@ -110,7 +110,8 @@ test('today with no workout: the sheet holds only Add workout; Add asks for a na
 });
 
 test('a past day: Add workout starts at local noon of that day (date and startedAt on the day)', () => {
-  const r = rig(gymWith([fin('2026-10-07', 'x', 1)]));
+  // a finished workout needs a done working set, or the whole gym state is invalid and nothing can be started
+  const r = rig(gymWith([fin('2026-10-07', 'x', 1, { items: [{ exerciseId: 'bench', sets: [{ reps: 5, weight: 60, warmup: false, done: true }] }] })]));
   r.prev();
   r.tap('Wednesday 7 October');
   assert.deepEqual(r.labels(), ['Workout', 'Add workout']);
