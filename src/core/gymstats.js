@@ -85,11 +85,21 @@ export const e1rmSeries = (gym, exerciseId) => finished(gym).sort((a, b) => a.st
   return all.length ? [{ workoutId: w.id, date: w.date, startedAt: w.startedAt, e1rm: Math.max(...all) }] : [];
 });
 
-// Exercise ids with something to chart (a qualifying set in a finished workout), most recently trained first; ties keep first-seen order.
-export function trainedExercises(gym) {
+// Weight progress (G11w). A set has a weight when it is done, not a warm-up, and above 0 kg; reps do not matter.
+const weighted = s => counts(s) && s.weight > 0;
+
+// Exercise ids with a weighted set in a finished workout, most recently trained first; ties keep first-seen order.
+export function weightExercises(gym) {
   const last = new Map();
   for (const w of finished(gym)) for (const it of arr(w.items)) {
-    if (arr(it.sets).some(s => est1RM(s) !== null)) last.set(it.exerciseId, Math.max(last.get(it.exerciseId) ?? -Infinity, w.startedAt));
+    if (arr(it.sets).some(weighted)) last.set(it.exerciseId, Math.max(last.get(it.exerciseId) ?? -Infinity, w.startedAt));
   }
   return [...last].sort((a, b) => b[1] - a[1]).map(([id]) => id);
 }
+
+// One point per finished workout with a weighted set of the exercise: its heaviest such set in kg (both items when the exercise
+// appears twice). Oldest first by startedAt.
+export const weightSeries = (gym, exerciseId) => finished(gym).sort((a, b) => a.startedAt - b.startedAt).flatMap(w => {
+  const kgs = arr(w.items).filter(it => it.exerciseId === exerciseId).flatMap(it => arr(it.sets).filter(weighted).map(x => x.weight));
+  return kgs.length ? [{ workoutId: w.id, date: w.date, startedAt: w.startedAt, weight: Math.max(...kgs) }] : [];
+});

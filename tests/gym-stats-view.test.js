@@ -314,6 +314,11 @@ test('weight chart: ALL workouts drawn, none cut; 30 workouts make a wider chart
   assert.ok(texts([sec]).includes('Start 50 kg, now 79 kg, +29 kg'));
 });
 
+test('weight chart: a wide chart says to swipe; a chart that fits does not', () => {
+  assert.ok(texts([WSEC(screen(bench30).out)]).includes('Swipe the chart sideways to see all 30 workouts.'));
+  assert.ok(!texts([WSEC(screen().out)]).some(t => t.startsWith('Swipe')));
+});
+
 test('weight block: no weights yet says so and shows no select', () => {
   const only = g([wk('w', '2026-10-12', [A('bench', [ws(5, 80, { warmup: true }), ws(12, 0)])])]);
   const sec = WSEC(screen(only).out);

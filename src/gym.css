@@ -88,11 +88,22 @@
 .gs-nums{display:flex;margin-top:4px}
 .gs-nums span{flex:1;min-width:0;text-align:center;font-size:12px;line-height:16px;font-weight:700}
 .gs-cap{display:flex;justify-content:space-between;gap:12px;margin-top:4px;font-size:12px;line-height:16px}
-.gs-tg,.gs-note{margin:0;font-size:14px}
+.gs-tg{margin:0;font-size:14px}
+/* Weight progress (G11w): the one chart with text inside its svg (13 px, drawn 1:1 or a little under on a narrow phone). A wide chart
+   (more than 17 workouts) scrolls inside its own box. The kg labels have a plate-coloured halo so a line under them stays readable. */
 .gs-line{fill:none;stroke:var(--text-2);stroke-width:2;stroke-linejoin:round}
 .gs-pt{fill:var(--text-2)}
-.gs-pr{fill:var(--accent);stroke:var(--text);stroke-width:1.5}
+.gs-dot5{fill:var(--accent)}
+.gs-end{fill:var(--accent);stroke:var(--text);stroke-width:1.5}
+.gs-grid{stroke:var(--line);stroke-width:1}
+.gs-axis{stroke:var(--text-2);stroke-width:1.5}
+.gs-tick{stroke:var(--text-2);stroke-width:1.5}
+.gs-tx{fill:var(--text-2);font-size:13px}
+.gs-lbl{fill:var(--text);font-size:13px;font-weight:700;paint-order:stroke;stroke:var(--plate-bot);stroke-width:3px;stroke-linejoin:round}
 .gs-sel{margin-top:6px}
-.gs-tiles{margin-top:14px}
-.gs-tiles .an-n{font-size:22px;line-height:28px;white-space:nowrap}
-.gs-prs{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:14px;line-height:18px}
+.gs-sum{margin:14px 0 0;font-size:17px;line-height:22px;font-weight:700;overflow-wrap:anywhere}
+.gs-dates{margin:2px 0 0;font-size:14px}
+.gs-wchart{margin-top:12px;overflow-x:auto}
+.gs-wchart svg{display:block}
+.gs-hint{margin:6px 0 0;font-size:14px}
+.gs-wl{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:14px;line-height:18px}

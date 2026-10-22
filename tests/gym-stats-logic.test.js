@@ -84,7 +84,7 @@ test('months: a quiet year still has a scale of at least 1', () => {
 test('no finished workout at all: empty is true and there is nothing to chart', () => {
   const m = statsModel(DATA, emptyGym(), TODAY);
   assert.equal(m.empty, true);
-  assert.equal(m.exercise, null);
+  assert.equal(m.weight, null);
   const open = statsModel(DATA, g([wk('x', '2026-10-12', R, { finishedAt: null })]), TODAY);
   assert.equal(open.empty, true);
 });

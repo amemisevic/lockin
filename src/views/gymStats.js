@@ -1,11 +1,11 @@
 // Gym Stats (gym plan G11 Stats), a pushed route #gym/stats: visits per week (with the target) and per month, sets per muscle this
-// week, and the estimated 1RM of one exercise over time with its PRs. Read-only; model in gymStatsLogic.js, charts in gymStatsCharts.js.
+// week, and the weight progress of one exercise over all its workouts. Read-only; model in gymStatsLogic.js, charts in gymStatsCharts.js.
 // No timers: the app has no live timers. The picked exercise is view state, not saved.
 import { h } from '../dom.js';
 import { pushedHeader, sectionHeading, plate, rerender } from '../ui/chrome.js';
 import { exerciseData, exerciseDataFailed, ensureExerciseData, retryExerciseData } from './gymData.js';
 import { statsModel } from './gymStatsLogic.js';
-import { barChart, shareRow, lineChart } from './gymStatsCharts.js';
+import { barChart, shareRow, weightChart } from './gymStatsCharts.js';
 
 const view = { picked: null };
 export const resetStatsView = () => { view.picked = null; };
@@ -26,23 +26,20 @@ export function renderGymStats(app, { data = exerciseData(), load = ensureExerci
       ? [none('The exercise list could not be loaded.'), h('button', { type: 'button', class: 'btn-ghost gm-retry', onClick: () => retry(rerender) }, 'Try again')]
       : none('Loading exercises…');
 
-  const e = m.exercise;
-  const pick = e && [
-    h('label', { class: 't2', for: 'gs-ex' }, 'Exercise'),
-    h('select', { id: 'gs-ex', class: 'in gs-sel', onChange: ev => { view.picked = ev.target.value; rerender(); } },
-      e.options.map(o => h('option', { value: o.id, selected: o.id === e.id }, o.name))),
-  ];
-  const prs = e && e.prs.length ? h('ul', { class: 'gs-prs' }, e.prs.map(p => h('li', null, p.text))) : null;
-  const oneRm = e
-    ? [pick, lineChart(e), e.note && h('p', { class: 't2 gs-note' }, e.note),
-      h('div', { class: 'an-tiles gs-tiles' }, e.tiles.map(([l, n]) => h('div', { class: 'an-tile' }, h('div', { class: 'an-n' }, n), h('div', { class: 'an-l' }, l)))), prs]
-    : none('No sets to chart yet. Log a done working set of 1 to 10 reps with a weight.');
+  const e = m.weight;
+  const weightBlock = e
+    ? [h('label', { class: 't2', for: 'gs-ex' }, 'Exercise'),
+      h('select', { id: 'gs-ex', class: 'in gs-sel', onChange: ev => { view.picked = ev.target.value; rerender(); } },
+        e.options.map(o => h('option', { value: o.id, selected: o.id === e.id }, o.name))),
+      h('p', { class: 'gs-sum' }, e.summary), h('p', { class: 't2 gs-dates' }, e.dates), weightChart(e), e.wide && h('p', { class: 't2 gs-hint' }, `Swipe the chart sideways to see all ${e.points.length} workouts.`),
+      h('ul', { class: 'gs-wl' }, e.rows.map(r => h('li', null, r)))]
+    : none('No sets with a weight yet. Log a done working set with a weight above 0.');
 
   return [
     header,
     section('Visits per week', h('p', { class: 't2 gs-tg' }, `Target ${m.weeks.target} a week`), barChart(m.weeks)),
     section('Visits per month', barChart(m.months)),
     section('Sets per muscle this week', muscles),
-    section('Estimated 1RM', oneRm),
+    section('Weight progress', weightBlock),
   ];
 }
