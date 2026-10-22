@@ -208,7 +208,7 @@ test('exercise: only the latest 20 workouts are drawn; tiles still cover all of 
   assert.deepEqual(e.tiles, [['Latest', '86.3 kg'], ['Best', '86.3 kg'], ['PRs', '24']]);
   assert.equal(e.prs.length, 20);
   assert.equal(e.first, '6 Sep 2026');
-  assert.match(e.label, /^Estimated 1RM, Barbell Bench Press, 20 workouts, oldest first: 64\.2, /);
+  assert.match(e.label, /^Estimated 1RM, Barbell Bench Press, 20 workouts, oldest first: 64\.2 PR, 65\.3 PR, /);
 });
 
 test('the input is not changed and a dirty state does not throw', () => {
