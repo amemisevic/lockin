@@ -14,8 +14,10 @@
 .q .seg button{padding:0 8px;letter-spacing:0;font-size:14px}
 .q .s{margin:8px 0 0;font-size:13px;line-height:17px;color:var(--text-2)}
 /* Stalled chosen = board .sgb.s slate (#0A0A0B on #8b98ad = 6.8:1); crossed chosen = .sgb.r, solid crimson-dk (#fff 5.7:1). */
-.nt-tasks .seg button.on:nth-child(3){color:var(--bg);background:#8b98ad;box-shadow:none}
-.nt-red .seg button.on:nth-child(2){color:#fff;background:var(--crimson-dk);box-shadow:none}
+.nt-tasks .seg button.on:nth-child(3){color:var(--bg)}
+.nt-tasks .seg button:nth-child(3)::before{background:#8b98ad;box-shadow:none}
+.nt-red .seg button.on:nth-child(2){color:#fff}
+.nt-red .seg button:nth-child(2)::before{background:var(--crimson-dk);box-shadow:none}
 .nt-reset{color:var(--crimson-lt);font-weight:700}
 /* MED pill: board inline style (bronze tint, #F0C987 text). */
 .nt-med{display:inline-flex;align-items:center;min-height:34px;margin:8px 0 0;padding:0 14px;border-radius:var(--r-pill);background:rgba(154,107,44,.25);border:1px solid var(--bronze);font-size:13px;font-weight:700;color:#F0C987}

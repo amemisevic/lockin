@@ -80,6 +80,36 @@ navigator.storage?.persist?.().catch(() => {});
 // iOS ignores user-scalable=no for pinch; zoom is locked by the owner's choice (spec §2).
 document.addEventListener('gesturestart', e => e.preventDefault());
 
+// Motion (M1, DESIGN-SPEC §10). iOS applies :active (press feedback in styles.css) only with a touch listener on the page.
+document.addEventListener('touchstart', () => {}, { passive: true });
+// Most taps re-render synchronously, so a toggle comes back rebuilt in its new state and its CSS transition never runs.
+// Capture notes the tapped group's state; after the handlers, each rebuilt toggle that changed is put back in its old
+// state for one style pass and flipped again, so the same transition plays. A toggle kept in place needs nothing.
+// ponytail: matched by position among the page's toggles; a re-render that adds toggles above the tapped one animates
+// the wrong control. Key by id if that shows up.
+const TOGGLES = '.shield, .swb, .chip, .seg > button';
+const stateEl = b => b.querySelector('.sw') ?? b; // the element carrying .on
+let was = null;
+document.addEventListener('click', e => {
+  const btn = e.target.closest?.(TOGGLES);
+  const all = [...document.querySelectorAll(TOGGLES)];
+  const group = btn?.matches('.chip, .seg > button') ? [...btn.parentElement.children] : [btn];
+  was = btn ? group.map(b => [all.indexOf(b), stateEl(b).classList.contains('on')]) : null;
+}, true);
+document.addEventListener('click', e => {
+  const btn = e.target.closest?.(TOGGLES);
+  if (!was || !btn || btn.isConnected) return;
+  const all = document.querySelectorAll(TOGGLES);
+  const flip = was.map(([i, on]) => all[i] && stateEl(all[i])).filter((s, k) => s && s.classList.contains('on') !== was[k][1]);
+  was = null;
+  for (const s of flip) s.classList.toggle('on'); // all back to the old state, one style pass,
+  document.body.getBoundingClientRect();
+  for (const s of flip) { // then forward again; a transition the render already started is finished first (pop stays)
+    for (const a of s.getAnimations({ subtree: true })) if (a.transitionProperty) a.finish();
+    s.classList.toggle('on');
+  }
+});
+
 const view = document.getElementById('view');
 const tabBar = document.querySelector('.tabs');
 const tabs = [...tabBar.querySelectorAll('.tab')];

@@ -23,6 +23,9 @@
   --r-plate: 24px; --r-pill: 999px; --gutter: 20px;
   /* fonts (self-hosted, src/fonts) */
   --f-title: 'Cinzel', serif; --f-serif: 'Cormorant Garamond', serif; --f-body: 'Alegreya Sans', system-ui, sans-serif;
+  /* motion (DESIGN-SPEC §10): use these, no raw durations. --ease-spring is the switch thumb's curve from Settings.css. */
+  --dur-press: 100ms; --dur-ui: 200ms; --dur-screen: 280ms;
+  --ease-out: cubic-bezier(.23, 1, .32, 1); --ease-spring: cubic-bezier(.3, 1.4, .5, 1);
 }
 
 /* ---- Base */
@@ -40,6 +43,13 @@ input, select, textarea { font-size: max(16px, 1em); } /* below 16 px iOS zooms 
 button { background: none; border: 0; padding: 0; cursor: pointer; }
 button:disabled { opacity: .4; cursor: default; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Press (DESIGN-SPEC §10): instant feedback on touch-down, eases back on release. Tappable list rows dim instead of shrinking
+   (not the div rows: :active also matches the ancestors of a pressed button).
+   :where keeps these below any class rule; the tab bar is left to M2. iOS needs the touchstart listener in app.js. */
+:where(button, a[href]) { transition: transform var(--dur-press) var(--ease-out), opacity var(--dur-press) var(--ease-out); }
+:where(button:not(:disabled), a[href]):not(.tab):active { transform: scale(.97); }
+:is(a, button):is(.row, .st, .gm-rw, .sr, .action-row):active { transform: none; opacity: .6; }
 
 /* ---- Text (spec §3) */
 .ttl {
@@ -82,9 +92,9 @@ button:disabled { opacity: .4; cursor: default; }
 
 /* Shield toggle; failed (owner ruling R1) and stalled (opacity .82: Task 10 contrast fix, owner ruling 1b; board .55; Kit.html dash 3 2.5) */
 .shield{position:relative;flex:none;width:48px;height:48px;display:grid;place-items:center}
-.shield svg .b{fill:rgba(255,255,255,.02);stroke:var(--outline);stroke-width:1.7;transition:fill .2s,stroke .2s}
-.shield svg .hl{fill:rgba(255,255,255,.28);opacity:0}
-.shield svg .lam{fill:none;stroke:var(--gold-ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.shield svg .b{fill:rgba(255,255,255,.02);stroke:var(--outline);stroke-width:1.7;transition:fill var(--dur-ui) var(--ease-out),stroke var(--dur-ui) var(--ease-out)}
+.shield svg .hl{fill:rgba(255,255,255,.28);opacity:0;transition:opacity var(--dur-ui) var(--ease-out)}
+.shield svg .lam{fill:none;stroke:var(--gold-ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity var(--dur-ui) var(--ease-out)}
 .shield.on svg .b{fill:#E9B352;stroke:var(--gold-hi)}
 .shield.on svg .hl,.shield.on svg .lam{opacity:1}
 .shield.on svg{filter:drop-shadow(0 0 5px rgba(242,190,92,.45))}
@@ -92,33 +102,43 @@ button:disabled { opacity: .4; cursor: default; }
 .shield.pop::after{content:"";position:absolute;left:9px;top:9px;width:30px;height:30px;border-radius:50%;animation:rip .65s ease-out forwards}
 @keyframes pop{0%{transform:scale(.55) rotate(-10deg)}60%{transform:scale(1.2) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes rip{0%{box-shadow:0 0 0 0 rgba(242,190,92,.65)}100%{box-shadow:0 0 0 18px rgba(242,190,92,0)}}
-.shield svg{filter:drop-shadow(0 0 3px rgba(242,190,92,.14))}
+.shield svg{filter:drop-shadow(0 0 3px rgba(242,190,92,.14));transition:filter var(--dur-ui) var(--ease-out)}
 .shield.failed svg .b{stroke:var(--crimson)}
 .shield.failed svg .lam{opacity:1;stroke:var(--crimson)}
 .shield.stalled{opacity:.82}
 .shield.stalled svg .b{stroke-dasharray:3 2.5}
 
-/* Switch: R3 60×44 button around the 60×34 track; .th transition from Settings.css */
+/* Switch: R3 60×44 button around the 60×34 track; .th transition from Settings.css, on in tokens.
+   M1: the on track is a ::before layer that fades (a gradient can't transition); the thumb's colour fades with it. */
 .swb{display:grid;place-items:center;width:60px;height:44px}
 .sw{position:relative;flex:none;width:60px;height:34px;border-radius:17px;background:var(--field);border:1px solid rgba(242,190,92,.22);box-shadow:inset 0 2px 5px rgba(0,0,0,.6)}
-.sw .th{position:absolute;left:3px;top:3px;width:26px;height:26px;display:grid;place-items:center;transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
-.sw .th svg .b{fill:#2a272c;stroke:var(--outline);stroke-width:2}
-.sw .th svg .lam{opacity:0;fill:none;stroke:var(--gold-ink);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
-.sw.on{background:linear-gradient(180deg,#3a2c14,#241b0d);border-color:#7a5a24;box-shadow:inset 0 2px 5px rgba(0,0,0,.5),0 0 16px rgba(242,190,92,.14)}
+.sw::before{content:"";position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(180deg,#3a2c14,#241b0d);border:1px solid #7a5a24;box-shadow:inset 0 2px 5px rgba(0,0,0,.5),0 0 16px rgba(242,190,92,.14);opacity:0;transition:opacity var(--dur-ui) var(--ease-out)}
+.sw.on::before{opacity:1}
+.sw .th{position:absolute;left:3px;top:3px;width:26px;height:26px;display:grid;place-items:center;transition:transform var(--dur-ui) var(--ease-spring)}
+.sw .th svg .b{fill:#2a272c;stroke:var(--outline);stroke-width:2;transition:fill var(--dur-ui) var(--ease-out),stroke var(--dur-ui) var(--ease-out)}
+.sw .th svg .lam{opacity:0;fill:none;stroke:var(--gold-ink);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;transition:opacity var(--dur-ui) var(--ease-out)}
 .sw.on .th{transform:translateX(26px)}
 .sw.on .th svg .b{fill:#E9B352;stroke:var(--gold-hi)}
 .sw.on .th svg .lam{opacity:1}
 
-/* Chips: R3 = Recovery.css values (height 44, padding 0 16px, 15px); group layout from Kit.html */
+/* Chips: R3 = Recovery.css values (height 44, padding 0 16px, 15px); group layout from Kit.html.
+   M1: the gold fill is a ::before layer that fades in and out; text and border colours fade with it. */
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{height:44px;padding:0 16px;border-radius:var(--r-pill);border:1px solid var(--line-strong);font-size:15px;font-weight:600;color:#E9E3D6;display:inline-flex;align-items:center}
-.chip.on{color:var(--gold-ink);border-color:#543415;background:var(--gold-grad)}
+.chip{position:relative;isolation:isolate;transition:transform var(--dur-press) var(--ease-out),opacity var(--dur-press) var(--ease-out),color var(--dur-ui) var(--ease-out),border-color var(--dur-ui) var(--ease-out)}
+.chip::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--gold-grad);opacity:0;transition:opacity var(--dur-ui) var(--ease-out)}
+.chip.on{color:var(--gold-ink);border-color:#543415}
+.chip.on::before{opacity:1}
 .chip:not(.on){box-shadow:0 0 12px rgba(242,190,92,.05)}
 
-/* Segmented: Analytics.css (span → button; R3 height 38 → 44) */
+/* Segmented: Analytics.css (span → button; R3 height 38 → 44). M1: the chosen fill is a ::before layer that fades
+   (night.css recolours it per answer). */
 .seg{display:flex;gap:4px;padding:4px;border-radius:var(--r-pill);background:#131216;border:1px solid var(--line)}
 .seg button{flex:1;height:44px;display:grid;place-items:center;border-radius:var(--r-pill);font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--text-2)}
-.seg button.on{color:var(--gold-ink);background:var(--gold-grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px #543415}
+.seg button{position:relative;isolation:isolate;transition:transform var(--dur-press) var(--ease-out),opacity var(--dur-press) var(--ease-out),color var(--dur-ui) var(--ease-out)}
+.seg button::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--gold-grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px #543415;opacity:0;transition:opacity var(--dur-ui) var(--ease-out)}
+.seg button.on{color:var(--gold-ink)}
+.seg button.on::before{opacity:1}
 .seg{box-shadow:inset 0 2px 5px rgba(0,0,0,.5),0 0 14px rgba(242,190,92,.05)}
 
 /* Stepper: Settings.css */
@@ -151,8 +171,11 @@ button:disabled { opacity: .4; cursor: default; }
 .mini.on.td svg .b{stroke-dasharray:none}
 .mini.on svg{filter:drop-shadow(0 0 4px rgba(242,190,92,.5))}
 
-/* Reduced motion (owner call 3): no pop, no ripple, no thumb slide; state changes are instant. */
+/* Reduced motion (DESIGN-SPEC §10, replaces owner call 3's instant changes): no movement, only short fades.
+   Every token-based transition shortens here; no pop, ripple, thumb slide or press shrink. */
 @media (prefers-reduced-motion: reduce) {
+  :root { --dur-press: 1ms; --dur-ui: 100ms; --dur-screen: 100ms; }
   .shield.pop svg, .shield.pop::after { animation: none; }
-  .shield svg .b, .sw .th { transition: none; }
+  .sw .th { transition: none; }
+  :where(button:not(:disabled), a[href]):not(.tab):active { transform: none; opacity: .6; }
 }
