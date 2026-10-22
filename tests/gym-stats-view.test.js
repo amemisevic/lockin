@@ -31,15 +31,15 @@ const DATA = { exercises: [
   { id: 'pushdown', name: 'Triceps Pushdown', equipment: 'cable', muscle: 'triceps', category: 'strength' },
   { id: 'row', name: 'Barbell Row', equipment: 'barbell', muscle: 'back', category: 'strength' },
 ], muscles: ['chest', 'other'], equipment: ['barbell', 'other'] };
-const R = [A('row', [ws(10, 50)])];
+const R = [A('row', [ws(12, 50)])]; // a done working set that is not a 1RM set (12 reps), so filler visits add no chart points
 
 // Visits (hand count): weeks from 27 Jul = 0 0 1 0 0 0 0 0 0 1 3 1; months from Nov 2025 = 0 x8, 1 1 1 4.
 // Muscles this week (12 Oct): chest 3 (+ a warm-up that does not count), triceps 3, back 2.
-// Bench 1RM: 93.3, 80.0, 96.3 (PR), 93.3. Row: 66.7 on 10 Oct.
+// Bench 1RM: 93.3 (10 Aug), 80.0 (30 Sep), 96.3 PR (5 Oct), 93.3 (12 Oct); those two early days are also visit days above. Row: 66.7 on 12 Oct.
 const GYM = g([
   wk('a1', '2026-07-20', R), wk('a2', '2026-08-10', R), wk('a3', '2026-09-30', R),
   wk('b1', '2026-10-05', [A('bench', [ws(5, 82.5)])]), wk('b2', '2026-10-07', R), wk('b3', '2026-10-07', R), wk('b4', '2026-10-11', R),
-  wk('p1', '2026-09-20', [A('bench', [ws(5, 80)])]), wk('p2', '2026-09-27', [A('bench', [ws(1, 100, { warmup: true }), ws(10, 60), ws(12, 50)])]),
+  wk('p1', '2026-08-10', [A('bench', [ws(5, 80)])]), wk('p2', '2026-09-30', [A('bench', [ws(1, 100, { warmup: true }), ws(10, 60), ws(12, 50)])]),
   wk('m1', '2026-10-12', [
     A('bench', [ws(10, 40, { warmup: true }), ws(5, 80), ws(5, 80), ws(5, 80)]),
     A('pushdown', [ws(12, 30), ws(12, 30), ws(12, 30)]),
@@ -251,7 +251,7 @@ test('1RM block text: tiles Latest / Best / PRs, the PR as a line of text ending
   const tiles = all([sec]).filter(n => hasClass(n, 'an-tile')).map(t => [t.children[1].textContent, t.children[0].textContent]);
   assert.deepEqual(tiles, [['Latest', '93.3 kg'], ['Best', '96.3 kg'], ['PRs', '1']]);
   assert.ok(texts([sec]).includes('5 Oct 2026 · 96.3 kg · PR'));
-  assert.deepEqual(all([sec]).find(n => hasClass(n, 'gs-cap')).children.map(c => c.textContent), ['20 Sep 2026', '12 Oct 2026']);
+  assert.deepEqual(all([sec]).find(n => hasClass(n, 'gs-cap')).children.map(c => c.textContent), ['10 Aug 2026', '12 Oct 2026']);
 });
 
 test('1RM block: nothing to chart yet says so and shows no select', () => {
