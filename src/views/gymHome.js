@@ -1,6 +1,6 @@
 // Gym home (gym plan G8, G9): this week's visits against the target, Start (asks for a name first) / Resume workout and Repeat last workout,
 // the exercise list entry, routines (each row opens the routine, G10; New routine asks for a name), the last workouts
-// (each row opens its detail, G11) and a History row for the full list. Logic in gymHomeLogic.js.
+// (each row opens its detail, G11), a History row for the full list and a Stats row (G11). Logic in gymHomeLogic.js.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
@@ -86,6 +86,9 @@ export function renderGymHome(app, { load = ensureExerciseData, now = Date.now, 
     section('Recent workouts', null, recent.length
       ? list(recent.map(historyRow))
       : h('p', { class: 'tk-empty' }, 'No workouts yet')),
+    h('a', { href: '#gym/stats', id: 'gm-stats', class: 'plate list gm-link' },
+      h('div', null, h('div', { class: 'gm-lt' }, 'Stats'), h('p', { class: 't2 gm-ls' }, 'Visits, muscles and estimated 1RM')),
+      icon('chevronRight')),
     h('a', { href: '#gym/history', id: 'gm-history', class: 'plate list gm-link' },
       h('div', null, h('div', { class: 'gm-lt' }, 'History'), h('p', { class: 't2 gm-ls' }, historySummary(gym))),
       icon('chevronRight')),

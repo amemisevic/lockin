@@ -80,3 +80,19 @@
 .gh-in{width:100%;min-height:44px;text-align:center;font-size:18px}
 .gh-date{min-height:44px}
 .gh-len,.gh-saved{margin:0}
+/* Stats (G11s): charts reuse the Analytics bars and tracks (analytics.css). Numbers are HTML text, 12 px or more. No animation. */
+.gs-chart{margin-top:10px}
+.gs-bars{display:block;height:96px;border-radius:8px 8px 4px 4px}
+.gs-chart svg{display:block;width:100%}
+.gs-target{stroke:var(--text);stroke-width:2;stroke-dasharray:6 4}
+.gs-nums{display:flex;margin-top:4px}
+.gs-nums span{flex:1;min-width:0;text-align:center;font-size:12px;line-height:16px;font-weight:700}
+.gs-cap{display:flex;justify-content:space-between;gap:12px;margin-top:4px;font-size:12px;line-height:16px}
+.gs-tg,.gs-note{margin:0;font-size:14px}
+.gs-line{fill:none;stroke:var(--text-2);stroke-width:2;stroke-linejoin:round}
+.gs-pt{fill:var(--text-2)}
+.gs-pr{fill:var(--accent);stroke:var(--text);stroke-width:1.5}
+.gs-sel{margin-top:6px}
+.gs-tiles{margin-top:14px}
+.gs-tiles .an-n{font-size:22px;line-height:28px;white-space:nowrap}
+.gs-prs{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:14px;line-height:18px}

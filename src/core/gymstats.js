@@ -84,3 +84,12 @@ export const e1rmSeries = (gym, exerciseId) => finished(gym).sort((a, b) => a.st
   const all = arr(w.items).filter(it => it.exerciseId === exerciseId).flatMap(it => arr(it.sets).map(est1RM)).filter(e => e !== null);
   return all.length ? [{ workoutId: w.id, date: w.date, startedAt: w.startedAt, e1rm: Math.max(...all) }] : [];
 });
+
+// Exercise ids with something to chart (a qualifying set in a finished workout), most recently trained first; ties keep first-seen order.
+export function trainedExercises(gym) {
+  const last = new Map();
+  for (const w of finished(gym)) for (const it of arr(w.items)) {
+    if (arr(it.sets).some(s => est1RM(s) !== null)) last.set(it.exerciseId, Math.max(last.get(it.exerciseId) ?? -Infinity, w.startedAt));
+  }
+  return [...last].sort((a, b) => b[1] - a[1]).map(([id]) => id);
+}
