@@ -232,7 +232,7 @@ test('weight section on load: one short line and nothing else (no chart, no Star
     assert.ok(texts([sec]).includes(EMPTY_LINE));
     assert.equal(imgs([sec]).length, 0);
     assert.equal(all([sec]).filter(n => ['gs-sum', 'gs-dates', 'gs-wl', 'gs-hint', 'gs-wchart'].some(c => hasClass(n, c))).length, 0);
-    assert.equal(all([sec]).filter(n => n.tagName === 'SVG' || n.tagName === 'UL').length, 0);
+    assert.equal(all([sec]).filter(n => (n.tagName === 'SVG' && n.getAttribute('viewBox')) || n.tagName === 'UL').length, 0); // the heading's icon svg has no viewBox in the fake DOM
     assert.ok(!texts([sec]).some(t => /^(Start |First workout|Workout \d|Swipe)/.test(t)));
   }
 });
