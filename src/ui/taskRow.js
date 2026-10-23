@@ -18,7 +18,7 @@ export function taskRow(app, view, date, { onMenu }) {
   const time = timeText(task);
   // open → done; done, failed or stalled → null (un-do / reopen). Never closes the day.
   const onToggle = () => app.set(s => setTaskStatus(s, date, task.id, status === 'open' ? 'done' : null));
-  return h('div', { class: status === 'done' ? 'row dn' : 'row' },
+  return h('div', { class: status === 'done' ? 'row dn' : 'row', 'data-k': `t/${task.id}` },
     shieldToggle({ status, onToggle, label: task.title }),
     h('div', { class: 'rb' },
       h('div', { class: 'rt' }, task.title),

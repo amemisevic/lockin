@@ -1,5 +1,6 @@
 // Bottom sheet and action sheet on native <dialog> (showModal traps focus; Esc fires `cancel`).
 import { h } from './dom.js';
+import { ghostOut } from './motion.js';
 
 let currentSheet = null;
 let currentActions = null;
@@ -12,14 +13,17 @@ function refocus(opener) {
 }
 
 // Shows the dialog modally; returns its dismiss function. Removal is synchronous so a closed
-// dialog never lingers in the DOM (its title id would shadow the next sheet's aria-labelledby).
-function present(dialog, onCancel) {
+// dialog never lingers in the DOM (its title id would shadow the next sheet's aria-labelledby);
+// the exit plays on a ghost clone and a ghost backdrop (M3). from() is how far a swipe already dragged it (px).
+function present(dialog, onCancel, from = () => 0) {
   const opener = document.activeElement;
   dialog.addEventListener('cancel', e => { e.preventDefault(); onCancel(); });
   document.body.append(dialog);
   dialog.showModal();
   return () => {
     if (!dialog.isConnected) return;
+    ghostOut(h('div', { class: 'ghost-bd' }));
+    ghostOut(dialog, '', { '--from': `${from()}px` });
     dialog.close();
     dialog.remove();
     refocus(opener);
@@ -43,15 +47,16 @@ export function openSheet({ title, action, content, isDirty = () => false, onAct
     h('h2', { class: 'title3', id: titleId }, title),
     actionButton);
   const dialog = h('dialog', { class: 'sheet', 'aria-labelledby': titleId }, header, h('div', { class: 'sheet-body' }, content));
-  swipeToDismiss(dialog, header, requestClose);
+  let swiped = 0;
+  swipeToDismiss(dialog, header, dy => { swiped = dy; requestClose(); swiped = 0; });
   const api = { close, actionButton };
   currentSheet = api;
-  const dismiss = present(dialog, requestClose);
+  const dismiss = present(dialog, requestClose, () => swiped);
   return api;
 }
 
-// Drag down from the grabber/header: past 100 px asks to close, otherwise springs back.
-function swipeToDismiss(dialog, handle, requestClose) {
+// Drag down from the grabber/header: past 100 px calls onDismiss(distance), otherwise springs back.
+function swipeToDismiss(dialog, handle, onDismiss) {
   let startY = null;
   handle.addEventListener('pointerdown', e => {
     if (e.target.closest('button')) return;
@@ -69,7 +74,7 @@ function swipeToDismiss(dialog, handle, requestClose) {
     startY = null;
     dialog.style.transition = '';
     dialog.style.transform = '';
-    if (dy > 100) requestClose();
+    if (dy > 100) onDismiss(dy);
   };
   handle.addEventListener('pointerup', end);
   handle.addEventListener('pointercancel', end);

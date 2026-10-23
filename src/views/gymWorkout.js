@@ -60,7 +60,7 @@ export function renderWorkout(app, { data = exerciseData(), load = ensureExercis
 
   const row = (ii, si, s) => {
     const n = si + 1;
-    return h('li', { class: s.done ? 'gw-set done' : 'gw-set' },
+    return h('li', { class: s.done ? 'gw-set done' : 'gw-set', 'data-k': `s/${ii}/${si}` },
       h('div', { class: 'gw-top' },
         h('span', { class: 'gw-n' }, `Set ${n}`),
         h('button', { type: 'button', class: 'gw-btn gw-wu', 'aria-pressed': String(s.warmup), 'aria-label': `Set ${n} warm-up`, onClick: act(() => apply(g => toggleWarmup(g, wid, ii, si))) },

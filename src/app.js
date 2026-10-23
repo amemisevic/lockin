@@ -7,6 +7,7 @@ import { parseRoute, nav } from './router.js';
 import { VERSION } from './version.js';
 import { icon } from './icons.js';
 import { h } from './dom.js';
+import { swapRows } from './motion.js';
 import { renderTasks } from './views/tasks.js';
 import { renderToday } from './views/today.js';
 import { renderChallenge } from './views/challenge.js';
@@ -157,7 +158,7 @@ function render() {
   const y = key === shown ? window.scrollY : 0; // keep position on re-render, top on route change
   view.classList.toggle('enter', shown !== null && key !== shown); // screen fade-in (M2): route change only, not first paint or re-render
   const focusId = view.contains(document.activeElement) && document.activeElement.id;
-  view.replaceChildren(...screen(r));
+  swapRows(view, screen(r), key === shown); // list add/remove motion (M3): same screen only
   if (focusId) document.getElementById(focusId)?.focus({ preventScroll: true });
   for (const t of tabs) {
     if (t.hash === `#${r.tab}`) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');

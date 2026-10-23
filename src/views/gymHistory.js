@@ -6,7 +6,7 @@ import { pushedHeader, sectionHeading } from '../ui/chrome.js';
 import { historyGroups, historyHref } from './gymHistoryLogic.js';
 
 // One row is a link (the whole row is the target, 56 px or more): title and summary left, date and chevron right.
-export const historyRow = w => h('li', { class: 'gm-rli' }, h('a', { href: historyHref(w.id), class: 'gm-rw gm-rl' },
+export const historyRow = w => h('li', { class: 'gm-rli', 'data-k': `h/${w.id}` }, h('a', { href: historyHref(w.id), class: 'gm-rw gm-rl' },
   h('div', null, h('div', { class: 'gm-rwn' }, w.title), h('div', { class: 'rn' }, w.summary)),
   h('span', { class: 'gm-rwd' }, w.date), icon('chevronRight')));
 

@@ -116,7 +116,7 @@
 dialog{padding:0;border:0;color:var(--text);max-width:none;max-height:none}
 dialog::backdrop{background:rgba(0,0,0,.55)}
 .sheet,.action-sheet{position:fixed;inset:auto 0 0;margin:0 auto;width:100%;max-width:672px}
-.sheet[open]{display:flex;flex-direction:column;height:calc(100% - env(safe-area-inset-top) - 12px);background:linear-gradient(180deg,var(--plate-top) 0%,var(--plate-bot) 100%);border:1px solid var(--line);border-bottom:0;border-radius:var(--r-plate) var(--r-plate) 0 0;box-shadow:inset 0 1px 0 rgba(255,236,190,.10),0 -12px 26px rgba(0,0,0,.5);animation:sheet-in 320ms cubic-bezier(.2,.8,.2,1);transition:transform 320ms cubic-bezier(.2,.8,.2,1)}
+.sheet[open]{display:flex;flex-direction:column;height:calc(100% - env(safe-area-inset-top) - 12px);background:linear-gradient(180deg,var(--plate-top) 0%,var(--plate-bot) 100%);border:1px solid var(--line);border-bottom:0;border-radius:var(--r-plate) var(--r-plate) 0 0;box-shadow:inset 0 1px 0 rgba(255,236,190,.10),0 -12px 26px rgba(0,0,0,.5);animation:sheet-in var(--dur-screen) var(--ease-out);transition:transform var(--dur-ui) var(--ease-out)}
 /* The title column gives way at large text so Cancel and the action never leave the screen. */
 .sheet-header{position:relative;display:grid;grid-template-columns:minmax(max-content,1fr) minmax(0,auto) minmax(max-content,1fr);align-items:center;padding:14px 4px 6px;touch-action:none}
 .sheet-header h2{margin:0;text-align:center;overflow-wrap:anywhere}
@@ -127,7 +127,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;border-radius:var(--r-pill);font-weight:600}
 .btn-text{color:var(--accent);padding:0 12px}
 .title3{font:600 1.176em/1.25 var(--f-body)}
-.action-sheet[open]{display:flex;flex-direction:column;gap:8px;background:transparent;padding:0 8px calc(env(safe-area-inset-bottom) + 8px);animation:sheet-in 320ms cubic-bezier(.2,.8,.2,1)}
+.action-sheet[open]{display:flex;flex-direction:column;gap:8px;background:transparent;padding:0 8px calc(env(safe-area-inset-bottom) + 8px);animation:sheet-in var(--dur-screen) var(--ease-out)}
 .action-sheet .group{border-radius:var(--r-plate);overflow:hidden;background:linear-gradient(180deg,var(--plate-top) 0%,var(--plate-bot) 100%);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,236,190,.10)}
 .footnote{font-size:13px;line-height:18px;color:var(--text-2)}
 .action-message{margin:0;padding:12px var(--gutter);text-align:center;border-bottom:1px solid var(--line-soft)}
@@ -148,9 +148,28 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .days .chip{flex:1;min-width:44px;padding:0;justify-content:center}
 .form-error{margin:0;color:var(--crimson-lt);font-weight:700}
 .form-error:empty{display:none}
-/* Reduced motion: sheets appear without the slide. */
+/* ==== Motion M3 (DESIGN-SPEC §10). Enter: sheets slide up, the backdrop fades. Exit and list removal: src/motion.js plays a
+   non-modal ghost clone (the real node is already gone), a ghost backdrop for sheets. Opacity and transform only. */
+dialog[open]::backdrop{animation:fade-in var(--dur-ui) var(--ease-out)}
+@keyframes fade-in{from{opacity:0}}
+@keyframes fade-out{to{opacity:0}}
+@keyframes sheet-out{from{transform:translateY(var(--from,0px))}to{transform:translateY(100%);opacity:0}}
+@keyframes k-out{to{opacity:0;transform:translateX(-12px)}}
+.ghost{pointer-events:none}
+dialog.ghost[open]{z-index:100;animation:sheet-out var(--dur-ui) var(--ease-out) forwards}
+.ghost-bd{position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.55);animation:fade-out var(--dur-ui) var(--ease-out) forwards}
+/* A new row rises in (scr-in), a removed row slides out where it was; the solid fill keeps the row below from showing through. */
+.k-in{animation:scr-in var(--dur-ui) var(--ease-out) backwards}
+.ghost.k-out{position:absolute;z-index:4;margin:0;list-style:none;background:var(--plate-bot);animation:k-out var(--dur-ui) var(--ease-out) forwards}
+/* Reduce Transparency / Increase Contrast (spec §6): sheets are solid. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .sheet[open], .action-sheet .group { background: #1a181c; }
+}
+/* Reduce Motion: fades only, no slide. */
 @media (prefers-reduced-motion: reduce) {
-  .sheet[open], .action-sheet[open] { animation: none; transition: none; }
+  .sheet[open], .action-sheet[open] { animation-name: fade-in; transition: none; }
+  dialog.ghost[open], .ghost.k-out { animation-name: fade-out; }
+  .k-in { animation-name: scr-fade; }
 }
 
 /* ==== Today tab (plan Task 12). Board compact format, copied from static/Main.html inline styles and <style>;

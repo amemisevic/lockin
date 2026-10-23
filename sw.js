@@ -47,6 +47,7 @@ const ASSETS = [
   'src/recovery.css',
   'src/icons.js',
   'src/logic.js',
+  'src/motion.js',
   'src/router.js',
   'src/sheet.js',
   'src/ui/chrome.js',
