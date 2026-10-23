@@ -80,12 +80,12 @@ Names like the three red lines, "Wake at 06:30", "Gym", "Finish Module 1", dates
 
 ## 10. Motion (owner decision 2026-10-23)
 Static screens stay as in the PNGs. Motion and the glass tab bar are added on top.
-- Tokens in `styles.css`: `--dur-press` 100 ms, `--dur-ui` 200 ms, `--dur-screen` 280 ms, `--ease-out`, `--ease-spring`. Use tokens only, no raw durations.
+- Tokens in `styles.css`: `--dur-press` 100 ms, `--dur-ui` 280 ms (UI, exits), `--dur-screen` 400 ms (screens, tab pill), `--dur-sheet` 450 ms (sheet enter), `--ease-out` cubic-bezier(.32,.72,0,1), `--ease-spring`. Use tokens only, no raw durations.
 - Press: every button and row gives instant feedback on `:active` (scale about .97 and/or opacity, under 120 ms). Release eases back.
 - Toggles (`.sw`, `.shield`, `.chip`, `.seg`): the thumb or fill slides, the color fades (`--dur-ui`). No jump between states. Keep the existing `pop` and `rip` on shield tick.
 - Tab bar: stays the floating glass pill. Content scrolling under it shows through the blur. The active tab is a liquid-glass pill (translucent fill, soft inner highlight, thin gold edge, gold icon that fills) that slides between tabs. Replaces the glow and 3 px bar from section 2. iPhone Safari ignores SVG `backdrop-filter`: use `backdrop-filter` plus `-webkit-backdrop-filter` with `blur()` and `saturate()` only.
 - Screens: short fade and 8 px rise on tab switch (`--dur-screen`).
 - Sheets and modals: slide or scale in, fade out. List add and remove: height-free fade and slide (no layout animation).
 - Analytics: stat cards, bars and numbers stagger in (about 40 ms apart, max 8 items), once per range change.
-- Performance: animate `transform`, `opacity`, `filter` only. Never `width`, `height`, `top`, `left`. No lingering `will-change`. Nothing blocks input. No animation longer than 300 ms.
+- Performance: animate `transform`, `opacity`, `filter` only. Never `width`, `height`, `top`, `left`. No lingering `will-change`. Nothing blocks input. No animation longer than 450 ms (owner decision 2026-10-24: 200 ms with the old curve read as instant).
 - Accessibility: `prefers-reduced-motion` turns movement into fades of 1 ms to 100 ms. Reduce Transparency: tab bar and sheets fall back to a solid `#1a181c` (as in section 6). Motion never carries state alone.

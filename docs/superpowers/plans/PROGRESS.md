@@ -992,3 +992,16 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Frozen tests: none fought the change.
 - Emil Kowalski skill (audit only): exits faster than enters (200 vs 280 ms), ease-out only, transform and opacity only, no `scale(0)`, nothing blocks input.
 - Next: ⛔ phone check of M3, then M4 (Analytics).
+
+## M3b: Slower motion curves and durations (owner decision 2026-10-24), branch `motion`
+
+- Commit: `fix(M3b): slower motion curves and durations` (this entry, `styles.css`, `screens.css`, DESIGN-SPEC §10, ROADMAP.md; hash in `git log`). Not pushed. `src/core`, `src/*.js`, tests, VERSION untouched.
+- Cause (owner): `--ease-out` cubic-bezier(.23,1,.32,1) finishes about 80 % of the travel in the first quarter, so 200 ms read as a teleport.
+- Precheck: HEAD `136bbd9`, `npm test` 1212 pass, 0 fail (exit 0). After: 1212 pass, 0 fail (exit 0).
+- Tokens: `--ease-out` cubic-bezier(.32,.72,0,1); `--dur-ui` 280 ms (UI and every exit); `--dur-screen` 400 ms; new `--dur-sheet` 450 ms (sheet enter); `--dur-press` 100 ms unchanged; `--ease-spring` unchanged. Reduce Motion block: `--dur-ui` and `--dur-screen` stay 100 ms, `--dur-sheet` added at 100 ms, fades only.
+- Uses: tab pill slide `--dur-screen` with `--ease-spring`; screen rise and fade `--dur-screen`; sheet and action sheet enter `--dur-sheet`; backdrop in and out, exit ghosts and row add/remove `--dur-ui`. All other token users (toggles, shield, thumb, chips) slow down through the tokens.
+- Exit ghost: the slide (`sheet-out`, transform only, `--ease-out`) and the fade (`fade-out`, linear) are now two animations of 280 ms, so the sheet is still visibly travelling while it fades; before, one eased animation had the opacity gone after about a third of the slide.
+- Docs: DESIGN-SPEC §10 token list and cap (now 450 ms), ROADMAP.md performance rule (100 to 280 ms, screens 400, sheets 450, cap 450). CLAUDE.md holds no duration cap or token list (its motion paragraph points to §10), so nothing changed there.
+- Browser pane (computed values; the pane paints no frames): tokens resolve as above; the sheet enter animation is 450 ms, the backdrop fade 280 ms, the Cancel exit ghost has `sheet-out` 280 ms ease-out and `fade-out` 280 ms linear, the ghost backdrop fades 280 ms, the pill transition is 0.4 s with the spring curve. Not run: a real iPhone, Reduce Motion.
+- Kept: `rip` .65 s and `pop` (existing, over the cap before too, "keep existing"); the 400 ms timeout fallback in `src/motion.js` still outlasts the 280 ms exits (JS not touched).
+- Next: ⛔ phone check of M3 and M3b, then M4 (Analytics).

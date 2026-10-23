@@ -10,7 +10,7 @@ Scope (view and CSS only; src/core and frozen tests untouched; plain CSS, no Tai
 - M3 Sheets, modals, lists: enter and exit motion; list add and remove.
 - M4 Analytics: stat cards, bars and numbers load in with a short staggered animation (first view of a range, not on every redraw).
 - M5 Audit on iPhone, then release (VERSION bump only here).
-Performance rules: animate transform, opacity and filter only; never layout properties; most motion 120 to 250 ms, screen transitions at most 300 ms; nothing blocks input; no lingering will-change; backdrop-filter only on the tab bar and sheets; stagger caps at about 8 items; works with reduced motion and Reduce Transparency.
+Performance rules: animate transform, opacity and filter only; never layout properties; most motion 100 to 280 ms, screens 400 ms, sheets 450 ms, nothing longer than 450 ms; nothing blocks input; no lingering will-change; backdrop-filter only on the tab bar and sheets; stagger caps at about 8 items; works with reduced motion and Reduce Transparency.
 
 ## Later
 - Task 21 audit and trial. List is in PROGRESS.md under "Deferred, Task 21".

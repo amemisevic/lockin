@@ -24,8 +24,8 @@
   /* fonts (self-hosted, src/fonts) */
   --f-title: 'Cinzel', serif; --f-serif: 'Cormorant Garamond', serif; --f-body: 'Alegreya Sans', system-ui, sans-serif;
   /* motion (DESIGN-SPEC §10): use these, no raw durations. --ease-spring is the switch thumb's curve from Settings.css. */
-  --dur-press: 100ms; --dur-ui: 200ms; --dur-screen: 280ms;
-  --ease-out: cubic-bezier(.23, 1, .32, 1); --ease-spring: cubic-bezier(.3, 1.4, .5, 1);
+  --dur-press: 100ms; --dur-ui: 280ms; --dur-screen: 400ms; --dur-sheet: 450ms;
+  --ease-out: cubic-bezier(.32, .72, 0, 1); --ease-spring: cubic-bezier(.3, 1.4, .5, 1);
 }
 
 /* ---- Base */
@@ -174,7 +174,7 @@ button:disabled { opacity: .4; cursor: default; }
 /* Reduced motion (DESIGN-SPEC §10, replaces owner call 3's instant changes): no movement, only short fades.
    Every token-based transition shortens here; no pop, ripple, thumb slide or press shrink. */
 @media (prefers-reduced-motion: reduce) {
-  :root { --dur-press: 1ms; --dur-ui: 100ms; --dur-screen: 100ms; }
+  :root { --dur-press: 1ms; --dur-ui: 100ms; --dur-screen: 100ms; --dur-sheet: 100ms; }
   .shield.pop svg, .shield.pop::after { animation: none; }
   .sw .th { transition: none; }
   :where(button:not(:disabled), a[href]):not(.tab):active { transform: none; opacity: .6; }
