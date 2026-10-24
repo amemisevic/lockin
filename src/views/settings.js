@@ -4,7 +4,7 @@
 // (any change to it, or the next attempt, removes the plate); never saved.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
-import { eyebrow, screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
+import { screenTitle, sectionHeading, plate, rerender } from '../ui/chrome.js';
 import { stepper, switchControl, helpButton } from '../ui/controls.js';
 import { validateImport, markBackup } from '../core/store.js';
 import { WEEKLY_TARGET, weeklyTarget, setWeeklyTarget, setWeeklyTargetOn } from '../core/gym.js';
@@ -125,7 +125,6 @@ export function renderSettings(app) {
   const { state } = app;
   const { protocols, redLines } = L.lists(state);
   return [
-    eyebrow('Lock In'),
     screenTitle('Settings'),
     h('section', { class: 'set-sec' }, sectionHeading('Protocols', 'addProtocols'), h('div', { class: 'plate list' },
       protocols.map(p => navRow(`set-protocol-${p.id}`, p.title, p.med ? 'MED version set' : 'No MED version', () => openProtocolSheet(app, p))),
