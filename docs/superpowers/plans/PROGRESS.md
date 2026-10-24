@@ -1237,3 +1237,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Browser pane 440x956, seeded started challenge: row reads "Saturday 24 October" on one line, 0 inputs or buttons besides "?" (44 x 44), `scrollWidth` 440. Not run: iPhone, 375 width. Seed cleared afterwards.
 - Side effect (ruled): after Begin Day 1 the date cannot be moved back one day.
 - Next: Task 21 step 5 per the plan.
+
+## T21-R: release v2.5.1 (Day 1 read-only row), branch `help`
+
+- Commit: `release: v2.5.1 day 1 row` (hash in `git log`). Release rule applied: VERSION 2.5.0 to 2.5.1 in `sw.js` and `src/version.js` (match); ROADMAP "Live" line now v2.5.1. No other change.
+- Commands: `npm test` after bump: 1289 tests, 1288 pass, 0 fail, 1 skipped (exit 0). Precheck is the same run (no code change since T21-4, last run 1288 pass).
+- Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`; results in STATUS.md.
+- Ambiguity and choice: none.
+- Next: owner iPhone check (close and reopen the Home Screen app twice), then Task 21 step 5.
