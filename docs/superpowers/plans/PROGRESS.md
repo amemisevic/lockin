@@ -1018,3 +1018,12 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Found while testing: the first version of `stagger` flattened NodeLists wrongly (`flatMap` over a NodeList); fixed with a spread before commit. The frozen fake-DOM tests do not exercise it, so only the pane run caught it.
 - Browser pane (440 wide, invented state from the analytics-view test fixture, removed afterwards; the pane paints no frames, values read from `getAnimations`): entry: 13 items with `--i` 0..4, delays 0..160 ms, 7 `an-grow`, `#view.enter` set; range tap: same stagger, no `enter`; same-range tap and a same-route re-render: 0 animations. Not run: iPhone, Reduce Motion.
 - Next: ⛔ phone check of M4, then M5 (audit, release).
+
+## M4b: Slower Analytics motion (owner: still too fast), branch `motion`
+
+- Commit: `fix(M4b): slower analytics stagger` (this entry and `src/analytics.css` only; hash in `git log`). Not pushed. JS, `src/core`, tests, VERSION untouched.
+- Precheck: HEAD `66fe2be`, `npm test` 1212 pass, 0 fail (exit 0). After: 1212 pass, 0 fail (exit 0).
+- Items: own keyframes `an-in` (fade, 16 px rise) at `--dur-screen` (400 ms), `--ease-out`, delay `--i` x 40 ms, `--i` still 0..4. Weekday bars `an-grow` (scaleY from the bottom) at `--dur-sheet` (450 ms), same delay as their column. Range buttons: `.an-range .seg button` colour and `::before` fill opacity at `--dur-screen`; press transitions (`--dur-press`) kept, the shared `.seg` rule in `styles.css` stays on `--dur-ui` for the other screens.
+- Timing (pane, `getAnimations`): items 400 ms, bars 450 ms (the longest single animation, cap holds), range fade 400 ms, last end 160 + 450 = 610 ms; the brief allowed about 560 for the items (160 + 400), only the bars run to 610. Same-range tap: 0 animations. Reduce Motion block unchanged (fades only, no delay, no bar growth; `--dur-screen` is 100 ms there).
+- Not run: iPhone, Reduce Motion.
+- Next: ⛔ phone check of M4 and M4b, then M5.
