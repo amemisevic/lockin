@@ -36,13 +36,13 @@ export function shieldToggle({ status, onToggle, label, id }) {
 }
 
 // Choice buttons in a group; aria-pressed marks the chosen one(s). multi: value is an array.
-// onPick gets the tapped value; with multi the caller adds or removes it.
+// An option may carry cls (T16-4), a class for its own colour. onPick gets the tapped value; with multi the caller adds or removes it.
 // label (T10-5): the group's accessible name.
 // id (T10-2): a group whose tap re-renders the screen gives its buttons ids `${id}-${n}`, so app.js can put focus back.
 const choices = (cls, item, { options, value, onPick, multi, id, label }) => h('div', { class: cls, role: 'group', 'aria-label': label },
   options.map((o, i) => {
     const on = multi ? value.includes(o.value) : value === o.value;
-    return h('button', { type: 'button', id: id && `${id}-${i}`, class: [item, on && 'on'].filter(Boolean).join(' ') || null, 'aria-pressed': String(on),
+    return h('button', { type: 'button', id: id && `${id}-${i}`, class: [item, o.cls, on && 'on'].filter(Boolean).join(' ') || null, 'aria-pressed': String(on),
       onClick: () => onPick(o.value) }, o.label);
   }));
 
