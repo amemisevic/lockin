@@ -1,6 +1,6 @@
 # Lock In roadmap (updated 2026-10-24)
-Live: v2.1.0 (Gym tab) on GitHub Pages (amemisevic.github.io/lockin). main = 193857d.
-Ready: v2.2.0 (motion polish) on branch `motion`, M1 to M5 committed, not pushed or merged. Waits for the owner's iPhone check.
+Live: v2.3.0 (help buttons, Challenge flow) on GitHub Pages (amemisevic.github.io/lockin). Includes v2.2.0 motion polish.
+Not started: help scope for the other tabs (Settings, Today, Tasks, Gym, Analytics).
 
 ## Now
 Motion polish, whole app. Plan and tasks M1 to M5. Branch from main. Judged on the iPhone.
