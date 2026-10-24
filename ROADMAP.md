@@ -1,5 +1,5 @@
 # Lock In roadmap (updated 2026-10-24)
-Live: v2.3.0 (help buttons, Challenge flow) on GitHub Pages (amemisevic.github.io/lockin). Includes v2.2.0 motion polish.
+Live: v2.4.0 (day review) on GitHub Pages (amemisevic.github.io/lockin). Includes v2.3.0 help buttons and v2.2.0 motion polish.
 Not started: help scope for the other tabs (Settings, Today, Tasks, Gym, Analytics).
 
 ## Now

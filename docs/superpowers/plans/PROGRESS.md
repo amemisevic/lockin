@@ -1147,3 +1147,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Choices: `openSheet` always has Cancel + an action button; the action is `Close`, the Cancel button is hidden (visibility, kept for the grid layout), so one visible close control; Esc and swipe still dismiss. The 10-column strip is about 36 pt wide per cell, so the button is the column wide and 44 tall (margin -7 px keeps the strip height; neighbouring rows' hit areas overlap by 9 px). Day notes `day-N` not shown (not asked).
 - Tests: `tests/day-review.test.js` (6: empty, no challenge, full, missing fields, open task + unfiled recovery, sw + wiring). Not run: browser pane, iPhone.
 - Next: owner iPhone check of the strip taps and the sheet.
+
+## DR1 + DR2: day review and release v2.4.0, branch `help`
+
+- DR1: commit `ea00afb` (entry above). Ruling (Armin, option A): strip tap target ~36 x 44 with 9 px row overlap accepted.
+- DR2 commit: `release: v2.4.0 day review` (hash in `git log`). VERSION 2.3.0 to 2.4.0 in `sw.js` and `src/version.js` only; ROADMAP.md Live line is v2.4.0.
+- Precheck: HEAD `ea00afb`, origin/main is an ancestor (fast-forward), `npm test` 1243 pass, 0 fail (exit 0). After the bump: 1243 pass, 0 fail (exit 0).
+- Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`.
+- Next: owner closes and reopens the Home Screen app twice, then checks day review on the iPhone.
