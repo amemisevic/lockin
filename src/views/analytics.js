@@ -7,8 +7,9 @@ import { analytics, RANGES, DEFAULT_RANGE } from './analyticsLogic.js';
 import { empty, sub, tiles, strip, protocolRows, resetBlock, tacticRows, weekdayCols, heatGrid } from './analyticsParts.js';
 
 let n = DEFAULT_RANGE;
+let play = false; // a range tap sets it: the next render staggers its items in once (M4). Data edits and ticks never do.
 
-const section = (title, ...body) => h('section', { class: 'an-sec' }, sectionHeading(title), plate(body));
+const section = (title, ...body) => h('section', { class: play ? 'an-sec an-play' : 'an-sec' }, sectionHeading(title), plate(body));
 const or = (block, build) => (block ? build(block) : empty());
 
 function overview(o) {
@@ -25,15 +26,28 @@ const challenge = c => [
 
 const tasks = t => tiles(t.label, [['Done', t.done], ['Failed', t.failed], ['Stalled', t.stalled], ['Open', t.open]]);
 
+// Range control: each button carries a stable id so the toggle replay in app.js finds it again after the rebuild.
+function range() {
+  const seg = segmented({ options: RANGES, value: n, onPick: v => { if (v === n) return; n = v; play = true; rerender(); } });
+  [...seg.children].forEach((b, i) => b.setAttribute('data-tg', `range/${RANGES[i].label}`));
+  return h('div', { class: 'an-range' }, seg);
+}
+
+// Items (.an-i) get --i in document order, capped at 4; analytics.css turns it into a delay.
+const stagger = nodes => nodes.flatMap(x => [...x.querySelectorAll('.an-i')]).forEach((el, i) => el.setAttribute('style', `--i:${Math.min(i, 4)}`));
+
 export function renderAnalytics(app) {
   const m = analytics(app.state, app.today(), n);
-  return [
+  const nodes = [
     eyebrow('Lock In'),
     screenTitle('Analytics'),
-    h('div', { class: 'an-range' }, segmented({ options: RANGES, value: n, onPick: v => { n = v; rerender(); } })),
+    range(),
     section('Overview', or(m.overview, overview)),
     section('PM Challenge', or(m.challenge, challenge)),
     section('Habits', sub('By weekday'), or(m.habits.weekdays, weekdayCols), sub('Last 28 days'), or(m.habits.heatmap, heatGrid)),
     section('Tasks', or(m.tasks, tasks)),
   ];
+  stagger(nodes);
+  play = false;
+  return nodes;
 }

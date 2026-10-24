@@ -86,8 +86,8 @@ document.addEventListener('touchstart', () => {}, { passive: true });
 // Most taps re-render synchronously, so a toggle comes back rebuilt in its new state and its CSS transition never runs.
 // Capture notes the tapped group's state; after the handlers, each rebuilt toggle that changed is put back in its old
 // state for one style pass and flipped again, so the same transition plays. A toggle kept in place needs nothing.
-// ponytail: matched by position among the page's toggles; a re-render that adds toggles above the tapped one animates
-// the wrong control. Key by id if that shows up.
+// A toggle with data-tg is found again by that id (Analytics range, M4); the rest are matched by position among the
+// page's toggles. ponytail: a re-render that adds toggles above a position-matched one animates the wrong control; give it a data-tg.
 const TOGGLES = '.shield, .swb, .chip, .seg > button';
 const stateEl = b => b.querySelector('.sw') ?? b; // the element carrying .on
 let was = null;
@@ -95,13 +95,14 @@ document.addEventListener('click', e => {
   const btn = e.target.closest?.(TOGGLES);
   const all = [...document.querySelectorAll(TOGGLES)];
   const group = btn?.matches('.chip, .seg > button') ? [...btn.parentElement.children] : [btn];
-  was = btn ? group.map(b => [all.indexOf(b), stateEl(b).classList.contains('on')]) : null;
+  was = btn ? group.map(b => [b.dataset.tg ?? all.indexOf(b), stateEl(b).classList.contains('on')]) : null;
 }, true);
 document.addEventListener('click', e => {
   const btn = e.target.closest?.(TOGGLES);
   if (!was || !btn || btn.isConnected) return;
   const all = document.querySelectorAll(TOGGLES);
-  const flip = was.map(([i, on]) => all[i] && stateEl(all[i])).filter((s, k) => s && s.classList.contains('on') !== was[k][1]);
+  const find = k => (typeof k === 'string' ? document.querySelector(`[data-tg="${k}"]`) : all[k]);
+  const flip = was.map(([k]) => find(k)).map(b => b && stateEl(b)).filter((s, k) => s && s.classList.contains('on') !== was[k][1]);
   was = null;
   for (const s of flip) s.classList.toggle('on'); // all back to the old state, one style pass,
   document.body.getBoundingClientRect();

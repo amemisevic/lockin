@@ -1005,3 +1005,16 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Browser pane (computed values; the pane paints no frames): tokens resolve as above; the sheet enter animation is 450 ms, the backdrop fade 280 ms, the Cancel exit ghost has `sheet-out` 280 ms ease-out and `fade-out` 280 ms linear, the ghost backdrop fades 280 ms, the pill transition is 0.4 s with the spring curve. Not run: a real iPhone, Reduce Motion.
 - Kept: `rip` .65 s and `pop` (existing, over the cap before too, "keep existing"); the 400 ms timeout fallback in `src/motion.js` still outlasts the 280 ms exits (JS not touched).
 - Next: ⛔ phone check of M3 and M3b, then M4 (Analytics).
+
+## M4: Analytics motion (ROADMAP.md, DESIGN-SPEC §10), branch `motion`
+
+- Commit: `feat(M4): analytics stagger and range fade` (this entry, `src/analytics.css`, `src/app.js`, `src/views/analytics.js`, `src/views/analyticsParts.js`; hash in `git log`). Not pushed. `src/core`, tests, VERSION untouched.
+- Precheck: HEAD `e0a17ae`, `npm test` 1212 pass, 0 fail (exit 0). After: 1212 pass, 0 fail (exit 0).
+- Stagger: stat tiles, protocol and tactic rows, weekday columns, the day strip, the heatmap and the reset track carry `.an-i`; `analytics.js` sets inline `--i` (0..4, document order, rest at 4) on them. CSS `scr-in` (fade + 8 px rise, `--dur-ui`, `--ease-out`) with `animation-delay: calc(var(--i) * 40ms)`. Plays under `#view.enter` (route change) or `.an-play` (set on the sections by a range tap, consumed by that render). Data edits, ticks and a tap on the already chosen range add neither, so nothing replays. The section frames fade (`scr-fade`) on entry instead of rising, so items do not rise twice.
+- Bars: weekday bars `scaleY(0)` to 1, `transform-box: fill-box`, `transform-origin: bottom`, same delay and duration as their column. Horizontal tracks (protocol, tactic, reset) fade with their row; no scaleX added (not asked).
+- Range control: segmented buttons get `data-tg="range/<label>"`; the replay in `app.js` now finds a rebuilt toggle by `data-tg` when it has one, else by position as before (ponytail note updated). Pane check: after a tap on 7d the old and new button each run `color` and `::before` `opacity` at 280 ms.
+- Timing: last item ends at 4 x 40 + 280 = 440 ms (measured via getAnimations). Sequence under 450 ms. Reduce Motion: fades only (`scr-fade`, delay 0, bars no growth), tokens already 100 ms.
+- Ruling (owner): the brief (about 40 ms apart, max 8, total under 450 ms) cannot all hold, since 8 x 40 + 280 = 600 ms. Owner chose 40 ms with 4 steps: `--i` caps at 4, `--stag` 40 ms in `src/analytics.css`, 440 ms total. No open ruling.
+- Found while testing: the first version of `stagger` flattened NodeLists wrongly (`flatMap` over a NodeList); fixed with a spread before commit. The frozen fake-DOM tests do not exercise it, so only the pane run caught it.
+- Browser pane (440 wide, invented state from the analytics-view test fixture, removed afterwards; the pane paints no frames, values read from `getAnimations`): entry: 13 items with `--i` 0..4, delays 0..160 ms, 7 `an-grow`, `#view.enter` set; range tap: same stagger, no `enter`; same-range tap and a same-route re-render: 0 animations. Not run: iPhone, Reduce Motion.
+- Next: ⛔ phone check of M4, then M5 (audit, release).

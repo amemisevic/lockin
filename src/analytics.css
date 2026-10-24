@@ -32,3 +32,16 @@
 .hm-part{fill:var(--bronze-lt)}
 .hm-missed{fill:none;stroke:var(--crimson)}
 .hm-none{fill:var(--text-3)}
+
+/* Motion (M4, spec §10). Items (.an-i, --i 0..4 set in analytics.js) fade and rise 40 ms apart: 4 steps x 40 ms + --dur-ui
+   = 440 ms, under the 450 ms cap. Plays on a screen change (#view.enter) and on a range tap (.an-play), never on other redraws.
+   Weekday bars grow with scaleY from the baseline (transform only). */
+.an-bar{transform-box:fill-box;transform-origin:bottom}
+@keyframes an-grow{from{transform:scaleY(0)}}
+#view.enter .an-i,.an-play .an-i{--stag:40ms;animation:scr-in var(--dur-ui) var(--ease-out) calc(var(--i) * var(--stag)) backwards}
+#view.enter .an-col .an-bar,.an-play .an-col .an-bar{animation:an-grow var(--dur-ui) var(--ease-out) calc(var(--i) * var(--stag)) backwards}
+#view.enter>.an-sec{animation:scr-fade var(--dur-ui) var(--ease-out) backwards} /* section frame fades, its items do the rise */
+@media (prefers-reduced-motion: reduce){
+  #view.enter .an-i,.an-play .an-i{animation-name:scr-fade;animation-delay:0s}
+  #view.enter .an-col .an-bar,.an-play .an-col .an-bar{animation:none}
+}
