@@ -1297,3 +1297,12 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Rulings (Armin 2026-10-24): V-01 leave the wrap at 390; V-07 leave the 30-day buttons (29 wide at 390, 33.5 at 440).
 - Not run: iPhone; Day 0 and Recovery compared on structure only; Today "Up next" hero, Morning, Afternoon, War Log, Mission, Night "Stalled / crossed" colours, entry editor placeholder, Analytics Reset hatch were not measured against a board (no board exists for War Log, Mission, hatch, editor; Night and Today colours seen only in code, not on screen).
 - Next: owner phone check, then Task 21 step 5b.
+
+## T21-R2: release v2.5.2, Task 21 fixes, branch `help`
+
+- Commit `release: v2.5.2 task 21 fixes` (hash in `git log`). VERSION 2.5.1 to 2.5.2 in `sw.js` and `src/version.js` (match). ROADMAP "Live" line is v2.5.2; Task 21 steps 1 to 3 marked done, step 4 (trial) starts 2026-10-24. No other changes, no `src/core` change, no test edited.
+- Precheck: `npm test` 1332 tests, 1331 pass, 0 fail, 1 skipped (exit 0), run after the bump.
+- Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`; results in STATUS.md.
+- Unchecked on the iPhone: Recovery fields (time field 140 wide, long answers min 84 high), Analytics Reset hatch, Night stalled shield / crossed colours, VoiceOver items (Settings title, h1/h2 change on Mission, icon labels).
+- Ambiguities: ROADMAP has no per-step checklist for Task 21; I marked steps 1 to 3 in the existing "Later" line.
+- Next: owner updates the Home Screen app (close and reopen twice), phone check, Task 21 step 4 trial.

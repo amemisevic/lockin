@@ -1,5 +1,5 @@
 # Lock In roadmap (updated 2026-10-24)
-Live: v2.5.1 (Day 1 read-only row; v2.5.0 Settings help buttons) on GitHub Pages (amemisevic.github.io/lockin). Includes v2.4.1 today counter removed, v2.3.0 help buttons and v2.2.0 motion polish.
+Live: v2.5.2 (Task 21 fixes; v2.5.1 Day 1 read-only row; v2.5.0 Settings help buttons) on GitHub Pages (amemisevic.github.io/lockin). Includes v2.4.1 today counter removed, v2.3.0 help buttons and v2.2.0 motion polish.
 Not started: help scope for the other tabs (Settings, Today, Tasks, Gym, Analytics).
 
 ## Now
@@ -14,7 +14,7 @@ Scope (view and CSS only; src/core and frozen tests untouched; plain CSS, no Tai
 Performance rules: animate transform, opacity and filter only; never layout properties; most motion 100 to 280 ms, screens 400 ms, sheets 450 ms, nothing longer than 450 ms; nothing blocks input; no lingering will-change; backdrop-filter only on the tab bar and sheets; stagger caps at about 8 items; works with reduced motion and Reduce Transparency.
 
 ## Later
-- Task 21 audit and trial. List is `docs/backlog.md`; rulings of 2026-10-24 are recorded there (steps in `docs/superpowers/plans/task21-inventory.md`).
+- Task 21 audit and trial. Steps 1 to 3 DONE (accessibility, CSS and visual fixes, tests, review; released v2.5.2). Step 4 (trial) STARTED 2026-10-24. List is `docs/backlog.md`; rulings of 2026-10-24 are recorded there (steps in `docs/superpowers/plans/task21-inventory.md`).
 
 ## Open owner decisions
 - M5 audit, NEEDS RULING (details in PROGRESS.md, M5): shield `pop` (500 ms) and `rip` (650 ms, box-shadow keyframes) over the 450 ms cap and outside transform/opacity/filter; colour fades (color, border-color, fill, stroke) on toggles; `.tab` colour fade uses the default curve, not a token; `prefers-reduced-transparency` is not supported by iOS Safari (caniuse), so only Increase Contrast triggers the solid fallback.
