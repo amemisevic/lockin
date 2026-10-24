@@ -1155,3 +1155,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Precheck: HEAD `ea00afb`, origin/main is an ancestor (fast-forward), `npm test` 1243 pass, 0 fail (exit 0). After the bump: 1243 pass, 0 fail (exit 0).
 - Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`.
 - Next: owner closes and reopens the Home Screen app twice, then checks day review on the iPhone.
+
+## DR2b: remove "1 of 30" counter from Today, branch `help`
+
+- Commit: `fix(DR2b): remove 1 of 30 counter from Today` (hash in `git log`). Not pushed. No VERSION bump. `src/core` untouched.
+- Change: `src/views/today.js` drops `medallion()` and its call in the header; the header now holds only the date eyebrow and title (`.tk-hd>div:first-child` is `flex:1`, so it spans the row, no gap). Rest element and everything else on Today unchanged.
+- Ruling (Armin, option A): `.td-med` CSS in `screens.css` stays as dead code because frozen `tests/contrast-today.test.js` ("day medallion") asserts those rules. Test not edited.
+- Precheck: HEAD `d0f32ae`, tracked tree clean. Browser pane at 440x956 (fresh state, no running challenge): header is one child spanning 20 to 420 px, no `.td-med` in the DOM, scrollWidth 440 = viewport. Not run: seeded active challenge, iPhone.
+- Next: owner iPhone check of the Today header, then the next scope.

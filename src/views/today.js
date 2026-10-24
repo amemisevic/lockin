@@ -38,12 +38,6 @@ function watermark() {
   return svg;
 }
 
-function medallion(state, n) {
-  const of = `of ${state.challenge.length}`;
-  return h('div', { class: 'td-med', role: 'img', 'aria-label': `Day ${n} ${of}` },
-    h('b', { 'aria-hidden': 'true' }, String(n)), h('span', { 'aria-hidden': 'true' }, of));
-}
-
 function challengePlate(state, today, n, nowMs) {
   const streak = currentStreak(state);
   const morning = state.days[today]?.morning;
@@ -105,8 +99,7 @@ export function renderToday(app) {
 
   return [
     h('div', { class: 'tk-hd' },
-      h('div', null, eyebrow(dayLabel(today)), screenTitle('Today')),
-      active && medallion(state, n)),
+      h('div', null, eyebrow(dayLabel(today)), screenTitle('Today'))),
     h('div', { class: 'mk', 'aria-hidden': 'true' }),
     active && challengePlate(state, today, n, now),
     ...cards.map(c => card(app, c)),
