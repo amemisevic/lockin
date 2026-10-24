@@ -61,12 +61,12 @@ export const weekdayCols = w => img(w.label, 'an-cols', w.days.map(d => h('div',
 
 // R5 marks: size and shape differ by kind, not only hue.
 const MARK = { all: { r: 0.4 }, part: { r: 0.24 }, missed: { r: 0.32, 'stroke-width': 0.08 }, none: { r: 0.08 } };
-const mark = (kind, cx, cy) => s('circle', { class: `hm-${kind}`, cx, cy, ...MARK[kind] });
+const mark = (kind, cx, cy, over) => s('circle', { class: `hm-${kind}`, cx, cy, ...MARK[kind], ...over });
 
 export const heatGrid = hm => [
   img(hm.label, 'an-hm an-i',s('svg', { viewBox: '0 0 7 4', width: '100%', 'aria-hidden': 'true' },
     ...hm.cells.map((c, i) => mark(c.kind, (i % 7) + 0.5, Math.floor(i / 7) + 0.5)))),
   h('div', { class: 'ch-lgs', 'aria-hidden': 'true' }, [['all', 'All done'], ['part', 'Partly'], ['missed', 'Missed'], ['none', 'Not due']]
-    .map(([k, l]) => h('span', { class: 'lg' }, s('svg', { viewBox: '0 0 1 1', width: 16, height: 16 }, mark(k, 0.5, 0.5)), l))),
+    .map(([k, l]) => h('span', { class: 'lg' }, s('svg', { viewBox: '0 0 1 1', width: 16, height: 16 }, mark(k, 0.5, 0.5, k === 'none' ? MARK.part : null)), l))),
 ];
 
