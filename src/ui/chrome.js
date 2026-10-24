@@ -3,7 +3,7 @@ import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { helpButton } from './controls.js';
 
-export const screenTitle = text => h('h1', { class: 'ttl' }, text);
+export const screenTitle = (text, tag = 'h1') => h(tag, { class: 'ttl' }, text);
 export const eyebrow = text => h('p', { class: 'eyebrow' }, text);
 // Sword ornament first, then the words, vertically centred (DESIGN-SPEC §3).
 // help (H1b, a key of views/helpCopy.js): the heading and its "?" in one row. id (T16-1): lets a field name itself by it.

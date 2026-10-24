@@ -9,7 +9,7 @@ function body(app, v) {
   if (v.kind === 'none') {
     return plate(h('p', { class: 'ms-p' }, `No mission loaded for Day ${v.n}.`), h('p', { class: 'ms-p t2' }, 'Import a pack in Settings.'));
   }
-  return [h('div', { class: 'hlp-row' }, eyebrow('Mission'), helpButton('mission')), screenTitle(v.title), v.paragraphs.map(t => h('p', { class: 'ms-p' }, t)),
+  return [h('div', { class: 'hlp-row' }, eyebrow('Mission'), helpButton('mission')), screenTitle(v.title, 'h2'), v.paragraphs.map(t => h('p', { class: 'ms-p' }, t)),
     goldButton('Write the War Log entry', () => app.nav(v.href))];
 }
 

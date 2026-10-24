@@ -2,16 +2,22 @@
 import { h } from '../dom.js';
 import { pushedHeader, sectionHeading } from '../ui/chrome.js';
 import { goldButton } from '../ui/controls.js';
+import { dayLabel } from './tasksLogic.js';
 import { warLogGroups, entryView, saveEntry } from './warlogLogic.js';
+
+// An autopsy's title carries its ISO key ("Autopsy · 2026-10-13"); show the long date instead (T14-3).
+const niceTitle = t => t.replace(/\d{4}-\d{2}-\d{2}/, dayLabel);
 
 // Task-row markup (.row/.rb/.rt/.rtm/.rn from styles.css) as a link; date only when written.
 const row = r => h('a', { href: r.href, class: 'row wl-row' }, h('div', { class: 'rb' },
-  h('div', { class: 'rt' }, r.title),
+  h('div', { class: 'rt' }, niceTitle(r.title)),
   r.date === null ? null : h('div', { class: 'rtm' }, r.date),
   h('div', { class: 'rn' }, r.preview)));
 
 export function renderWarLog(app) {
-  return [pushedHeader({ title: 'War Log', onBack: () => history.back(), help: 'warLog' }),
+  const header = pushedHeader({ title: 'War Log', onBack: () => history.back(), help: 'warLog' });
+  header.className += ' wl-hd';
+  return [header,
     ...warLogGroups(app.state).flatMap(g => [sectionHeading(g.group), h('div', { class: 'plate list' }, g.rows.map(row))])];
 }
 
@@ -21,9 +27,9 @@ export function renderWarEntry(app, [key] = []) {
   const v = entryView(app.state, key);
   if (!v) { app.redirect('#warlog'); return []; }
   if (v.readOnly) {
-    return [pushedHeader({ title: v.title, onBack: () => history.back() }), h('div', { class: 'wl' }, h('div', { class: 'plate wl-ro' }, v.text))];
+    return [pushedHeader({ title: niceTitle(v.title), onBack: () => history.back() }), h('div', { class: 'wl' }, h('div', { class: 'plate wl-ro' }, v.text))];
   }
-  const ta = h('textarea', { id: 'wl-text', class: 'ta wl-ta', 'aria-label': v.title, onBlur: () => save(), onInput: () => save() }, v.text);
+  const ta = h('textarea', { id: 'wl-text', class: 'ta wl-ta', placeholder: 'Start writing.', 'aria-label': v.title, onBlur: () => save(), onInput: () => save() }, v.text);
   const save = () => app.set(s => saveEntry(s, key, ta.value, Date.now()));
   const leave = () => { save(); history.back(); };
   const keepFocus = e => e.preventDefault();

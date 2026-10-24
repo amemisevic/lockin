@@ -296,6 +296,8 @@ dialog.ghost[open]{z-index:100;animation:sheet-out var(--dur-ui) var(--ease-out)
 .wl-row{min-height:44px;padding:12px 16px}
 .wl-row .rt,.wl-row .rn{overflow-wrap:anywhere}
 .wl-ta{min-height:220px}
+.wl-ta::placeholder{color:var(--text-3);opacity:1}
+.wl-hd+.sec{margin-top:24px}
 .wl-ro{white-space:pre-wrap;overflow-wrap:anywhere}
 /* ==== Check-ins (Task 15). Numbered questions = Recovery board .fq (css/Recovery.css); gold button 54 px full width
    (CheckIn.css .btn-gold); MED rows = .plate.list rows, switch on the right, wrap at large text. */
