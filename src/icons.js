@@ -35,6 +35,8 @@ export const icons = {
   arrowDown: svg('<path d="M12 5v14M6 13l6 6 6-6"/>'),
   ellipsis: svg('<circle cx="5.5" cy="12" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="18.5" cy="12" r="1.75"/>', true),
   check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  // Help "?" (H1b): circle + question mark, drawn here in the control icons' 2 px stroke; not in assets/icons.
+  help: svg('<circle cx="12" cy="12" r="9"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2 1-1.2 1.8M12 17v.01"/>'),
   xmark: svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
   chevronLeft: svg('<path d="M15 5l-7 7 7 7"/>'),
   chevronRight: svg('<path d="M9 5l7 7-7 7"/>'),

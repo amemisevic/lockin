@@ -81,6 +81,7 @@ const ASSETS = [
   'src/views/gymWorkout.js',
   'src/views/gymWorkoutDetail.js',
   'src/views/gymWorkoutLogic.js',
+  'src/views/helpCopy.js',
   'src/views/mission.js',
   'src/views/recovery.js',
   'src/views/recoveryLogic.js',

@@ -3,7 +3,7 @@
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { screenTitle, eyebrow, sectionHeading } from '../ui/chrome.js';
-import { goldButton, shieldSvg } from '../ui/controls.js';
+import { goldButton, shieldSvg, helpButton } from '../ui/controls.js';
 import { CHALLENGE_LENGTH, setupLists, beginStatus, begin, oathRows } from './challengeLogic.js';
 
 // R2: the board's outline laurel = the gold laurel without gradients and veins; screens.css strokes every part.
@@ -47,10 +47,10 @@ export function renderDay0(app) {
           h('div', { class: 'ch-day', 'aria-hidden': 'true' }, 'DAY'),
           h('div', { class: 'ch-n ch-d0n', 'aria-hidden': 'true' }, '0'),
           h('div', { class: 't2 ch-of', 'aria-hidden': 'true' }, of))),
-      btn,
+      h('div', { class: 'ch-bw' }, btn, helpButton('begin')),
       h('p', { class: 't2 ch-why', id: 'ch-why', 'aria-live': 'polite' }, status.reason ?? '')),
     h('section', null,
-      h('div', { class: 'tk-sh' }, sectionHeading('Day 1, your oath')),
+      h('div', { class: 'tk-sh' }, sectionHeading('Day 1, your oath', 'oath')),
       h('div', { class: 'plate list' }, oathRows(state).map(oathRow))),
     h('div', { class: 'plate list ch-setup' },
       listRow('ch-protocols', 'Protocols', lists.protocols),

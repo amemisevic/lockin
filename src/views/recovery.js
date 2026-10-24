@@ -6,7 +6,7 @@ import { icon } from '../icons.js';
 import { dayNo } from '../core/challenge.js';
 import { checkVague, fileAutopsy } from '../core/recovery.js';
 import { pushedHeader, plate, question, sectionHeading, rerender } from '../ui/chrome.js';
-import { chips, goldButton } from '../ui/controls.js';
+import { chips, goldButton, helpButton } from '../ui/controls.js';
 import { STATES, PLACES, recoveryRoute, newDraft, effects, countdown, canFile, autopsyForm, errorText } from './recoveryLogic.js';
 
 const drafts = {};
@@ -32,7 +32,7 @@ function resetPlate(state, date) {
 function countdownPlate(state, date) {
   const c = countdown(state, date, Date.now());
   return h('div', { class: 'plate rc-cd' },
-    h('div', { class: 'rc-cdr' }, h('span', { class: 'eyebrow' }, 'File within 24 hours'),
+    h('div', { class: 'rc-cdr' }, h('div', { class: 'hlp-row' }, h('span', { class: 'eyebrow' }, 'File within 24 hours'), helpButton('recovery')),
       h('span', { id: 'rc-left', class: c.overdue ? 'rc-left over' : 'rc-left' }, c.label)),
     h('div', { class: 'rc-bar', 'aria-hidden': 'true' },
       h('i', { class: c.overdue ? 'over' : null, style: `width:${Math.round(c.fill * 100)}%` })));

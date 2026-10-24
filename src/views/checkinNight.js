@@ -22,7 +22,8 @@ const OTHER = {}; // the Something else chip's value: never equal to a pack tact
 const STALLED = 'Genuinely couldn\'t act on this today. Won\'t count for or against you.';
 
 // Board section: sword heading, optional helper line (.t2), then the body.
-const section = (title, helper, ...body) => h('section', { class: 'nt-sec' }, sectionHeading(title),
+// title may be [text, help] (H1b)
+const section = (title, helper, ...body) => h('section', { class: 'nt-sec' }, sectionHeading(...[].concat(title)),
   helper && h('p', { class: 't2 nt-help' }, helper), body);
 // Board .q row: the title (and extras) above its segmented control, in one element.
 const q = (title, extra, control, ...after) => h('div', { class: 'q' }, h('div', { class: 'h' }, h('b', null, title), extra), control, after);
@@ -65,7 +66,7 @@ function bottomGSection(state, d) {
     Object.assign(d, other ? { other: !d.other, tactic: '' } : { other: false, tactic: d.tactic === v ? '' : v });
   });
   const showText = d.archetype && (d.other || !tactics.length);
-  return section('The Bottom G\'s move', 'Which tactic did your enemy use? Optional on a clean day.',
+  return section(['The Bottom G\'s move', 'bottomMove'], 'Which tactic did your enemy use? Optional on a clean day.',
     chips({ options: opts(ARCHETYPES), value: d.archetype, onPick: pickArchetype }),
     tactics.length > 0 && chips({ options: tacticOpts, value: d.other ? OTHER : d.tactic, onPick: pickTactic }),
     showText && h('textarea', { id: 'ci-other', class: 'ta', 'aria-label': 'Something else, in your own words',
@@ -125,13 +126,13 @@ export function renderNight(app, [date] = []) {
   const refreshGate = () => { close.disabled = !canClose(app.state, date, d); };
 
   return [
-    pushedHeader({ title: `Night · Day ${dayNo(state, date)}`, onBack: () => history.back() }),
+    pushedHeader({ title: `Night · Day ${dayNo(state, date)}`, onBack: () => history.back(), help: 'autoRedo' }),
     tasksSection(state, date, d),
     protocolsSection(state, date, d),
     redLinesSection(state, d),
-    section('Today\'s Top G win', null, h('label', { class: 't2 nt-lbl', for: 'ci-win' }, 'One sentence'), area('ci-win', d, 'win')),
+    section(['Today\'s Top G win', 'topWin'], null, h('label', { class: 't2 nt-lbl', for: 'ci-win' }, 'One sentence'), area('ci-win', d, 'win')),
     bottomGSection(state, d),
-    section('Slipped without knowing?', null, h('label', { class: 't2 nt-lbl', for: 'ci-slip' }, 'Optional.'), area('ci-slip', d, 'slipNote')),
+    section(['Slipped without knowing?', 'slip'], null, h('label', { class: 't2 nt-lbl', for: 'ci-slip' }, 'Optional.'), area('ci-slip', d, 'slipNote')),
     resultSection(state, date, d, refreshGate),
     h('div', { class: 'ci-go' }, close, d.error && h('p', { class: 'form-error', role: 'alert' }, NIGHT_ERRORS[d.error] ?? d.error)),
   ].filter(Boolean);

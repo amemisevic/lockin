@@ -6,7 +6,7 @@ import { openActionSheet } from '../sheet.js';
 import { dayNo } from '../core/challenge.js';
 import { currentStreak } from '../core/scoring.js';
 import { screenTitle, eyebrow, sectionHeading } from '../ui/chrome.js';
-import { goldButton } from '../ui/controls.js';
+import { goldButton, helpButton } from '../ui/controls.js';
 import { graduated, stripCells, legend, redoStatus, confirmRedo, redoDeclaredToday, missionInfo, graduation, rateLabel } from './challengeLogic.js';
 
 const LABEL = { passed: 'passed', redo: 'redo', reset: 'reset', today: 'today', open: 'not closed', future: 'upcoming' };
@@ -38,7 +38,7 @@ function torch() {
 function header(streak) {
   return h('div', { class: 'ch-hd' },
     h('div', null, eyebrow('PM Challenge'), screenTitle('Challenge')),
-    streak >= 1 && h('div', { class: 'ch-pill' }, torch(), h('span', null, `${streak}-day streak`)));
+    streak >= 1 && h('div', { class: 'hlp-row' }, h('div', { class: 'ch-pill' }, torch(), h('span', null, `${streak}-day streak`)), helpButton('streak')));
 }
 
 function laurel() {
@@ -70,10 +70,11 @@ function hero(state, n, cells, counts, dr) {
     h('div', { class: 'ch-strip' }, cells.map(c => cell(c, dr))),
     h('div', { class: 'ch-lgs' },
       legendItem('passed', 'Passed', counts.passed), legendItem('redo', 'Redo', counts.redo),
-      legendItem('reset', 'Reset', counts.reset)));
+      legendItem('reset', 'Reset', counts.reset), helpButton('redoBand')));
 }
 
-const secHead = (title, right) => h('div', { class: 'tk-sh' }, sectionHeading(title), right && h('span', { class: 't2' }, right));
+// title may be [text, help] (H1b)
+const secHead = (title, right) => h('div', { class: 'tk-sh' }, sectionHeading(...[].concat(title)), right && h('span', { class: 't2' }, right));
 
 function missionPlate(app, m, hasPack) {
   const warLog = h('button', { type: 'button', id: 'ch-warlog', class: 'btn-ghost', onClick: () => app.nav('#warlog') }, 'War Log');
@@ -116,7 +117,7 @@ const slots = (title, right, names) => h('section', null, secHead(title, right),
 function graduationPlate(g) {
   const stat = (label, value) => h('div', { class: 'ch-gs' }, h('span', null, label), h('b', null, value));
   return h('div', { class: 'plate rim ch-hero' }, h('div', { class: 'ch-lw' }, laurel()),
-    h('h2', { class: 'ch-gt' }, 'YOU FINISHED'),
+    h('div', { class: 'hlp-row hlp-c' }, h('h2', { class: 'ch-gt' }, 'YOU FINISHED'), helpButton('graduation')),
     h('div', { class: 'ch-gss' },
       stat('Passed', String(g.passed)), stat('Redo', String(g.redo)), stat('Reset', String(g.reset)),
       stat('Longest streak', String(g.longest)), stat('Pass rate', rateLabel(g.rate))));
@@ -132,7 +133,7 @@ export function renderChallenge(app) {
     hero(state, n, stripCells(state, today), legend(state), redoDeclaredToday(state, today)),
     missionPlate(app, missionInfo(state, today), !!state.pack),
     redoPlate(app, redoStatus(state, today)),
-    slots('Protocols', null, state.challenge.protocols.map(p => p.title)),
+    slots(['Protocols', 'protocol'], null, state.challenge.protocols.map(p => p.title)),
     slots('Red lines', 'crossing one = Reset', state.challenge.redLines.map(r => r.name)),
   ];
 }

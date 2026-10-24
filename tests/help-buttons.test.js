@@ -18,8 +18,12 @@ import { addDays } from '../src/logic.js';
 // Each opens the existing action sheet (message + Close). Fake DOM from tests/fakedom.js, plus what native <dialog> adds.
 El.prototype.showModal = function () { this.attrs.open = ''; };
 El.prototype.close = function () { delete this.attrs.open; };
-El.prototype.cloneNode = undefined; // no exit ghost in the fake DOM (src/motion.js skips it)
+El.prototype.replaceChildren = function (...cs) { this.children = []; this.append(...cs); };
+Object.defineProperty(El.prototype, 'style', { get() { return { setProperty() {} }; } }); // for the exit ghost (src/motion.js)
 Object.defineProperty(El.prototype, 'isConnected', { get() { return this.parent != null; } });
+globalThis.DOMParser = class { // icons with the parts Today's watermark strips
+  parseFromString() { const s = new El('svg'); for (const c of ['b', 'hl', 'lam']) { const p = new El('path'); p.className = c; s.append(p); } return { documentElement: s }; }
+};
 globalThis.matchMedia = () => ({ matches: false });
 globalThis.document.body.parent = {}; // document.body counts as connected
 
@@ -46,7 +50,7 @@ const helps = nodes => all(nodes).filter(n => hasClass(n, 'help'));
 const labels = nodes => helps(nodes).map(n => n.getAttribute('aria-label')).sort();
 const want = (...keys) => keys.map(k => `Help: ${HELP[k].name}`).sort();
 const btn = (nodes, key) => helps(nodes).find(n => n.getAttribute('aria-label') === `Help: ${HELP[key].name}`);
-const sheets = () => document.body.children.filter(n => n.tagName === 'DIALOG');
+const sheets = () => document.body.children.filter(n => n.tagName === 'DIALOG' && !hasClass(n, 'ghost')); // a closing sheet leaves an exit ghost
 
 test('Day 0: oath entries heading and Begin Day 1', () => {
   const out = renderDay0(fakeApp(defaultState(), D1));
@@ -83,7 +87,7 @@ test('Morning: title, question 2 and MED question 3', () => {
 test('Morning after a Reset: one forced-full-pass button, next to the No MED line', () => {
   NOW = at(D2, 8);
   const out = renderMorning(fakeApp(resetD1(), D2));
-  const lines = all(out).filter(n => n.textContent === 'No MED today. Yesterday was a Reset.');
+  const lines = all(out).filter(n => hasClass(n, 'ci-why') && n.textContent === 'No MED today. Yesterday was a Reset.');
   assert.equal(lines.length, 2, 'two protocols, two lines');
   assert.deepEqual(labels(out), want('gating', 'risk', 'med', 'forcedPass'));
   assert.ok(btn(out, 'forcedPass').parent.children.includes(lines[0]));

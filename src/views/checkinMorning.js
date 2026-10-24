@@ -6,7 +6,7 @@ import { addDays } from '../logic.js';
 import { dayNo, phase, medCheck, medUsedInWeek, submitMorning } from '../core/challenge.js';
 import { pendingRecovery } from '../core/recovery.js';
 import { pushedHeader, question, rerender } from '../ui/chrome.js';
-import { switchControl, goldButton } from '../ui/controls.js';
+import { switchControl, goldButton, helpButton } from '../ui/controls.js';
 import { timeLeft } from './todayLogic.js';
 
 const drafts = {};
@@ -27,6 +27,7 @@ function medQuestion(state, today, d) {
   const ps = state.challenge.protocols.filter(p => p.med?.trim());
   if (!ps.length) return null;
   const used = medUsedInWeek(state, today) + d.med.length;
+  let helped = false; // one forced-full-pass "?" per screen
   const rows = ps.map(p => {
     const reason = medReason(state, today, p, d, used);
     const sw = switchControl({ on: d.med.includes(p.id), label: p.title, onToggle: () => {
@@ -35,11 +36,15 @@ function medQuestion(state, today, d) {
     } });
     sw.id = `ci-med-${p.id}`;
     if (reason) sw.setAttribute('disabled', '');
+    const why = reason && h('div', { class: 't2 ci-why' }, reason);
+    const forced = reason?.startsWith('No MED today.') && !helped;
+    helped ||= forced;
     return h('div', { class: 'ci-mr' },
-      h('div', { class: 'ci-mt' }, h('b', null, p.title), h('div', { class: 't2' }, p.med), reason && h('div', { class: 't2 ci-why' }, reason)),
+      h('div', { class: 'ci-mt' }, h('b', null, p.title), h('div', { class: 't2' }, p.med),
+        forced ? h('div', { class: 'hlp-row' }, why, helpButton('forcedPass')) : why),
       sw);
   });
-  return question(3, 'Declare MED', null,
+  return question(3, ['Declare MED', 'med'], null,
     h('p', { class: 't2 ci-hl' }, `${used} of ${state.settings.medPerWeek} MED used this week`),
     h('div', { class: 'plate list' }, rows));
 }
@@ -67,12 +72,12 @@ export function renderMorning(app) {
   start.id = 'ci-start';
 
   return [
-    pushedHeader({ title: `Morning · Day ${dayNo(state, today)}`, onBack: () => history.back() }),
+    pushedHeader({ title: `Morning · Day ${dayNo(state, today)}`, onBack: () => history.back(), help: 'gating' }),
     rec && h('a', { href: `#recovery/${rec.date}`, id: 'ci-rec', class: 'plate warn td-link ci-rec' },
       h('div', { class: 'td-chb' }, h('div', { class: 'td-ct' }, 'Recovery due'),
         h('p', { class: 't2 td-cl' }, rec.overdue ? 'Overdue' : timeLeft(rec.msLeft)))),
     question(1, 'Today\'s #1 target', 'ci-target', field('ci-target', d, 'target')),
-    question(2, 'Red line at risk today?', 'ci-risk', field('ci-risk', d, 'risk')),
+    question(2, ['Red line at risk today?', 'risk'], 'ci-risk', field('ci-risk', d, 'risk')),
     medQuestion(state, today, d),
     h('div', { class: 'ci-go' }, start,
       d.error && h('p', { class: 'form-error', role: 'alert' }, d.error),

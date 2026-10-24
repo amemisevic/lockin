@@ -2,6 +2,8 @@
 // Stateless DOM builders (h + icon); looks are styles.css, copied from the boards' CSS.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
+import { openActionSheet } from '../sheet.js';
+import { HELP } from '../views/helpCopy.js';
 
 // The shield path from icons.js at a given size, keeping only the listed parts (b = outline, hl, lam).
 export function shieldSvg(size, keep) {
@@ -56,3 +58,7 @@ export function switchControl({ on, onToggle, label }) {
 
 export const goldButton = (label, onClick, { disabled } = {}) =>
   h('button', { type: 'button', class: 'btn-gold', onClick, disabled }, label);
+
+// Help "?" (H1b): 44 px button that opens the action sheet with the entry's text and a Close button.
+export const helpButton = key => h('button', { type: 'button', class: 'help', 'aria-label': `Help: ${HELP[key].name}`,
+  onClick: () => openActionSheet([], { message: HELP[key].text, cancel: 'Close' }) }, icon('help'));

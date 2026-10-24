@@ -8,7 +8,7 @@ import { NIGHT_FROM, dayNo, phase } from '../core/challenge.js';
 import { NIGHT_TEXT, currentStreak } from '../core/scoring.js';
 import { screenTitle, eyebrow, sectionHeading, plate } from '../ui/chrome.js';
 import { taskRow } from '../ui/taskRow.js';
-import { goldButton } from '../ui/controls.js';
+import { goldButton, helpButton } from '../ui/controls.js';
 import { dayLabel } from './tasksLogic.js';
 import { openTaskMenu } from './tasks.js';
 import { todayCards, timeLeft, nightLineVisible, medLine } from './todayLogic.js';
@@ -80,7 +80,7 @@ const linkCard = (kind, cls, href, title, line) => h('a', { href, id: `td-${kind
 function card(app, c) {
   if (c.kind === 'start') return linkCard(c.kind, 'rim', c.href, 'Start Day 1');
   if (c.kind === 'recovery') return linkCard(c.kind, 'warn', c.href, 'Recovery due', c.overdue ? 'Overdue' : timeLeft(c.msLeft));
-  if (c.kind === 'closeYesterday') return actionCard(app, c.kind, null, NIGHT_TEXT['yesterday-open'], 'Close yesterday', c.href);
+  if (c.kind === 'closeYesterday') return actionCard(app, c.kind, null, NIGHT_TEXT['yesterday-open'], 'Close yesterday', c.href, helpButton('autoRedo'));
   if (c.kind === 'morning') return actionCard(app, c.kind, 'Morning check-in', 'Set today\'s target.', 'Start morning', c.href);
   if (c.kind === 'night') return actionCard(app, c.kind, 'Night check-in', 'Close today.', 'Start night', c.href);
   const notNow = h('button', { type: 'button', id: 'td-notnow', class: 'btn-ghost', onClick: () => {

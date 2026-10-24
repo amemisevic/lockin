@@ -171,6 +171,15 @@ button:disabled { opacity: .4; cursor: default; }
 .mini.on.td svg .b{stroke-dasharray:none}
 .mini.on svg{filter:drop-shadow(0 0 4px rgba(242,190,92,.5))}
 
+/* Help "?" (H1b): 44 px tap target round a 22 px icon; .hlp-row puts it at the end of a heading or question. */
+.help{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;color:var(--text-2)}
+.help svg{width:22px;height:22px}
+.hlp-row{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.hlp-row>:first-child{min-width:0}
+.hlp-c{justify-content:center}
+.ch-bw{width:100%;display:flex;align-items:center;gap:8px;margin-top:20px}
+.ch-bw .ch-wide{flex:1;width:auto;margin-top:0}
+
 /* Reduced motion (DESIGN-SPEC §10, replaces owner call 3's instant changes): no movement, only short fades.
    Every token-based transition shortens here; no pop, ripple, thumb slide or press shrink. */
 @media (prefers-reduced-motion: reduce) {
