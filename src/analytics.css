@@ -21,6 +21,9 @@
 .an-med{fill:var(--bronze-lt)}
 .an-miss{fill:var(--crimson)}
 .an-red{fill:var(--crimson)}
+/* Reset bar (T18-1): missed protocols = bronze hatch (the rect goes clear over it), red line = solid crimson. */
+.an-reset{background:repeating-linear-gradient(135deg,var(--bronze-lt) 0 2px,transparent 2px 5px)}
+.an-reset .an-miss{fill:transparent}
 .an-bar{fill:var(--accent)}
 .an-cols{display:flex;gap:6px;margin-top:10px}
 .an-col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;line-height:14px;color:var(--text-2)}

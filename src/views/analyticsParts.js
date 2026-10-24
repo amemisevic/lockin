@@ -45,7 +45,7 @@ export const protocolRows = rows => rows.map(p => h('div', { class: 'an-br an-i'
   stacked(p.label, [['an-held', p.counts[0]], ['an-med', p.counts[1]], ['an-miss', p.counts[2]]])));
 
 export const resetBlock = r => [
-  stacked(r.label, [['an-red', r.counts[0]], ['an-miss', r.counts[1]]], 'an-trk an-i'),
+  stacked(r.label, [['an-red', r.counts[0]], ['an-miss', r.counts[1]]], 'an-trk an-reset an-i'),
   h('div', { class: 'an-brh an-gap' }, h('span', null, `Red line ${r.redLine}`), h('span', null, `Missed protocols ${r.protocols}`)),
   r.byProtocol.map(b => h('div', { class: 'an-brh an-gap' }, h('span', { class: 't2' }, b.title), h('b', null, b.count))),
 ];
