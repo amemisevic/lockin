@@ -5,14 +5,14 @@
 .nt-help{margin:8px 4px 0;font-size:14px;line-height:19px}
 .nt-lbl{display:block;margin:8px 4px 0;font-size:13px;line-height:18px}
 .nt-sec>.plate,.nt-sec>.chips,.nt-sec>.ta{margin-top:12px}
-.q{padding:14px 16px 16px;border-top:1px solid var(--line-soft);overflow-wrap:anywhere}
-.q:first-child{border-top:0}
-.q .h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
-.q .h b{font-size:16px;line-height:20px;font-weight:600}
-.q .h .t3{color:var(--text-3);font-size:13px;font-variant-numeric:lining-nums}
-.q .seg{margin-top:12px}
-.q .seg button{padding:0 8px;letter-spacing:0;font-size:14px}
-.q .s{margin:8px 0 0;font-size:13px;line-height:17px;color:var(--text-2)}
+.nt-sec .q{padding:14px 16px 16px;border-top:1px solid var(--line-soft);overflow-wrap:anywhere}
+.nt-sec .q:first-child{border-top:0}
+.nt-sec .q .h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+.nt-sec .q .h b{font-size:16px;line-height:20px;font-weight:600}
+.nt-sec .q .h .t3{color:var(--text-3);font-size:13px;font-variant-numeric:lining-nums}
+.nt-sec .q .seg{margin-top:12px}
+.nt-sec .q .seg button{padding:0 8px;letter-spacing:0;font-size:14px}
+.nt-sec .q .s{margin:8px 0 0;font-size:13px;line-height:17px;color:var(--text-2)}
 /* Stalled chosen = board .sgb.s slate (#0A0A0B on #8b98ad = 6.8:1); crossed chosen = .sgb.r, solid crimson-dk (#fff 5.7:1). */
 .seg button.opt-stalled.on{color:var(--bg)}
 .seg button.opt-stalled::before{background:#8b98ad;box-shadow:none}
