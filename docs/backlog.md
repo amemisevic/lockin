@@ -34,5 +34,31 @@ Owner rulings 2026-10-24 (T21-1) are in the last column. LEAVE and DROPPED rows 
 | Core fixes (Tasks 18, 19 rulings) | The decision textarea lost its unused `aria-describedby` (correct); the `touched` draft key is now used only for `change`; the `d >= first` filter is redundant for `n` null (kept for finite `n`); the "All never smaller than 30d" test holds because the fixture's first log is inside the 30-day window. | CF-1 CLOSED (verified, informational). |
 | Task 21 (planned) | Replace the Day 1 date input with a plain text row (owner ruling 2026-10-15). | Ruled 2026-10-15 and 2026-10-24: read-only text row (see Task 19). |
 
+## Task 21 S1 whole-branch code review (T21-3, 2026-10-24, `bba5b0a...a4e9037`)
+Two axes (standards, spec). 0 Critical, 0 High. Medium and Low below, nothing fixed. Build nothing from this list without the owner's go-ahead. Already-backlogged items were not repeated.
+
+| ID | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| S1-01 | Medium | `src/core/tasks.js:34` | `isDue` returns false for every archived task on every date, so Delete (archive) removes the habit from past days: Tasks 7-dot history, Analytics (taskTotals, weekdayRates, heatmap) and Day review, though `taskLog` keeps the entries. Plan Task 11 step 3 "archives, history kept"; Rules "Rule edits never rewrite history". Frozen `tests/tasks.test.js:39` pins "archived is never due". | NEEDS RULING (core + frozen test) |
+| S1-02 | Medium | `src/app.js:59-70` | `set` and `setGym` share one `saveFailed` flag and one banner. A failed gym write shows "Couldn't save"; the next successful challenge save hides it while the gym data is still unsaved (and the reverse). | logged |
+| S1-03 | Medium | `styles.css:101-102` | Shield `pop` runs .5 s and `rip` .65 s (animates box-shadow); DESIGN-SPEC §10 caps motion at 450 ms and transform/opacity/filter. Already in ROADMAP "Open owner decisions". | logged (owner decision already open) |
+| S1-04 | Medium | `src/views/gymWorkout.js:30-139`, `gymWorkoutDetail.js:25-129` | Near-twin screens: `act`, `names`/`nameOf`/`settled`, set-row `field`, exercise `card` with remove confirm, name-input handler duplicated. Error slot also in `gymRoutine.js:68`. Possible Duplicated Code / Shotgun Surgery. | logged |
+| S1-05 | Low | `src/views/gymWorkoutLogic.js:60` | "Last time" takes the first item of the exercise in a workout, then drops warm-ups; `prefillSets` (`src/core/workouts.js`) takes the first item that has a working set. With two items of one exercise and warm-ups first, the label and the prefill show different workouts. Gym plan Prefill: "most recent finished workout containing that exercise, warm-ups excluded". | logged |
+| S1-06 | Low | `src/views/gymHome.js:100` | Stats link subtitle says "Visits, muscles and estimated 1RM"; the 1RM chart was replaced by Weight progress (G11w). Stale copy. | logged |
+| S1-07 | Low | `src/core/exercises.js:68` | `renameCustom` is wired to no view; a custom exercise cannot be renamed (gym plan: "Rename is allowed"; PROGRESS-GYM lists it as an open gap). | logged |
+| S1-08 | Low | `src/views/dayReview.js`, `dayReviewLogic.js`, `.dy-btn` in `challenge.js` | Day review (read-only sheet from the 30-day strip) is in PROGRESS.md (DR1 to DR3) but in no plan or ROADMAP item. No forbidden feature in it. Its task list shares S1-01's cause. | logged (confirm owner approval) |
+| S1-09 | Low | `screens.css` | 318 lines, over the 300-line target (all JS files are under 200). | logged |
+| S1-10 | Low | `src/core/scoring.js:10,12` vs `challenge.js:10,13` | `newDay` and `isClosed` copied identically; `scoring.js` already imports from `challenge.js`. Possible Duplicated Code. | logged (core, no change without ruling) |
+| S1-11 | Low | `src/core/{gym.js:13-15, model.js:11-13, pack.js:5, routines.js:10, workouts.js:9}`, `exercises.js:5`, `gymstats.js:7`, `views/gymHomeLogic.js:9` | `isObj` / `isStr` / `isNum` / `arr` re-declared per file. `workouts.js:9` `isObj` lacks the `!Array.isArray` check, so `editSet` / `editWorkout` (lines 75, 96) accept an array patch. | logged (core) |
+| S1-12 | Low | `src/core/model.js:15` vs `gym.js:17` | `isDate` is regex-only, so an imported key like `2026-99-99` passes `validateState`; gym uses the stricter `realDate`. | logged (core) |
+| S1-13 | Low | `src/app.js:77-107` | Toggle re-animation (`TOGGLES`, `was`, two click listeners) lives in `app.js`, not `src/motion.js`. Possible Divergent Change. | logged |
+| S1-14 | Low | `src/views/settings.js:19` | Module-level `hashchange` listener relies on import order to run before `app.js`'s own. Fragile coupling. | logged |
+| S1-15 | Low | `src/ui/controls.js:6` | `ui/` imports `views/helpCopy.js` (inverted layering; the file is pure data). | logged |
+| S1-16 | Low | `src/core/store.js:10`, `src/app.js:45` | `load(storage, today)` ignores `today` ("signature kept"). Possible Speculative Generality. | logged (core) |
+| S1-17 | Low | `src/core/exercises.js:9-10` | `fromBundled` / `fromCustom` near-identical; line 10 has `'',equipment` (missing space). | logged (core) |
+| S1-18 | Low | `src/core/workouts.js` (ii, si, wid) and callers | The tuple (workoutId, itemIndex, setIndex) is threaded as bare primitives through about 10 functions. Possible Data Clumps. | logged (core) |
+| S1-19 | Low | `src/icons.js` (`arrowUp`, `arrowDown`, `xmark`, ...) | Not in `docs/design/lockin-v2/assets/icons`, and `arrowUp`/`arrowDown`/`xmark` do not appear in `static/` or in PROGRESS.md. They come from v1 (`a325d02`); the Gym screens reuse them. CLAUDE.md asks that icons outside those sources be listed in PROGRESS.md. | logged |
+
 ## 14-day trial friction notes (plan Checkpoint D)
 Write one line per friction, dated. Build nothing from this list until day 14.
+- 2026-10-24: T10-4 stalled shield outline ~2.83:1 with glow (estimate); look at it on the iPhone, then rule on CSS.

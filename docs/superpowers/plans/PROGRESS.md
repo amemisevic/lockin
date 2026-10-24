@@ -1206,3 +1206,14 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Finding, skipped test: T10-4 stalled shield. With the drop-shadow modelled (peak 0.43 of alpha .14 under a 1.7 px stroke) the stalled outline is 2.83:1 on `--plate-top` (3.12 without the glow); open and failed stay above 3. It is an estimate; the skip reason points at the iPhone look. CSS, not core.
 - S3a tap-target sweep (browser pane 440x956, seeded Day 2 after a Reset, 20 routes plus Day 0 and the Add task sheet, selector `.btn, .chip, .tab, button`): only offenders are the Challenge day-strip cells `.dy-btn` (33.5 x 44, the known and accepted Day review cells). Not reached: Afternoon (redirects when not due), Workout and Routine (redirect without data), other sheets. Script, seed and server not kept.
 - Next: step 3, S1 whole-branch code review.
+
+## T21-3: Task 21 step 3, S1 whole-branch code review, branch `help`
+
+- Commit: `docs(T21-3): code review findings` (hash in `git log`). Not pushed. No `src/` change, no test change, no VERSION bump, no fix commits (no Critical or High found).
+- Precheck: HEAD `a4e9037`, `npm test` 1289 tests, 1288 pass, 0 fail, 1 skipped (exit 0). No test run after: only `docs/` changed.
+- Scope: `mattpocock-skills:code-review`, fixed point `bba5b0a` (Task 1 base, the parent of the first v2 code commit `cc51aa7`) to HEAD: 235 files, about 5000 `src/` lines. Standards axis: CLAUDE.md plus the Fowler smell baseline. Spec axis: v2 plan, DESIGN-SPEC, gym plan and PROGRESS-GYM rulings, ROADMAP, help drafts. Two read-only subagents; I re-checked their line numbers against HEAD and ran the mechanical CLAUDE.md greps myself (forbidden date APIs, leading-slash paths, `prefers-color-scheme`, forbidden features, file sizes, `sw.js` ASSETS against disk and `src/`, VERSION match): only `screens.css` (318 lines) hit.
+- Result: 0 Critical, 0 High, 4 Medium, 15 Low (S1-01 to S1-19 in `docs/backlog.md`, one row each). The review's "no `innerHTML`, guarded `JSON.parse`, DST-safe settle, gym PR/volume/e1RM, import order" checks came back clean.
+- Needs ruling: S1-01 (`src/core/tasks.js:34`, archived habits vanish from past days; frozen `tests/tasks.test.js:39` pins it). S1-03 (shield pop/rip over the 450 ms motion cap) was already an open owner decision in ROADMAP.
+- Added to backlog under the 14-day trial notes: T10-4 stalled shield outline ~2.83:1 with glow (estimate), iPhone look first.
+- Ambiguity and choice: "first v2 commit" taken as the Task 1 base `bba5b0a`, so the Task 1 code commit is inside the range; Task 0 (design import and docs) is outside it.
+- Next: Task 21 step 4 (Day 1 read-only text row), after the owner rules on S1-01.
