@@ -1359,3 +1359,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Ambiguities: entry name not given; chose `Bottom G archetypes` (used in the aria-label). Sheet text stays centred (existing style).
 - Not done: VERSION bump (none asked), iPhone check.
 - Next: owner iPhone check, then the next help scope or a release task.
+
+## H1g-R: release v2.5.6, Bottom G help, branch `help`
+
+- Commit `release: v2.5.6 Bottom G help` (hash in `git log`) on top of `e12f21d`. VERSION 2.5.5 to 2.5.6 in `sw.js` and `src/version.js` (match). ROADMAP "Live" line is v2.5.6. No `src/core` change, no test edited.
+- Commands: precheck `npm test` before bump: 1343 tests, 1342 pass, 0 fail, 1 skipped (exit 0); after bump: 1343 tests, 1342 pass, 0 fail, 1 skipped (exit 0).
+- Pushed `git push origin help:main` (ff-only), then ff-merge in C:/Users/Armin/PM-App.
+- Unchecked: iPhone.
+- Next: owner updates the Home Screen app (close and reopen twice), phone check of Night archetypes "?".
