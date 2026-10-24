@@ -1197,3 +1197,12 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Already logged above, unchanged: DR3 (`tests/day-review-sim.test.js`, simulated data) and the dead `.td-med` CSS in `screens.css`, kept because frozen `tests/contrast-today.test.js` asserts those rules.
 - Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`.
 - Next: owner closes and reopens the Home Screen app twice, then checks the Settings help buttons on the iPhone.
+
+## T21-2: Task 21 step 2, new tests only, branch `help`
+
+- Commit: `test(T21-2): backlog test gaps` (hash in `git log`). Not pushed. No `src/` change (two temporary mutations of `src/views/recovery.js` and `src/app.js` to prove the new guard tests fail without the guard, both restored with `git checkout`), no frozen test edited, no VERSION bump.
+- Precheck: HEAD `a26c3fb`, `npm test` 1257 pass, 0 fail (exit 0). After: 1289 tests, 1288 pass, 0 fail, 1 skipped (exit 0).
+- New files (all `tests/`): `tasks-ties.test.js` (T2-3), `recovery-keywords.test.js` (T5-1, reads the KEYWORD regex from the source and pins it to the 15 plan words), `pack-guards.test.js` (T6-1), `stats-gaps.test.js` (T7-1), `contrast-shield-glow.test.js` (T10-4), `app-render-guard.test.js` (T14-2, `render()` is cut out of `src/app.js` and run with stubs), `checkin-night-gate.test.js` (T16-3, in-place Close gating), `archetypes-drift.test.js` (T16-6, reads `src/core/pack.js` source, no core export), `recovery-view-guards.test.js` (T17-2, the double tap is proved to be stopped by the view guard: no re-render event on the second tap; already-filed reached through the view).
+- Finding, skipped test: T10-4 stalled shield. With the drop-shadow modelled (peak 0.43 of alpha .14 under a 1.7 px stroke) the stalled outline is 2.83:1 on `--plate-top` (3.12 without the glow); open and failed stay above 3. It is an estimate; the skip reason points at the iPhone look. CSS, not core.
+- S3a tap-target sweep (browser pane 440x956, seeded Day 2 after a Reset, 20 routes plus Day 0 and the Add task sheet, selector `.btn, .chip, .tab, button`): only offenders are the Challenge day-strip cells `.dy-btn` (33.5 x 44, the known and accepted Day review cells). Not reached: Afternoon (redirects when not due), Workout and Routine (redirect without data), other sheets. Script, seed and server not kept.
+- Next: step 3, S1 whole-branch code review.
