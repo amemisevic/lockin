@@ -7,7 +7,7 @@ import { closeNight, nightTargets, NIGHT_TEXT } from '../core/scoring.js';
 import { openTasks } from '../core/tasks.js';
 import { tacticsFor } from '../core/pack.js';
 import { openActionSheet } from '../sheet.js';
-import { pushedHeader, sectionHeading, rerender } from '../ui/chrome.js';
+import { pushedHeader, sectionHeading, rerender, formError } from '../ui/chrome.js';
 import { segmented, chips, goldButton, helpButton } from '../ui/controls.js';
 import { ARCHETYPES, NIGHT_ERRORS, newDraft, nightRoute, medIds, liveSuggestion, overrideOptions, canClose, nightForm }
   from './checkinNightLogic.js';
@@ -111,7 +111,7 @@ export function renderNight(app, [date] = []) {
     if (drafts[date] !== d) return; // stale sheet or second tap: already filed
     if (!nightTargets(app.state, Date.now()).includes(date)) return rerender(); // grace over: never file
     const r = closeNight(app.state, date, nightForm(app.state, date, d), Date.now());
-    if (!r.ok) { d.error = r.error; rerender(); return; }
+    if (!r.ok) { d.error = r.error; d.errorShown = false; rerender(); return; }
     delete drafts[date];
     app.set(() => r.state);
     app.nav(r.state.days[date].result === 'reset' ? `#recovery/${date}` : '#today');
@@ -136,6 +136,6 @@ export function renderNight(app, [date] = []) {
     bottomGSection(state, d),
     section(['Slipped without knowing?', 'slip', 'nt-slip-h'], null, h('label', { class: 't2 nt-lbl', for: 'ci-slip', id: 'ci-slip-h' }, 'Optional.'), area('ci-slip', d, 'slipNote', null, named('ci-slip', 'nt-slip-h'))),
     resultSection(state, date, d, refreshGate),
-    h('div', { class: 'ci-go' }, close, d.error && h('p', { class: 'form-error', role: 'alert' }, NIGHT_ERRORS[d.error] ?? d.error)),
+    h('div', { class: 'ci-go' }, close, d.error && formError(d, NIGHT_ERRORS[d.error] ?? d.error)),
   ].filter(Boolean);
 }

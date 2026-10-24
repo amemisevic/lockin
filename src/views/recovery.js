@@ -5,7 +5,7 @@ import { h } from '../dom.js';
 import { icon } from '../icons.js';
 import { dayNo } from '../core/challenge.js';
 import { checkVague, fileAutopsy } from '../core/recovery.js';
-import { pushedHeader, plate, question, sectionHeading, rerender } from '../ui/chrome.js';
+import { pushedHeader, plate, question, sectionHeading, rerender, formError } from '../ui/chrome.js';
 import { chips, goldButton, helpButton } from '../ui/controls.js';
 import { STATES, PLACES, recoveryRoute, newDraft, effects, countdown, canFile, autopsyForm, errorText } from './recoveryLogic.js';
 
@@ -75,7 +75,7 @@ export function renderRecovery(app, [date] = []) {
   const file = () => {
     if (drafts[date] !== d) return; // second tap: already filed
     const r = fileAutopsy(app.state, date, autopsyForm(d), Date.now());
-    if (!r.ok) { d.error = r.error; rerender(); return; }
+    if (!r.ok) { d.error = r.error; d.errorShown = false; rerender(); return; }
     delete drafts[date];
     app.set(() => r.state);
     app.nav(`#warlog/autopsy-${date}`);
@@ -97,7 +97,7 @@ export function renderRecovery(app, [date] = []) {
     question(4, Q.decision, 'rc-decision', h('p', { class: 'rc-hint' }, 'Not "I was weak." The exact sequence.'),
       h('textarea', { id: 'rc-decision', class: 'ta', onInput: e => { d.decision = e.target.value; refreshGate(); } }, d.decision)),
     question(5, [Q.change, 'change'], 'rc-change', vagueField('rc-change', 'change', d, refreshGate)),
-    h('div', { class: 'ci-go' }, btn, d.error && h('p', { class: 'form-error', role: 'alert' }, errorText(d.error))),
+    h('div', { class: 'ci-go' }, btn, d.error && formError(d, errorText(d.error))),
     h('p', { class: 'rc-foot' }, `Your autopsy and fix go into the War Log under Day ${dayNo(state, date)}.`),
   ];
 }

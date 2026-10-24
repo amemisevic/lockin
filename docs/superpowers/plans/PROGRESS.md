@@ -1260,3 +1260,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Browser pane (http://localhost:5190, static server, then stopped): route change, Back and 10 routes put focus on the h1 (no outline); a seeded task showed the shield description "Open", focus back on the shield after a tap and on ⋯ after the sheet closed. Seed cleared. `gym/workout` with no workout has no h1 (focus stays on body). Not run: iPhone, VoiceOver.
 - Ambiguities and choices: heading-focus lives outside `render()` (above). The live-region helper tolerates a DOM with no `body` or `replaceChildren` (older view test fakes), as `motion.js` does for clone. Help ids assume one "?" per key per screen.
 - Next: owner rulings on Night / Recovery (T11-1), VoiceOver checks, then Task 21 step 4b-2 (CSS / markup group).
+
+## T21-5a addendum: T11-1 Night and Recovery, ruled by Armin 2026-10-24
+
+- Ruling: keep `role=alert` only on the first display after a refusal (as Settings does); frozen tests stay unchanged.
+- `formError(d, text)` in `src/ui/chrome.js`: role=alert on the first display, none on later renders of the same refusal; a new refusal resets `d.errorShown`. Night and Recovery use it. Morning keeps the persistent region.
+- New `tests/a11y-error-first-display.test.js` (helper + Recovery wiring; red first). `npm test`: 1314 tests, 1313 pass, 0 fail, 1 skipped (exit 0). `checkin-night-flow.test.js:198` and `recovery-view.test.js:205` pass unedited. Night wiring is covered by the helper test and that frozen test only.
+- Not pushed. Next: step 4b-2.

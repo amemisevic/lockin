@@ -29,6 +29,15 @@ export const question = (n, label, forId, ...body) => {
   return h('div', { class: 'fq' }, help ? h('div', { class: 'hlp-row' }, head, helpButton(help)) : head, body);
 };
 
+// A refusal sentence under a gold button (T11-1). role=alert only on its first display: every later render of the same
+// refusal (choice taps, the 30 s tick) keeps the text but not the role, so VoiceOver does not read it again.
+// The draft remembers it (d.errorShown); a handler that sets d.error also sets d.errorShown = false.
+export const formError = (d, text) => {
+  const role = d.errorShown ? null : 'alert';
+  d.errorShown = true;
+  return h('p', { class: 'form-error', role }, text);
+};
+
 // Check-in re-render without a state write: app.js re-renders on hashchange. Blur first: iOS keeps a textarea focused
 // on a button tap, and the R8 guard skips the re-render while one is focused.
 export const rerender = () => {
