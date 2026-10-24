@@ -43,5 +43,14 @@ export const HELP = {
   gymTarget: { name: 'Weekly gym target', text: 'Your goal for gym visits each week, from 1 to 7 (default 4). The Gym tab compares each week with it, with no streak and no penalty; switched off, it shows nowhere.' },
   exportBackup: { name: 'Export backup', text: 'Saves all your data, gym included, as one file through the share sheet, or downloads it if sharing is not available. Last backup updates only after the file is shared or downloaded.' },
   eraseAll: { name: 'Erase all data', text: 'Deletes everything Lock In stored on this phone and restarts the app empty. Export a backup first.' }, // owner-approved 2026-10-24 (STATUS.md draft)
+  // Bottom G archetypes, owner-approved 2026-10-24. Negotiator, Assassin, Seducer: core lies from The Forge seed_bottom_g_tactics.
+  // Escapist and Authority: written by the planner, owner-approved. Five lines, one per archetype (the sheet keeps the line breaks).
+  archetypes: { name: 'Bottom G archetypes', text: [
+    'Negotiator: bargains with you. Core lie: you can do it later, tomorrow, or when conditions are better.',
+    'Assassin: attacks who you are. Core lie: who do you think you are?',
+    'Seducer: sells you a quick escape. Core lie: this will make the pain go away.',
+    'Escapist: runs from what feels hard or unpleasant by avoiding, hiding or numbing out.',
+    'Authority: hides behind other people or rules. "I\'m not allowed", "they expect it", "it\'s not up to me."',
+  ].join('\n') },
   importBackup: { name: 'Import backup', text: 'Choosing a backup file replaces the data in the app with the file\'s, after you confirm. A file that is not a Lock In v2 backup, or is damaged, is refused and nothing changes.' },
 };

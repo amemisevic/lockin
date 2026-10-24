@@ -24,7 +24,7 @@ const STALLED = 'Genuinely couldn\'t act on this today. Won\'t count for or agai
 // Board section: sword heading, optional helper line (.t2), then the body.
 // title may be [text, help] (H1b)
 const section = (title, helper, ...body) => h('section', { class: 'nt-sec' }, sectionHeading(...[].concat(title)),
-  helper && h('p', { class: 't2 nt-help' }, helper), body);
+  helper && (typeof helper === 'string' ? h('p', { class: 't2 nt-help' }, helper) : helper), body);
 // Board .q row: the title (and extras) above its segmented control, in one element.
 const q = (title, extra, control, ...after) => h('div', { class: 'q' }, h('div', { class: 'h' }, h('b', null, title), extra), control, after);
 const area = (id, d, key, onInput, names) => h('textarea', { id, class: 'ta', ...names, onInput: e => { d[key] = e.target.value; onInput?.(); } }, d[key]);
@@ -68,7 +68,8 @@ function bottomGSection(state, d) {
     Object.assign(d, other ? { other: !d.other, tactic: '' } : { other: false, tactic: d.tactic === v ? '' : v });
   });
   const showText = d.archetype && (d.other || !tactics.length);
-  return section(['The Bottom G\'s move', 'bottomMove'], 'Which tactic did your enemy use? Optional on a clean day.',
+  return section(['The Bottom G\'s move', 'bottomMove'],
+    h('div', { class: 'hlp-row' }, h('p', { class: 't2 nt-help' }, 'Which tactic did your enemy use? Optional on a clean day.'), helpButton('archetypes')),
     chips({ options: opts(ARCHETYPES), value: d.archetype, onPick: pickArchetype, id: 'nt-arch', label: 'Archetype' }),
     tactics.length > 0 && chips({ options: tacticOpts, value: d.other ? OTHER : d.tactic, onPick: pickTactic, id: 'nt-tac', label: 'Tactic' }),
     showText && h('textarea', { id: 'ci-other', class: 'ta', 'aria-label': 'Something else, in your own words',

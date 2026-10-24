@@ -40,12 +40,20 @@ const EXPECTED = {
   change: ['Concrete change', 'A specific change that breaks the chain: something you will block, delete or move. A vague answer gets a warning.'],
   warLog: ['War Log', 'The War Log holds your four oath entries, your autopsies and one entry per mission day. You can edit oath and Day entries; autopsies are read-only.'],
   strip: ['30-day strip', 'Each square is one day of the 30: marked Passed, Redo or Reset once closed, with today outlined and later days dim. A bronze ring on today means a declared Redo.'],
+  // Bottom G "?": five archetype lines, owner-approved 2026-10-24 (Escapist and Authority invented, owner allowed).
+  archetypes: ['Bottom G archetypes', [
+    'Negotiator: bargains with you. Core lie: you can do it later, tomorrow, or when conditions are better.',
+    'Assassin: attacks who you are. Core lie: who do you think you are?',
+    'Seducer: sells you a quick escape. Core lie: this will make the pain go away.',
+    'Escapist: runs from what feels hard or unpleasant by avoiding, hiding or numbing out.',
+    'Authority: hides behind other people or rules. "I\'m not allowed", "they expect it", "it\'s not up to me."',
+  ].join('\n')],
 };
 
 // H1b-S: the 9 Settings entries are checked against their draft in help-settings.test.js; only the key set is counted here.
 const SETTINGS_KEYS = ['zeroDay', 'medPerWeek', 'startDate', 'packImport', 'medVersion', 'deleteItem', 'gymTarget', 'exportBackup', 'importBackup', 'eraseAll'];
 
-test('HELP holds exactly the 42 approved entries (H1b/H1d 18, H1f gaps 14, H1b-S Settings 9, Erase all data 1)', () => {
+test('HELP holds exactly the 43 approved entries (H1b/H1d 18, H1f gaps 14, H1b-S Settings 9, Erase all data 1, archetypes 1)', () => {
   assert.deepEqual(Object.keys(HELP).sort(), [...Object.keys(EXPECTED), ...SETTINGS_KEYS].sort());
   for (const [key, [name, text]] of Object.entries(EXPECTED)) assert.deepEqual(HELP[key], { name, text }, key);
 });
@@ -60,8 +68,14 @@ test('entry 16 keeps the owner\'s rewritten text', () => {
   assert.equal(HELP.graduation.text, 'The challenge ends when Day 30 is closed, whatever its result. This version cannot start a new one.');
 });
 
-test('every entry is at most 2 sentences', () => {
-  for (const [key, { text }] of Object.entries(HELP)) assert.ok((text.match(/[.!?](\s|$)/g) ?? []).length <= 2, key);
+test('every entry is at most 2 sentences (archetypes is a five-line list, owner-approved)', () => {
+  for (const [key, { text }] of Object.entries(HELP)) if (key !== 'archetypes') assert.ok((text.match(/[.!?](\s|$)/g) ?? []).length <= 2, key);
+});
+
+test('archetypes: one line per archetype, and the help sheet keeps the line breaks', () => {
+  assert.equal(HELP.archetypes.text.split('\n').length, 5);
+  const css = readFileSync(new URL('../screens.css', import.meta.url), 'utf8');
+  assert.match(css.match(/\.action-message\{[^}]*\}/)?.[0] ?? '', /white-space:pre-line/);
 });
 
 test('helpCopy.js is plain data: no imports, no markup', () => {

@@ -1347,3 +1347,15 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - `npm test` after the bump: 1342 tests, 1341 pass, 0 fail, 1 skipped (exit 0).
 - Not pushed. Unchecked: iPhone.
 - Next: owner updates the Home Screen app (close and reopen twice), phone check of Erase all data (export a backup first).
+
+## H1g: Bottom G archetypes "?", branch `help`
+
+- Owner rulings (2026-10-24): build it; the Night 9th "?" is approved; Escapist and Authority definitions invented by the planner and approved with the text as given.
+- Commit `feat: Bottom G help` (hash in `git log`). New HELP key `archetypes` (name `Bottom G archetypes`, five lines joined with `\n`) in helpCopy.js, with a comment on provenance (first three from The Forge seed_bottom_g_tactics core lies, last two planner-written, owner-approved). Night: the Bottom G helper line is now `hlp-row` + `helpButton('archetypes')` (`section()` accepts a node as helper). `.action-message` got `white-space:pre-line` so the sheet keeps the five line breaks (no effect on other sheets: none contains `\n`).
+- Red first: help-copy EXPECTED +1 (42 to 43), Night labels 7 to 8 (9 with an open task), placement beside the helper line, `.action-message` pre-line. Red run exit 1 (entry missing). No `src/core` change, no frozen test edited.
+- Test edits (help tests only): the "at most 2 sentences" test skips `archetypes` (a five-line list by the owner's text); new test: five lines and pre-line.
+- Commands: `npm test` after: 1343 tests, 1342 pass, 0 fail, 1 skipped (exit 0).
+- Browser (localhost:5173, 390 wide, throwaway state, Date faked to 21:00): Night shows 8 "?" (no task), archetypes button 44 x 44 beside the helper line, scrollWidth 390 = clientWidth, sheet text exact in five lines.
+- Ambiguities: entry name not given; chose `Bottom G archetypes` (used in the aria-label). Sheet text stays centred (existing style).
+- Not done: VERSION bump (none asked), iPhone check.
+- Next: owner iPhone check, then the next help scope or a release task.

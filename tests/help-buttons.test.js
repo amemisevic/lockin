@@ -118,20 +118,21 @@ test('Morning after a Reset: one forced-full-pass button, next to the No MED lin
   assert.ok(btn(out, 'forcedPass').parent.children.includes(lines[0]));
 });
 
-test('Night: title, protocols, red lines, Top G win, Bottom G\'s move, Slipped, suggested result (7; 8 with open tasks)', () => {
+test('Night: title, protocols, red lines, Top G win, Bottom G\'s move, archetypes, Slipped, suggested result (8; 9 with open tasks)', () => {
   NOW = at(D1, 21);
   const out = renderNight(fakeApp(started(), D1), [D1]);
-  assert.deepEqual(labels(out), want('autoRedo', 'nightProtocols', 'nightRedLines', 'topWin', 'bottomMove', 'slip', 'result'));
+  assert.deepEqual(labels(out), want('autoRedo', 'nightProtocols', 'nightRedLines', 'topWin', 'bottomMove', 'archetypes', 'slip', 'result'));
+  assert.ok(btn(out, 'archetypes').parent.children.some(n => hasClass(n, 'nt-help') && n.textContent === 'Which tactic did your enemy use? Optional on a clean day.'), 'beside the helper line');
   assert.ok(btn(out, 'result').parent.children.some(n => n.textContent === 'Suggested result'), 'beside the eyebrow');
   for (const [key, title] of [['nightProtocols', 'Protocols'], ['nightRedLines', 'Red lines'], ['topWin', 'Today\'s Top G win'], ['bottomMove', 'The Bottom G\'s move'], ['slip', 'Slipped without knowing?']]) {
     assert.ok(btn(out, key).parent.children.some(n => n.tagName === 'H2' && n.textContent === title), key);
   }
 });
 
-test('Night with an open task: Settle your tasks gets the eighth button', () => {
+test('Night with an open task: Settle your tasks gets the ninth button', () => {
   NOW = at(D1, 21);
   const out = renderNight(fakeApp(addTask(started(), { title: 'Task A', date: D1 }, 't1'), D1), [D1]);
-  assert.equal(helps(out).length, 8);
+  assert.equal(helps(out).length, 9);
   assert.ok(btn(out, 'tasks').parent.children.some(n => n.tagName === 'H2' && n.textContent === 'Settle your tasks'));
 });
 

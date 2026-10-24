@@ -1,9 +1,13 @@
 # STATUS
-- Task: E1-R release v2.5.5 (Erase all data). Branch `help`. Not pushed.
-- Result: DONE. VERSION 2.5.4 to 2.5.5 in `sw.js` and `src/version.js` (match). ROADMAP Live line is v2.5.5. PROGRESS.md entry E1-R added.
-- HEAD: help, `release: v2.5.5 erase all data` on top of 6026dae (hash in `git log`).
-- Tests: `npm test` after the bump 1342 tests, 1341 pass, 0 fail, 1 skipped (exit 0). src/core untouched, no test edited.
-- Changed files: sw.js, src/version.js, ROADMAP.md, PROGRESS.md, STATUS.md.
-- Deviations: none. Needs ruling: none.
-- Phone check: update the Home Screen app (close and reopen twice). Settings > Data: Erase all data last, "?" opens text + Close; Cancel keeps data; Erase empties the app. Export a backup first.
-- Next: owner iPhone check; push when you say so; Bottom G "?" after rulings (c) Escapist/Authority definitions, (d) Night 9th "?".
+- Task: H1g Bottom G "?" help (archetypes). Branch `help`. Not pushed.
+- Result: DONE. New HELP key `archetypes` (5 lines, owner's exact text), provenance comment in helpCopy.js. Night helper line is now hlp-row + "?" (Night 8 buttons, 9 with an open task). `.action-message` has `white-space:pre-line` so the sheet keeps the line breaks.
+- HEAD: help, `feat: Bottom G help` (hash in `git log`), on top of 68a7897. Red first (exit 1, entry missing), then green.
+- Tests: `npm test` 1343 tests, 1342 pass, 0 fail, 1 skipped (exit 0). src/core, VERSION untouched; no frozen test edited.
+- Changed files: src/views/helpCopy.js, src/views/checkinNight.js, screens.css, tests/help-copy.test.js, tests/help-buttons.test.js, docs/superpowers/plans/PROGRESS.md, docs/STATUS.md.
+- Test edits (help tests only): EXPECTED +1, count 42 to 43; Night 7/8 to 8/9 with placement check; new test (5 lines + pre-line).
+- Deviations: the "every entry is at most 2 sentences" test now skips `archetypes` (the owner's text is five lines). Needed to keep the text exact.
+- Needs ruling: none. Chose the sheet heading name `Bottom G archetypes` (aria-label only); change if you want another.
+- Browser check (390 wide, seeded Night): no horizontal overflow, "?" 44 x 44 beside the helper line, sheet shows 5 lines. Sheet text stays centred.
+- Not run: iPhone, 375 and 440 wide.
+- Phone check: Night, Bottom G section: tap the "?" beside "Which tactic did your enemy use?"; five lines, then Close.
+- Next: owner iPhone check, then the next help scope or a release bump.
