@@ -48,7 +48,9 @@ export const app = {
   state: load(storage, today()),
   gym: gymLoaded.state, // own key (lockin.v2.gym): a gym fault never touches the challenge data
   gymCorrupt: gymLoaded.corrupt,
-  saveFailed: false,
+  failedC: false, // last challenge write failed
+  failedG: false, // last gym write failed; each key clears only its own flag
+  get saveFailed() { return this.failedC || this.failedG; },
   version: VERSION,
   today,
   viewDate: () => requestedDate ?? today(),
@@ -57,7 +59,7 @@ export const app = {
     const next = updater(this.state);
     if (next === this.state) return; // nothing changed: no save, no re-render
     this.state = next;
-    this.saveFailed = !save(storage, this.state);
+    this.failedC = !save(storage, this.state);
     showBanner(this.saveFailed);
     notify();
   },
@@ -67,8 +69,8 @@ export const app = {
     if (next === this.gym) return true;
     this.gym = next;
     const ok = saveGym(storage, next).ok;
-    this.saveFailed = !ok;
-    showBanner(!ok);
+    this.failedG = !ok;
+    showBanner(this.saveFailed);
     notify();
     return ok;
   },

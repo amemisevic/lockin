@@ -1,10 +1,12 @@
 # STATUS
-- Task: fix failed/missed selected colour. Branch help.
-- Result: DONE. Failed (task) and Missed (protocol) now carry `opt-failed`, which shares the Crossed crimson-dk fill with white label (5.7:1). Labels unchanged; no Reset text touched.
-- Root cause: segmented() adds a class only if the option has `cls`; Failed and Missed had none, so `.seg button.on` painted them gold.
-- HEAD: see `git log -1` on help (commit "fix: failed/missed selected colour"). Tests: npm test 1331 pass, 0 fail, 1 skipped.
-- Changed files: src/views/checkinNight.js, src/night.css, tests/css-option-class.test.js (assertions appended to the existing T16-4 test; no existing assertion changed), docs/STATUS.md.
-- Deviations: Recovery form has no failed/missed options (neutral chips), so nothing to fix there. Not reproduced in the browser, no src/core change, no VERSION bump.
+- Task: S1-02 separate save-failure flags. Branch `help`. No release bump, not pushed.
+- Result: DONE. `app.js`: `failedC` + `failedG`; `saveFailed` is a getter (either); `set` and `setGym` each write only their own flag and show the banner from the getter.
+- HEAD: help (commit "fix: separate save-failure flags (S1-02)"; hash = this commit).
+- Tests: npm test 1333 pass, 0 fail, 1 skipped (exit 0). New test red on old app.js (0 pass, 2 fail), green after (2 pass).
+- Changed files: src/app.js, tests/save-failure-flags.test.js (new), docs/STATUS.md. HANDOFF-TEMPLATE.md untracked. No src/core, no frozen test touched.
+- Test method: cuts the real `app` object out of app.js and runs it with stubs (as app-render-guard does), so no fake mirrors app.js. gym-import-wiring fake unchanged.
+- settingsLogic.js:142 (applyImport): reads `app.saveFailed` after `setGym(r.gym)` then `set(r.state)`. A successful setGym clears failedG and set(r.state) (new object) rewrites failedC, so a stale failure cannot block or undo an import. Only gap: if set() hit its "unchanged" early return, a stale failedC would survive; r.state is always a fresh parse, so unreachable. Not changed.
+- Deviations: none.
 - Needs ruling: none.
-- Phone check: Night at #checkin/night/2026-10-24: select Failed and Missed, expect crimson with white label; Done/Held stay gold; Stalled slate, Crossed crimson as before.
-- Next: owner iPhone check.
+- Phone check: none needed (banner logic only). Optional: block storage, fail one key, save the other, banner stays.
+- Next: next backlog item.
