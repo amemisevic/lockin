@@ -1138,3 +1138,12 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Commit: `chore(release): v2.3.0 help buttons` (hash in `git log`). VERSION 2.2.0 to 2.3.0 in `sw.js` and `src/version.js` only. ROADMAP.md: Live v2.3.0, help scope for Settings, Today, Tasks, Gym, Analytics not started (the stale `Ready: v2.2.0 on motion` and `main = 193857d` lines removed; origin/main already held the motion work, 6956506).
 - Precheck: branch `help`, HEAD `71cd900`, tracked tree clean (untracked `HANDOFF-TEMPLATE.md` and `docs/STATUS.md` left alone), origin/main is an ancestor (fast-forward), `npm test` 1237 pass, 0 fail (exit 0).
 - Next: owner iPhone check (close and reopen the Home Screen app twice), then the next help scope.
+
+## DR1: day review (read-only), branch `help`
+
+- Commit: `feat(DR1): day review` (hash in `git log`). Not pushed. `src/core`, VERSION and frozen tests untouched; no new icon or library.
+- Precheck: HEAD `9d35dd4`, tracked tree clean (untracked `HANDOFF-TEMPLATE.md` and `docs/STATUS.md` left alone), `npm test` 1237 pass, 0 fail (exit 0). After: 1243 pass, 0 fail (exit 0).
+- Build: `src/views/dayReviewLogic.js` `dayRecord(state, date)` (result, auto, declaredRedo, morning, afternoon, night, slipNote, autopsy `warLog['autopsy-DATE']`, unfiled recovery, done tasks via `tasksOn`); `src/views/dayReview.js` sheet (existing `openSheet`, scrollable body, shows only existing fields, empty day `Nothing logged.`, note `Task names show today's titles.` under the task list). `challenge.js`: past and today strip cells are `button.dy-btn` with label `Day N, <state>, <weekday d Mon>`; future cells stay inert `div`s. Analytics strip unchanged. sw.js caches the two files. CSS in `screens.css` (`.dy-btn`, `.dr-*`).
+- Choices: `openSheet` always has Cancel + an action button; the action is `Close`, the Cancel button is hidden (visibility, kept for the grid layout), so one visible close control; Esc and swipe still dismiss. The 10-column strip is about 36 pt wide per cell, so the button is the column wide and 44 tall (margin -7 px keeps the strip height; neighbouring rows' hit areas overlap by 9 px). Day notes `day-N` not shown (not asked).
+- Tests: `tests/day-review.test.js` (6: empty, no challenge, full, missing fields, open task + unfiled recovery, sw + wiring). Not run: browser pane, iPhone.
+- Next: owner iPhone check of the strip taps and the sheet.

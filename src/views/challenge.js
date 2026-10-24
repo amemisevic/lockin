@@ -7,6 +7,8 @@ import { dayNo } from '../core/challenge.js';
 import { currentStreak } from '../core/scoring.js';
 import { screenTitle, eyebrow, sectionHeading } from '../ui/chrome.js';
 import { goldButton, helpButton } from '../ui/controls.js';
+import { dayLabel } from './tasksLogic.js';
+import { openDayReview } from './dayReview.js';
 import { graduated, stripCells, legend, redoStatus, confirmRedo, redoDeclaredToday, missionInfo, graduation, rateLabel } from './challengeLogic.js';
 
 const LABEL = { passed: 'passed', redo: 'redo', reset: 'reset', today: 'today', open: 'not closed', future: 'upcoming' };
@@ -62,12 +64,22 @@ export const cell = (c, dr) => h('div', { class: dr && c.kind === 'today' ? `${C
   'aria-label': `Day ${c.n}, ${LABEL[c.kind]}${dr && c.kind === 'today' ? ', Redo declared' : ''}` },
   GLYPH[c.kind] ? GLYPH[c.kind]() : h('span', { 'aria-hidden': 'true' }, String(c.n)));
 
+// DR1: past and today cells open the day review; future cells stay inert. 44 pt tall, the column wide.
+const dayCell = (app, c, dr) => {
+  const el = cell(c, dr);
+  if (c.kind === 'future') return el;
+  el.removeAttribute('role');
+  return h('button', { type: 'button', class: 'dy-btn', 'aria-label': `${el.getAttribute('aria-label')}, ${dayLabel(c.date)}`,
+    onClick: () => openDayReview(app.state, c.date) }, el);
+};
+
 export const legendItem = (kind, label, count) => h('span', { class: 'lg' },
   h('i', { class: CELL[kind], 'aria-hidden': 'true' }, GLYPH[kind]()), `${label} ${count}`);
 
-function hero(state, n, cells, counts, dr) {
+function hero(app, n, cells, counts, dr) {
+  const { state } = app;
   return h('div', { class: 'plate rim ch-hero ch-hr' }, dayMark(n, state.challenge.length), helpButton('strip'),
-    h('div', { class: 'ch-strip' }, cells.map(c => cell(c, dr))),
+    h('div', { class: 'ch-strip' }, cells.map(c => dayCell(app, c, dr))),
     h('div', { class: 'ch-lgs' },
       legendItem('passed', 'Passed', counts.passed), legendItem('redo', 'Redo', counts.redo),
       legendItem('reset', 'Reset', counts.reset), helpButton('redoBand')));
@@ -130,7 +142,7 @@ export function renderChallenge(app) {
   const n = dayNo(state, today) ?? 0; // phase 'before' (clock moved back): Day 0 (R1)
   return [
     header(currentStreak(state)),
-    hero(state, n, stripCells(state, today), legend(state), redoDeclaredToday(state, today)),
+    hero(app, n, stripCells(state, today), legend(state), redoDeclaredToday(state, today)),
     missionPlate(app, missionInfo(state, today), !!state.pack),
     redoPlate(app, redoStatus(state, today)),
     slots(['Protocols', 'protocol'], null, state.challenge.protocols.map(p => p.title)),

@@ -236,6 +236,8 @@ dialog.ghost[open]{z-index:100;animation:sheet-out var(--dur-ui) var(--ease-out)
 .goldtxt{background:linear-gradient(180deg,#FCE29A,#E3A949 60%,#B08539);-webkit-background-clip:text;background-clip:text;color:transparent}
 /* Strip (R8): 10 columns, cells at most 29 px round; closed cells show a glyph instead of the number */
 .ch-strip{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px 3px;width:100%;margin-top:18px;place-items:center}
+.dy-btn{display:grid;place-items:center;width:100%;min-height:44px;margin:-7px 0;padding:0;background:none;border:0;color:inherit;font:inherit}
+.dr-b{padding:12px 14px}.dr-l{margin:0 0 6px;overflow-wrap:anywhere}.dr-pre{white-space:pre-wrap}.dr-ul{margin:0 0 6px;padding-left:18px}
 .dy{width:min(29px,100%);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:12px;line-height:14px;font-weight:700;border:1px solid rgba(242,190,92,.15);background:#17161a;color:#8f897f;font-variant-numeric:lining-nums}
 .dy svg{width:62%;height:62%;stroke-width:2.6}
 .dy.p{background:linear-gradient(180deg,#FCE29A,#E3A949 70%,#C99139);color:var(--gold-ink);border-color:var(--gold-hi);box-shadow:0 0 9px rgba(242,190,92,.38)}
