@@ -1285,3 +1285,4 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Ambiguities and choices: T18-4 "same size as the other legend marks" (they differ): chose the Partly radius, needs a ruling. T14-3 editor prompt copy "Start writing." is mine. `screens.css` is 321 lines (was 318, over the 300 target before this task).
 - Not run: browser pane, iPhone.
 - Next: owner phone check, then Task 21 step 4b-3 / step 5 per the plan.
+- Ruling (Armin, 2026-10-24): T18-4 keep the Partly size for the "Not due" legend dot. No code change.
