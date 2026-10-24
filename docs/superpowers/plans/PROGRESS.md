@@ -1084,3 +1084,13 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Owner ruling: H1b deviations 1 to 4 stand. (1) Oath "?" sits on the `Day 1, your oath` heading (Day 0). (2) One forced-full-pass "?" per screen (first `No MED today.` line). (3) Entry 9 (04:00 auto-Redo) also sits on Today's Close yesterday card. (4) Begin Day 1 is 52 px narrower beside its "?", pending the phone check.
 - Still open: ⛔ owner iPhone check of H1b (not run), including the Begin Day 1 width.
 - Next: owner picks the next help scope (Today, Tasks, Analytics, Settings or Gym, from `help-inventory.md`); then its copy draft.
+
+## H1a-S: Settings help copy draft (text only), branch `help`
+
+- Commit: `docs(H1a-S): settings help copy draft` (this entry and `docs/superpowers/plans/help-copy-settings-draft.md`; hash in `git log`). Not pushed. No code, no tests.
+- Precheck: branch `help`, HEAD `ab090d9`, tracked tree clean (untracked `HANDOFF-TEMPLATE.md` and `docs/STATUS.md` left alone), `npm test` 1231 pass, 0 fail (exit 0). After: not re-run (docs only).
+- Sources read: `help-inventory.md` (Settings rows), PLAN Rules, Global Constraints, Tasks 1, 3, 6, 15, 19, DESIGN-SPEC §7, CLAUDE.md Platform facts, `v2.1-gym-plan.md` Rules, `PROGRESS-GYM.md` (rulings 3, 17, 18, G6, G13), HANDOFF.md, the Forge BUILD-PLAN §5 (outside the repo, cited by section only, nothing copied), and `src/views/settings*.js` for what is on screen.
+- Result: 11 entries: Zero Day threshold, MED per week, Day 1 date, Challenge pack, MED version (protocol sheet), Delete protocol / red line, Weekly gym target, Data (Home Screen storage, Export is the only backup), Export backup, Import backup, and one UNCLEAR entry (what a protocol or red line contains, what MED stands for; no text). Each text is at most 2 short sentences. No personal data, no course content.
+- Choices: Reminders and the Last backup line are left out (inventory: already explained on screen). The Home Screen storage and "Export is the only backup" facts sit on the `Data` heading, not repeated on Export. Code-only behaviour (future-date refusal, "changes only after the file is shared") is marked as code in the draft.
+- Needs ruling: (1) MED per week: BP "2 MED days per week, TOTAL" vs PLAN slots; draft follows PLAN. (2) The protocol sheet hint says "once" and omits the weekly slot. (3) Entry 6 repeats a sentence the delete confirm sheet already shows. (4) UNCLEAR: what a protocol or red line contains, what MED stands for.
+- Next: owner rules on the list; then H1b-S (build the Settings "?" buttons).
