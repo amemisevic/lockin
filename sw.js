@@ -53,6 +53,7 @@ const ASSETS = [
   'src/sheet.js',
   'src/ui/chrome.js',
   'src/ui/controls.js',
+  'src/ui/live.js',
   'src/ui/taskRow.js',
   'src/views/analytics.js',
   'src/views/analyticsLogic.js',

@@ -7,6 +7,7 @@ import { dayNo, phase, medCheck, medUsedInWeek, submitMorning } from '../core/ch
 import { pendingRecovery } from '../core/recovery.js';
 import { pushedHeader, question, rerender } from '../ui/chrome.js';
 import { switchControl, goldButton, helpButton } from '../ui/controls.js';
+import { announce } from '../ui/live.js';
 import { timeLeft } from './todayLogic.js';
 
 const drafts = {};
@@ -64,7 +65,7 @@ export function renderMorning(app) {
   const start = goldButton('Start the day', () => {
     if (today !== app.today()) return rerender(); // past midnight: never file on the render-time date
     const r = submitMorning(app.state, today, { target: d.target, risk: d.risk, med: d.med }, Date.now());
-    if (!r.ok) { d.error = r.error; rerender(); return; }
+    if (!r.ok) { d.error = r.error; announce(r.error); rerender(); return; }
     delete drafts[today];
     app.set(() => r.state);
     app.nav('#today');
@@ -80,7 +81,7 @@ export function renderMorning(app) {
     question(2, ['Red line at risk today?', 'risk'], 'ci-risk', field('ci-risk', d, 'risk')),
     medQuestion(state, today, d),
     h('div', { class: 'ci-go' }, start,
-      d.error && h('p', { class: 'form-error', role: 'alert' }, d.error),
+      d.error && h('p', { class: 'form-error' }, d.error), // announced once by announce(), not by a role here (T11-1)
       d.error === 'Close yesterday first.' && h('a', { href: `#checkin/night/${addDays(today, -1)}`, id: 'ci-close', class: 'btn-ghost' }, 'Close yesterday')),
   ].filter(Boolean);
 }
