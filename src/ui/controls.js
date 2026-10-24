@@ -18,17 +18,21 @@ export function shieldSvg(size, keep) {
 // ponytail: keyed by label, two shields with the same label on one screen both pop; key by id if that matters.
 let popKey = null;
 
-// status: 'open' | 'done' | 'failed' | 'stalled'. aria-pressed is true only for done (call 4).
-export function shieldToggle({ status, onToggle, label }) {
+// status: 'open' | 'done' | 'failed' | 'stalled'. aria-pressed is true only for done (call 4), so the other three also
+// carry their state as a description (T10-1). id (the focus-restore id, app.js render) names the button; its state text is `${id}-st`.
+const STATE_TEXT = { open: 'Open', failed: 'Failed', stalled: 'Stalled' };
+export function shieldToggle({ status, onToggle, label, id }) {
   const done = status === 'done';
   const svg = shieldSvg(null, ['b', 'hl', 'lam']);
   // Failed (owner ruling R1): the Reset badge X (M3 3l8 8M11 3l-8 8, 14 box) drawn where the lambda sits.
   if (status === 'failed') svg.querySelector('.lam').setAttribute('d', 'M10.5 13.25l9 9M19.5 13.25l-9 9');
   const cls = ['shield', done && 'on', status === 'failed' && 'failed', status === 'stalled' && 'stalled', done && popKey === label && 'pop'];
+  const state = id && STATE_TEXT[status];
   return h('button', {
-    type: 'button', class: cls.filter(Boolean).join(' '), 'aria-pressed': String(done), 'aria-label': label,
+    type: 'button', id, class: cls.filter(Boolean).join(' '), 'aria-pressed': String(done), 'aria-label': label,
+    'aria-describedby': state ? `${id}-st` : null,
     onClick: () => { popKey = label; try { onToggle(); } finally { popKey = null; } },
-  }, svg);
+  }, svg, state && h('span', { id: `${id}-st`, hidden: true }, state));
 }
 
 // Choice buttons in a group; aria-pressed marks the chosen one(s). multi: value is an array.
