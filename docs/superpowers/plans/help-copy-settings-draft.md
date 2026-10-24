@@ -1,7 +1,7 @@
 # Help copy draft: Settings tab (task H1a-S, text only)
 Scope ruled: Settings. Each entry follows the `src/views/helpCopy.js` format: a key, `name` (heading, used in the "?" aria-label), `text` (max 2 short plain sentences, what the app does), plus where the "?" sits and the sources. UNCLEAR = sources silent, no text.
 PLAN = `2026-10-12-lockin-v2-app.md`; SPEC = `docs/design/lockin-v2/DESIGN-SPEC.md`; INV = `help-inventory.md` (Settings rows); GYM = `v2.1-gym-plan.md`; PG = `PROGRESS-GYM.md`; CLAUDE = `CLAUDE.md` Platform facts; TERMS = `help-terms-draft.md` (approved, now in `helpCopy.js`); GAP = `help-gap-draft.md`; BP = The Forge `BUILD-PLAN.md` and FCLAUDE = The Forge `CLAUDE.md` (outside the repo, cited by section only, nothing copied). Texts follow PLAN where BP differs (see Conflicts). "Code" = what `src/views/settings*.js` does today, cited only where PLAN is silent.
-Review pass: entries reworded to the Challenge tone and length. Owner rulings applied (see Conflicts and rulings): the Data entry is deleted and the entries renumbered; entry 2's definition of MED is the TERMS 5 sentence copied verbatim; entries 5 and 6 are unchanged. The Protocols and Red lines headings are already covered (GAP G1, G2, built in H1f), so they have no entry here.
+Review pass: entries reworded to the Challenge tone and length. Owner rulings applied (see Conflicts and rulings): the Data entry is deleted and the entries renumbered; entry 2's definition of MED is the shipped `med` sentence copied verbatim; entries 5 and 6 are unchanged. The Protocols and Red lines headings are already covered (GAP G1, G2, built in H1f), so they have no entry here.
 
 ## 1. Zero Day threshold (`zeroDay`)
 - "?": Settings, Challenge section, row `Zero Day threshold` (beside the stepper).
@@ -12,8 +12,8 @@ Review pass: entries reworded to the Challenge tone and length. Owner rulings ap
 ## 2. MED per week (`medPerWeek`)
 - "?": Settings, Challenge section, row `MED per week` (beside the stepper).
 - name: `MED per week`
-- text: "MED stands for Minimum Effective Dose: a shorter fallback version of a protocol for a bad day. Each protocol you declare uses one slot in a Monday to Sunday week; choose 0 to 3 slots (default 2)."
-- Source: first sentence = TERMS 5 first sentence, copied verbatim (checked against `help-terms-draft.md` line 28; TERMS 5 sources: FCLAUDE "Important decisions", SEED Days 5, 6, 8, PLAN Rules MED). Second sentence: PLAN Rules, MED ("each declaration uses one of `settings.medPerWeek` (default 2) slots in the Mon–Sun week"; Monday-start week, last Rules line); PLAN Task 19 step 1 (stepper 0–3). Ruling 4: the definition stays only while it matches TERMS 5 word for word; if it is changed, the first sentence is dropped and the definition is UNCLEAR.
+- text: "MED is Minimum Effective Dose: a shorter fallback version of a protocol for a bad day. Each protocol you declare uses one slot in a Monday to Sunday week; choose 0 to 3 slots (default 2)."
+- Source: first sentence = the first sentence of the shipped `src/views/helpCopy.js` `med` entry, copied verbatim (the approved TERMS 5 text as shipped; TERMS 5 sources: FCLAUDE "Important decisions", SEED Days 5, 6, 8, PLAN Rules MED). Second sentence: PLAN Rules, MED ("each declaration uses one of `settings.medPerWeek` (default 2) slots in the Mon–Sun week"; Monday-start week, last Rules line); PLAN Task 19 step 1 (stepper 0–3). Ruling 4 (updated): the definition stays only while it matches the shipped `med` entry word for word; if it is changed, the first sentence is dropped and the definition is UNCLEAR.
 
 ## 3. Day 1 date
 - "?": Settings, Challenge section, row `Day 1` (`The day the 30 days count from`).
@@ -68,6 +68,6 @@ Owner rulings applied in this commit:
 1. MED per week: PLAN wins over BP. BP §5 reads "Maximum 2 MED days per week, TOTAL across all protocols"; PLAN says each declaration uses one slot (◆). Entries 2 and 5 follow PLAN and avoid the word "days".
 2. The protocol sheet hint ("A shorter version you may declare once in the morning") stays unchanged; entry 5 does not repeat "once".
 3. The Data entry (old 8) is deleted; entries renumbered (old 9 and 10 are now 8 and 9). Entry 6 (Delete) stays as is, including its second sentence that the confirm sheet already shows.
-4. Entry 2 may define MED only with the approved TERMS 5 wording copied verbatim. It is: the first sentence of entry 2 is TERMS 5's first sentence, character for character. Note: the shipped `helpCopy.js` `med` entry words it slightly differently ("MED is Minimum Effective Dose: ..."); TERMS 5 in `help-terms-draft.md` was the reference used. If it must match the shipped text instead, the sentence needs a new ruling.
+4. Entry 2 may define MED only with the approved wording copied verbatim. The first ruling used TERMS 5 ("MED stands for ..."); the owner then ruled to match the shipped `helpCopy.js` `med` entry instead. Entry 2's first sentence is now that entry's first sentence, character for character: "MED is Minimum Effective Dose: a shorter fallback version of a protocol for a bad day."
 
 Still noted (not ruled): entry 3 omits code-only refusals (future date, a filed day falling outside the 30 days); entry 8's "updates only after" and entry 9's "the file's" come from code and PG, not PLAN. UNCLEAR: none left in Settings.
