@@ -74,7 +74,7 @@ Method: same class set measured in the app and in the static board at 390 (scrol
 | V-04 | Night | First two task questions 160 / 159 px, board 155 / 158 (5 px, "?" row). Chips 44 vs 40 and Analytics range 54 vs 48 are HIG 44 pt minimum. | logged |
 | V-05 | Analytics | Range switch 54 high, board 48 (6 px): buttons are 44 (HIG), board buttons are 42. Everything below sits 6 px lower. | logged: HIG wins |
 | V-06 | Analytics | Plate padding 22 vs 18: bars and tracks 304 wide, board 312 (8 px); headings start at x 20, board 24 (4 px). Tiles are 95 x 88 (3 across), board 155 x 128 / 151 x 94 (2 across); columns 38 wide, board 41. Related to T18-3. | logged |
-| V-07 | Challenge day strip | 30-day buttons 29 wide (tile 36), under 44 pt: 10 columns do not fit at 44. Height is 44. | logged: Day review ruled, width never ruled; needs ruling |
+| V-07 | Challenge day strip | 30-day buttons 29 wide (tile 36), under 44 pt: 10 columns do not fit at 44. Height is 44. | CLOSED, ruled by Armin 2026-10-24: leave. 29 wide at 390, 33.5 at 440, already accepted. |
 | V-08 | Day 0 | "Begin Day 1" is 260 wide beside the "?" , board button 312 x 52 (52 px narrower, 4 high). Hero has no headline or paragraph. | logged |
 | V-09 | Today | Challenge strip 110 px, board 133: no 30-pip row; "Morning pending" in place of "Morning done / Night opens". Task rows 93 / 75 with 7 dots, board rows 80 without. | logged: Plan has no pip row |
 | V-10 | Tasks / Today rows | `.more` 44 x 44, board 40 x 40 (HIG). | logged |
