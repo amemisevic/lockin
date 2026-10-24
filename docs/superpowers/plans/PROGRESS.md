@@ -1163,3 +1163,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Ruling (Armin, option A): `.td-med` CSS in `screens.css` stays as dead code because frozen `tests/contrast-today.test.js` ("day medallion") asserts those rules. Test not edited.
 - Precheck: HEAD `d0f32ae`, tracked tree clean. Browser pane at 440x956 (fresh state, no running challenge): header is one child spanning 20 to 420 px, no `.td-med` in the DOM, scrollWidth 440 = viewport. Not run: seeded active challenge, iPhone.
 - Next: owner iPhone check of the Today header, then the next scope.
+
+## DR2c: release v2.4.1 (Today counter removed), branch `help`
+
+- Commit: `release: v2.4.1 today counter removed` (hash in `git log`). VERSION 2.4.0 to 2.4.1 in `sw.js` and `src/version.js` only; ROADMAP.md Live line is v2.4.1. No other changes.
+- Precheck: HEAD `827ac3a`, origin/main is an ancestor (fast-forward), `npm test` 1243 pass, 0 fail (exit 0). After the bump: 1243 pass, 0 fail (exit 0).
+- Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`.
+- Next: owner closes and reopens the Home Screen app twice, then checks the Today header.
