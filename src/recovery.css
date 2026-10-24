@@ -22,3 +22,6 @@
 .fq .rc-nudge:empty{display:none}
 .fq .rc-ans{margin:8px 0 0 36px;white-space:pre-wrap;overflow-wrap:anywhere}
 .rc-foot{margin:12px 0 0;text-align:center;font-size:13px;line-height:18px;color:var(--text-3)}
+/* T21-6: board sizes: time field 140 wide, long answers min 84 high (shared .ta is 76 for the check-ins) */
+.in.rc-time{width:140px}
+#rc-decision,#rc-change{min-height:84px}
