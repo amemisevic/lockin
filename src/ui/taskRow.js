@@ -25,5 +25,5 @@ export function taskRow(app, view, date, { onMenu }) {
       time && h('div', { class: 'rtm' }, time),
       status === 'done' && h('div', { class: 'okt' }, 'Completed'),
       task.repeat.type !== 'none' && dots(habitDots(app.state, task.id, date))),
-    h('button', { type: 'button', class: 'more', 'aria-label': 'Task options', onClick: () => onMenu(view) }, icon('more')));
+    h('button', { type: 'button', id: `mo-${task.id}`, class: 'more', 'aria-label': 'Task options', onClick: () => onMenu(view) }, icon('more')));
 }

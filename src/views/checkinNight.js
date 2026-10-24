@@ -37,7 +37,7 @@ function tasksSection(state, date, d) {
   return section(['Settle your tasks', 'tasks'], 'Anything still open has to be resolved before you can close the day.',
     h('div', { class: 'plate list nt-tasks' }, open.map(({ task }) =>
       q(task.title, task.start ? h('span', { class: 't3' }, task.start) : null,
-        segmented({ options: TASK, value: d.tasks[task.id] ?? null, onPick: tap(v => { d.tasks[task.id] = v; }) }),
+        segmented({ options: TASK, value: d.tasks[task.id] ?? null, onPick: tap(v => { d.tasks[task.id] = v; }), id: `nt-t-${task.id}` }),
         h('p', { class: 's' }, STALLED)))));
 }
 
@@ -45,7 +45,7 @@ function protocolsSection(state, date, d) {
   const med = medIds(state, date);
   return section(['Protocols', 'nightProtocols'], null, h('div', { class: 'plate list' }, state.challenge.protocols.map(p => (med.includes(p.id)
     ? q(p.title, null, h('p', { class: 'nt-med' }, 'MED (declared this morning)'))
-    : q(p.title, null, segmented({ options: PROTOCOL, value: d.protocols[p.id] ?? null, onPick: tap(v => { d.protocols[p.id] = v; }) }))))));
+    : q(p.title, null, segmented({ options: PROTOCOL, value: d.protocols[p.id] ?? null, onPick: tap(v => { d.protocols[p.id] = v; }), id: `nt-p-${p.id}` }))))));
 }
 
 function redLinesSection(state, d) {
@@ -53,7 +53,7 @@ function redLinesSection(state, d) {
   const anyCrossed = lines.some(r => d.redLines[r.id] === 'crossed');
   return section(['Red lines', 'nightRedLines'], 'Be exact. A crossed line is a Reset by itself.',
     h('div', { class: `plate list nt-red${anyCrossed ? ' warn' : ''}` }, lines.map(r =>
-      q(r.name, null, segmented({ options: RED, value: d.redLines[r.id] ?? null, onPick: tap(v => { d.redLines[r.id] = v; }) }),
+      q(r.name, null, segmented({ options: RED, value: d.redLines[r.id] ?? null, onPick: tap(v => { d.redLines[r.id] = v; }), id: `nt-r-${r.id}` }),
         d.redLines[r.id] === 'crossed' && h('p', { class: 's nt-reset' }, 'This is a Reset.')))));
 }
 
@@ -67,8 +67,8 @@ function bottomGSection(state, d) {
   });
   const showText = d.archetype && (d.other || !tactics.length);
   return section(['The Bottom G\'s move', 'bottomMove'], 'Which tactic did your enemy use? Optional on a clean day.',
-    chips({ options: opts(ARCHETYPES), value: d.archetype, onPick: pickArchetype }),
-    tactics.length > 0 && chips({ options: tacticOpts, value: d.other ? OTHER : d.tactic, onPick: pickTactic }),
+    chips({ options: opts(ARCHETYPES), value: d.archetype, onPick: pickArchetype, id: 'nt-arch' }),
+    tactics.length > 0 && chips({ options: tacticOpts, value: d.other ? OTHER : d.tactic, onPick: pickTactic, id: 'nt-tac' }),
     showText && h('textarea', { id: 'ci-other', class: 'ta', 'aria-label': 'Something else, in your own words',
       onInput: e => { d.text = e.target.value; } }, d.text));
 }
@@ -85,7 +85,7 @@ function resultSection(state, date, d, refreshGate) {
     toggle,
     d.overrideOpen && h('div', { class: 'nt-ovr' },
       crossed && h('p', { class: 't2' }, NIGHT_TEXT['red-line-override']),
-      chips({ options: opts(overrideOptions(state, d)), value: d.overrideResult, onPick: tap(v => { d.overrideResult = v; }) }),
+      chips({ options: opts(overrideOptions(state, d)), value: d.overrideResult, onPick: tap(v => { d.overrideResult = v; }), id: 'nt-ovr' }),
       h('label', { class: 't2 nt-lbl', for: 'ci-reason' }, 'Reason'),
       area('ci-reason', d, 'reason', refreshGate)));
 }

@@ -37,15 +37,16 @@ export function shieldToggle({ status, onToggle, label, id }) {
 
 // Choice buttons in a group; aria-pressed marks the chosen one(s). multi: value is an array.
 // onPick gets the tapped value; with multi the caller adds or removes it.
-const choices = (cls, item, { options, value, onPick, multi }) => h('div', { class: cls, role: 'group' },
-  options.map(o => {
+// id (T10-2): a group whose tap re-renders the screen gives its buttons ids `${id}-${n}`, so app.js can put focus back.
+const choices = (cls, item, { options, value, onPick, multi, id }) => h('div', { class: cls, role: 'group' },
+  options.map((o, i) => {
     const on = multi ? value.includes(o.value) : value === o.value;
-    return h('button', { type: 'button', class: [item, on && 'on'].filter(Boolean).join(' ') || null, 'aria-pressed': String(on),
+    return h('button', { type: 'button', id: id && `${id}-${i}`, class: [item, on && 'on'].filter(Boolean).join(' ') || null, 'aria-pressed': String(on),
       onClick: () => onPick(o.value) }, o.label);
   }));
 
 export const chips = opts => choices('chips', 'chip', opts);
-export const segmented = ({ options, value, onPick }) => choices('seg', null, { options, value, onPick });
+export const segmented = ({ options, value, onPick, id }) => choices('seg', null, { options, value, onPick, id });
 
 export function stepper({ value, min, max, onChange, label }) {
   return h('div', { class: 'stp', role: 'group', 'aria-label': label },
@@ -64,5 +65,5 @@ export const goldButton = (label, onClick, { disabled } = {}) =>
   h('button', { type: 'button', class: 'btn-gold', onClick, disabled }, label);
 
 // Help "?" (H1b): 44 px button that opens the action sheet with the entry's text and a Close button.
-export const helpButton = key => h('button', { type: 'button', class: 'help', 'aria-label': `Help: ${HELP[key].name}`,
+export const helpButton = key => h('button', { type: 'button', id: `help-${key}`, class: 'help', 'aria-label': `Help: ${HELP[key].name}`,
   onClick: () => openActionSheet([], { message: HELP[key].text, cancel: 'Close' }) }, icon('help'));
