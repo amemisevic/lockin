@@ -15,8 +15,8 @@ import { ARCHETYPES, NIGHT_ERRORS, newDraft, nightRoute, medIds, liveSuggestion,
 const drafts = {};
 const cap = s => s[0].toUpperCase() + s.slice(1);
 const opts = (values, labels = values.map(cap)) => values.map((value, i) => ({ value, label: labels[i] }));
-const TASK = opts(['done', 'failed', 'stalled']).map(o => o.value === 'stalled' ? { ...o, cls: 'opt-stalled' } : o);
-const PROTOCOL = opts(['held', 'missed']);
+const TASK = opts(['done', 'failed', 'stalled']).map(o => o.value === 'stalled' ? { ...o, cls: 'opt-stalled' } : o.value === 'failed' ? { ...o, cls: 'opt-failed' } : o);
+const PROTOCOL = opts(['held', 'missed']).map(o => o.value === 'missed' ? { ...o, cls: 'opt-failed' } : o);
 const RED = opts(['held', 'crossed'], ['I held the line', 'I crossed it']).map(o => o.value === 'crossed' ? { ...o, cls: 'opt-crossed' } : o);
 const OTHER = {}; // the Something else chip's value: never equal to a pack tactic name
 const STALLED = 'Genuinely couldn\'t act on this today. Won\'t count for or against you.';

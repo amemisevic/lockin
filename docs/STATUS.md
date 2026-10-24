@@ -1,10 +1,10 @@
 # STATUS
-- Task: T21-6 visual pass (step 5a). Branch `help`. Not pushed. No VERSION bump.
-- Result: 2 fixed (3 commits with docs), 12 deviations logged in docs/backlog.md (V-01 to V-12), 2 need a ruling. Screens measured at 440 and 390: no overflow, no clipped text.
-- HEAD: see `git log -1` (docs commit on top of 431e6f4).
-- Tests: precheck 1329 (1328 pass, 0 fail, 1 skipped); after 1332 (1331 pass, 0 fail, 1 skipped), exit 0. 3 new tests.
-- Changed: settings.js, recovery.css, 2 new tests, backlog.md, PROGRESS.md.
-- Per screen: Today deviation (strip 110 vs 133, no pips, rows with dots) logged. Tasks pass (rows match, `.more` 44 vs 40 HIG). Challenge deviation 56 px at 390 logged, pass at 440. Analytics deviation (range 54 vs 48, padding, tiles) logged. Settings title 18 px FIXED, order differs logged. Day 0 deviation (hero text, button 52 px narrower) logged. Night deviation 13 px logged. Recovery time field 210 px and answers 8 px FIXED, countdown plate 52 px logged. War Log, Mission, hatch, editor: no board, not measured.
-- Needs ruling: V-07 30-day buttons 29 wide. V-01 ruled 2026-10-24: leave the wrap at 390.
-- Phone check: Settings title higher (no "Lock In" line); Recovery form time field short, answers a bit taller. Not run: iPhone.
-- Next: owner phone check, then step 5b.
+- Task: fix failed/missed selected colour. Branch help.
+- Result: DONE. Failed (task) and Missed (protocol) now carry `opt-failed`, which shares the Crossed crimson-dk fill with white label (5.7:1). Labels unchanged; no Reset text touched.
+- Root cause: segmented() adds a class only if the option has `cls`; Failed and Missed had none, so `.seg button.on` painted them gold.
+- HEAD: see `git log -1` on help (commit "fix: failed/missed selected colour"). Tests: npm test 1331 pass, 0 fail, 1 skipped.
+- Changed files: src/views/checkinNight.js, src/night.css, tests/css-option-class.test.js (assertions appended to the existing T16-4 test; no existing assertion changed), docs/STATUS.md.
+- Deviations: Recovery form has no failed/missed options (neutral chips), so nothing to fix there. Not reproduced in the browser, no src/core change, no VERSION bump.
+- Needs ruling: none.
+- Phone check: Night at #checkin/night/2026-10-24: select Failed and Missed, expect crimson with white label; Done/Held stay gold; Stalled slate, Crossed crimson as before.
+- Next: owner iPhone check.

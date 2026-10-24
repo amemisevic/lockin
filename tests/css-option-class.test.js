@@ -17,5 +17,8 @@ test('Night stalled / crossed options carry opt-stalled / opt-crossed; night.css
   const view = readFileSync(new URL('../src/views/checkinNight.js', import.meta.url), 'utf8');
   assert.match(view, /cls: 'opt-stalled'/);
   assert.match(view, /cls: 'opt-crossed'/);
+  assert.match(view, /value === 'failed' \? \{ \.\.\.o, cls: 'opt-failed' \}/);
+  assert.match(view, /value === 'missed' \? \{ \.\.\.o, cls: 'opt-failed' \}/);
+  assert.match(readFileSync(new URL('../src/night.css', import.meta.url), 'utf8'), /\.seg button\.opt-failed\.on\{color:#fff\}/);
   assert.doesNotMatch(readFileSync(new URL('../src/night.css', import.meta.url), 'utf8'), /nth-child/);
 });
