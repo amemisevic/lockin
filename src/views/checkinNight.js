@@ -27,7 +27,9 @@ const section = (title, helper, ...body) => h('section', { class: 'nt-sec' }, se
   helper && h('p', { class: 't2 nt-help' }, helper), body);
 // Board .q row: the title (and extras) above its segmented control, in one element.
 const q = (title, extra, control, ...after) => h('div', { class: 'q' }, h('div', { class: 'h' }, h('b', null, title), extra), control, after);
-const area = (id, d, key, onInput) => h('textarea', { id, class: 'ta', onInput: e => { d[key] = e.target.value; onInput?.(); } }, d[key]);
+const area = (id, d, key, onInput, names) => h('textarea', { id, class: 'ta', ...names, onInput: e => { d[key] = e.target.value; onInput?.(); } }, d[key]);
+// T16-1: the heading names the textarea; its helper line (a <label for>) is the description.
+const named = (id, head) => ({ 'aria-labelledby': head, 'aria-describedby': `${id}-h` });
 // Choice tap: update the draft, then re-render from it.
 const tap = fn => v => { fn(v); rerender(); };
 
@@ -130,9 +132,9 @@ export function renderNight(app, [date] = []) {
     tasksSection(state, date, d),
     protocolsSection(state, date, d),
     redLinesSection(state, d),
-    section(['Today\'s Top G win', 'topWin'], null, h('label', { class: 't2 nt-lbl', for: 'ci-win' }, 'One sentence'), area('ci-win', d, 'win')),
+    section(['Today\'s Top G win', 'topWin', 'nt-win-h'], null, h('label', { class: 't2 nt-lbl', for: 'ci-win', id: 'ci-win-h' }, 'One sentence'), area('ci-win', d, 'win', null, named('ci-win', 'nt-win-h'))),
     bottomGSection(state, d),
-    section(['Slipped without knowing?', 'slip'], null, h('label', { class: 't2 nt-lbl', for: 'ci-slip' }, 'Optional.'), area('ci-slip', d, 'slipNote')),
+    section(['Slipped without knowing?', 'slip', 'nt-slip-h'], null, h('label', { class: 't2 nt-lbl', for: 'ci-slip', id: 'ci-slip-h' }, 'Optional.'), area('ci-slip', d, 'slipNote', null, named('ci-slip', 'nt-slip-h'))),
     resultSection(state, date, d, refreshGate),
     h('div', { class: 'ci-go' }, close, d.error && h('p', { class: 'form-error', role: 'alert' }, NIGHT_ERRORS[d.error] ?? d.error)),
   ].filter(Boolean);

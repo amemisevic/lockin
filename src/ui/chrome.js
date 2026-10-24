@@ -6,9 +6,9 @@ import { helpButton } from './controls.js';
 export const screenTitle = text => h('h1', { class: 'ttl' }, text);
 export const eyebrow = text => h('p', { class: 'eyebrow' }, text);
 // Sword ornament first, then the words, vertically centred (DESIGN-SPEC §3).
-// help (H1b, a key of views/helpCopy.js): the heading and its "?" in one row.
-export const sectionHeading = (text, help) => {
-  const el = h('h2', { class: 'sec' }, icon('sword'), text);
+// help (H1b, a key of views/helpCopy.js): the heading and its "?" in one row. id (T16-1): lets a field name itself by it.
+export const sectionHeading = (text, help, id) => {
+  const el = h('h2', { class: 'sec', id }, icon('sword'), text);
   return help ? h('div', { class: 'hlp-row' }, el, helpButton(help)) : el;
 };
 
