@@ -254,6 +254,7 @@ dialog.ghost[open]{z-index:100;animation:sheet-out var(--dur-ui) var(--ease-out)
 .ch-mb{margin:8px 0 0;white-space:pre-line;overflow-wrap:anywhere}
 .ch-mp>.ch-mb:first-child{margin-top:0}
 .ch-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.ch-mp>.ch-acts:first-child{margin-top:0}
 /* Declared Redo (R11) */
 .ch-rd{margin-top:12px;padding:14px 16px}
 .ch-rdr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 8px;min-height:44px;margin-top:4px}
