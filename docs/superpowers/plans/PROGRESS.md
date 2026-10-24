@@ -1217,3 +1217,9 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Added to backlog under the 14-day trial notes: T10-4 stalled shield outline ~2.83:1 with glow (estimate), iPhone look first.
 - Ambiguity and choice: "first v2 commit" taken as the Task 1 base `bba5b0a`, so the Task 1 code commit is inside the range; Task 0 (design import and docs) is outside it.
 - Next: Task 21 step 4 (Day 1 read-only text row), after the owner rules on S1-01.
+
+## T21-3: review rulings, branch `help`
+
+- Commit: `docs(T21-3): review rulings` (hash in `git log`). Docs only, not pushed; no `src/`, test or VERSION change, so no test run (last precheck 1289 tests, 1288 pass, 0 fail, 1 skipped, exit 0).
+- Rulings from Armin (2026-10-24), recorded beside the rows in `docs/backlog.md`: S1-01 keep as is (archived tasks stay never due; known limit, a fix needs an `archivedOn` field, core + frozen test, not planned): CLOSED. S1-08 Day review owner-approved (read-only, option A): CLOSED. S1-03 stays open in ROADMAP.
+- Next: Task 21 step 4 (Day 1 read-only text row).
