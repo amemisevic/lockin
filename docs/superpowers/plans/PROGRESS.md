@@ -1267,3 +1267,21 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - `formError(d, text)` in `src/ui/chrome.js`: role=alert on the first display, none on later renders of the same refusal; a new refusal resets `d.errorShown`. Night and Recovery use it. Morning keeps the persistent region.
 - New `tests/a11y-error-first-display.test.js` (helper + Recovery wiring; red first). `npm test`: 1314 tests, 1313 pass, 0 fail, 1 skipped (exit 0). `checkin-night-flow.test.js:198` and `recovery-view.test.js:205` pass unedited. Night wiring is covered by the helper test and that frozen test only.
 - Not pushed. Next: step 4b-2.
+
+## T21-5b: Task 21 step 4b-2, CSS and markup group, branch `help`
+
+- Commits (not pushed, no VERSION bump, no `src/core` change, no existing test edited): `fix(T16-4)`, `fix(T16-5)`, `fix(T17-3)`, `refactor(T12-1)`, `fix(T12-2)`, `fix(T14-3)`, `fix(T18-1)`, `fix(T18-4)`, `test(T10-3)`, then `docs(T21-5b)`; hashes in `git log`.
+- Precheck: HEAD `564b816`, `npm test` 1314 tests, 1313 pass, 0 fail, 1 skipped (exit 0). After: 1329 tests (15 new, in 9 new files), 1328 pass, 0 fail, 1 skipped (exit 0). Each fix had its test red first, except `tests/icons-id-refs.test.js` (T10-3 verification, green at once).
+- T16-4: `choices` in `controls.js` adds an option's `cls`; Night gives `opt-stalled` / `opt-crossed`; `night.css` selects on those, no `:nth-child`.
+- T16-5: every `.q` rule in `night.css` is `.nt-sec .q ...`.
+- T17-3: `recovery.js` has `addClass` (appends to `className`); no `classList`, because the frozen `tests/recovery-view.test.js` fake DOM has none.
+- T12-1: `torch` was identical in `today.js` and `challenge.js`; both copies are gone, one `torch` and the `redraw` helper live in `icons.js`. Left (not copies): Challenge `redoGlyph`, Tasks `todayIcon`, which set different attributes.
+- T12-2: `.ch-mp>.ch-acts:first-child{margin-top:0}` (the actions row lost its 16 px top margin when it is the plate's first child).
+- T14-3: `.wl-hd+.sec{margin-top:24px}` under the War Log header; Mission title is an h2 (`screenTitle(text, tag)`), the pushed header is the one h1; editor placeholder "Start writing." with `::placeholder` in `--text-3`; autopsy title shown as a long date in the entry header and the list row (view only: frozen `tests/warlogLogic.test.js:145` pins the ISO title in `entryView`). Row chevrons skipped as asked.
+- T18-1: Reset bar gets `an-reset`: a bronze-lt hatch background, and `.an-reset .an-miss` goes transparent, so only the missed-protocols segment shows the hatch. The `.an-miss` crimson rule stays first (contrast test reads it).
+- T18-3: no change. None of bar 8, column 96, tile 32, 88 px, 16 px has an exact token (tokens: `--r-plate` 24, `--r-pill`, `--gutter` 20).
+- T18-4: the legend "Not due" dot uses the Partly radius (0.24, was 0.08); the grid keeps 0.08 (pinned by `tests/analytics-view.test.js`).
+- T10-3: verified, no shipped icon uses href, clip-path, mask, filter, `<use>` or url(#) in style; `tests/icons-id-refs.test.js` guards it.
+- Ambiguities and choices: T18-4 "same size as the other legend marks" (they differ): chose the Partly radius, needs a ruling. T14-3 editor prompt copy "Start writing." is mine. `screens.css` is 323 lines (was 318, over the 300 target before this task).
+- Not run: browser pane, iPhone.
+- Next: owner phone check, then Task 21 step 4b-3 / step 5 per the plan.
