@@ -17,7 +17,7 @@ const opts = values => values.map(v => ({ value: v, label: v }));
 const heading = t => Object.assign(sectionHeading(t), { className: 'sec rc-sec' });
 // Board header: the shared pushed header with the title in crimson.
 function header() {
-  const el = pushedHeader({ title: 'Recovery Protocol', onBack: () => history.back() });
+  const el = pushedHeader({ title: 'Recovery Protocol', onBack: () => history.back(), help: 'recoveryProtocol' });
   el.querySelector('.eyebrow').className = 'eyebrow rc-ttl';
   return el;
 }
@@ -96,7 +96,7 @@ export function renderRecovery(app, [date] = []) {
     question(3, Q.place, null, chips({ options: opts(PLACES), value: d.place, onPick: tap('place') })),
     question(4, Q.decision, 'rc-decision', h('p', { class: 'rc-hint' }, 'Not "I was weak." The exact sequence.'),
       h('textarea', { id: 'rc-decision', class: 'ta', onInput: e => { d.decision = e.target.value; refreshGate(); } }, d.decision)),
-    question(5, Q.change, 'rc-change', vagueField('rc-change', 'change', d, refreshGate)),
+    question(5, [Q.change, 'change'], 'rc-change', vagueField('rc-change', 'change', d, refreshGate)),
     h('div', { class: 'ci-go' }, btn, d.error && h('p', { class: 'form-error', role: 'alert' }, errorText(d.error))),
     h('p', { class: 'rc-foot' }, `Your autopsy and fix go into the War Log under Day ${dayNo(state, date)}.`),
   ];

@@ -26,8 +26,8 @@ const oathRow = r => h('div', { class: 'ch-or' },
     h('div', null, h('b', null, r.title), h('span', null, r.done ? 'Written' : 'Not written yet'))),
   helpButton(OATH_HELP[r.key]));
 
-const listRow = (id, title, items) => h('a', { href: '#settings', id, class: 'st ch-row' },
-  h('div', null, h('b', null, title), h('span', null, items.length ? `${items.length} added` : 'None yet')));
+const listRow = (id, title, items, help) => h('div', { class: 'ch-or' }, h('a', { href: '#settings', id, class: 'st ch-row' },
+  h('div', null, h('b', null, title), h('span', null, items.length ? `${items.length} added` : 'None yet'))), helpButton(help));
 
 export function renderDay0(app) {
   const { state } = app;
@@ -57,7 +57,7 @@ export function renderDay0(app) {
       h('div', { class: 'tk-sh' }, sectionHeading('Day 1, your oath')),
       h('div', { class: 'plate list' }, oathRows(state).map(oathRow))),
     h('div', { class: 'plate list ch-setup' },
-      listRow('ch-protocols', 'Protocols', lists.protocols),
-      listRow('ch-redlines', 'Red lines', lists.redLines)),
+      listRow('ch-protocols', 'Protocols', lists.protocols, 'addProtocols'),
+      listRow('ch-redlines', 'Red lines', lists.redLines, 'addRedLines')),
   ];
 }

@@ -76,7 +76,7 @@ export function renderMorning(app) {
     rec && h('a', { href: `#recovery/${rec.date}`, id: 'ci-rec', class: 'plate warn td-link ci-rec' },
       h('div', { class: 'td-chb' }, h('div', { class: 'td-ct' }, 'Recovery due'),
         h('p', { class: 't2 td-cl' }, rec.overdue ? 'Overdue' : timeLeft(rec.msLeft)))),
-    question(1, 'Today\'s #1 target', 'ci-target', field('ci-target', d, 'target')),
+    question(1, ['Today\'s #1 target', 'target'], 'ci-target', field('ci-target', d, 'target')),
     question(2, ['Red line at risk today?', 'risk'], 'ci-risk', field('ci-risk', d, 'risk')),
     medQuestion(state, today, d),
     h('div', { class: 'ci-go' }, start,

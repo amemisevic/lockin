@@ -8,7 +8,7 @@ import { openTasks } from '../core/tasks.js';
 import { tacticsFor } from '../core/pack.js';
 import { openActionSheet } from '../sheet.js';
 import { pushedHeader, sectionHeading, rerender } from '../ui/chrome.js';
-import { segmented, chips, goldButton } from '../ui/controls.js';
+import { segmented, chips, goldButton, helpButton } from '../ui/controls.js';
 import { ARCHETYPES, NIGHT_ERRORS, newDraft, nightRoute, medIds, liveSuggestion, overrideOptions, canClose, nightForm }
   from './checkinNightLogic.js';
 
@@ -34,7 +34,7 @@ const tap = fn => v => { fn(v); rerender(); };
 function tasksSection(state, date, d) {
   const open = openTasks(state, date);
   if (!open.length) return null;
-  return section('Settle your tasks', 'Anything still open has to be resolved before you can close the day.',
+  return section(['Settle your tasks', 'tasks'], 'Anything still open has to be resolved before you can close the day.',
     h('div', { class: 'plate list nt-tasks' }, open.map(({ task }) =>
       q(task.title, task.start ? h('span', { class: 't3' }, task.start) : null,
         segmented({ options: TASK, value: d.tasks[task.id] ?? null, onPick: tap(v => { d.tasks[task.id] = v; }) }),
@@ -43,7 +43,7 @@ function tasksSection(state, date, d) {
 
 function protocolsSection(state, date, d) {
   const med = medIds(state, date);
-  return section('Protocols', null, h('div', { class: 'plate list' }, state.challenge.protocols.map(p => (med.includes(p.id)
+  return section(['Protocols', 'nightProtocols'], null, h('div', { class: 'plate list' }, state.challenge.protocols.map(p => (med.includes(p.id)
     ? q(p.title, null, h('p', { class: 'nt-med' }, 'MED (declared this morning)'))
     : q(p.title, null, segmented({ options: PROTOCOL, value: d.protocols[p.id] ?? null, onPick: tap(v => { d.protocols[p.id] = v; }) }))))));
 }
@@ -51,7 +51,7 @@ function protocolsSection(state, date, d) {
 function redLinesSection(state, d) {
   const lines = state.challenge.redLines;
   const anyCrossed = lines.some(r => d.redLines[r.id] === 'crossed');
-  return section('Red lines', 'Be exact. A crossed line is a Reset by itself.',
+  return section(['Red lines', 'nightRedLines'], 'Be exact. A crossed line is a Reset by itself.',
     h('div', { class: `plate list nt-red${anyCrossed ? ' warn' : ''}` }, lines.map(r =>
       q(r.name, null, segmented({ options: RED, value: d.redLines[r.id] ?? null, onPick: tap(v => { d.redLines[r.id] = v; }) }),
         d.redLines[r.id] === 'crossed' && h('p', { class: 's nt-reset' }, 'This is a Reset.')))));
@@ -79,7 +79,7 @@ function resultSection(state, date, d, refreshGate) {
   const toggle = h('button', { type: 'button', class: 'btn btn-text', onClick: () => { d.overrideOpen = !d.overrideOpen; rerender(); } },
     d.overrideOpen ? 'Cancel override' : 'Override');
   return h('div', { class: 'plate rim nt-res' },
-    h('p', { class: 'eyebrow' }, 'Suggested result'),
+    h('div', { class: 'hlp-row' }, h('p', { class: 'eyebrow' }, 'Suggested result'), helpButton('result')),
     h('p', { class: 'nt-word' }, cap(result)),
     reasons.map(r => h('p', { class: 't2' }, r)),
     toggle,

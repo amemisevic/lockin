@@ -137,10 +137,10 @@ export function renderSettings(app) {
   return [
     eyebrow('Lock In'),
     screenTitle('Settings'),
-    h('section', { class: 'set-sec' }, sectionHeading('Protocols'), h('div', { class: 'plate list' },
+    h('section', { class: 'set-sec' }, sectionHeading('Protocols', 'addProtocols'), h('div', { class: 'plate list' },
       protocols.map(p => navRow(`set-protocol-${p.id}`, p.title, p.med ? 'MED version set' : 'No MED version', () => openProtocolSheet(app, p))),
       addRow('set-add-protocol', 'Add protocol', () => openProtocolSheet(app)))),
-    h('section', { class: 'set-sec' }, sectionHeading('Red lines'), h('div', { class: 'plate list' },
+    h('section', { class: 'set-sec' }, sectionHeading('Red lines', 'addRedLines'), h('div', { class: 'plate list' },
       redLines.map(r => navRow(`set-redline-${r.id}`, r.name, 'Crossing it is a Reset', () => openRedLineSheet(app, r))),
       addRow('set-add-redline', 'Add red line', () => openRedLineSheet(app)))),
     h('section', { class: 'set-sec' }, sectionHeading('Challenge'), h('div', { class: 'plate list' },

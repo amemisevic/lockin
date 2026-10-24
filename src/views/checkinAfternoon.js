@@ -34,7 +34,7 @@ export function renderAfternoon(app) {
   log.id = 'ci-log';
 
   return [
-    pushedHeader({ title: `Afternoon · Day ${dayNo(state, today)}`, onBack: () => history.back() }),
+    pushedHeader({ title: `Afternoon · Day ${dayNo(state, today)}`, onBack: () => history.back(), help: 'afternoon' }),
     question(1, 'Still on track?', null, segmented({ options: TRACK, value: d.onTrack, onPick: v => { d.onTrack = v; rerender(); } })),
     d.onTrack === 'struggling' && question(2, 'What is the friction?', 'ci-friction',
       h('textarea', { id: 'ci-friction', class: 'ta', onInput: e => { d.friction = e.target.value; } }, d.friction)),

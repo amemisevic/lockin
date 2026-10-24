@@ -11,7 +11,7 @@ const row = r => h('a', { href: r.href, class: 'row wl-row' }, h('div', { class:
   h('div', { class: 'rn' }, r.preview)));
 
 export function renderWarLog(app) {
-  return [pushedHeader({ title: 'War Log', onBack: () => history.back() }),
+  return [pushedHeader({ title: 'War Log', onBack: () => history.back(), help: 'warLog' }),
     ...warLogGroups(app.state).flatMap(g => [sectionHeading(g.group), h('div', { class: 'plate list' }, g.rows.map(row))])];
 }
 

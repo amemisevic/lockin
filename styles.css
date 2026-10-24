@@ -181,6 +181,8 @@ button:disabled { opacity: .4; cursor: default; }
 .ch-or:first-child{border-top:0}
 .ch-or .st{flex:1;min-width:0;width:auto;border-top:0}
 .ch-or .help{margin-right:6px}
+.ch-hr{position:relative}
+.ch-hr>.help{position:absolute;top:4px;right:4px}
 .ch-bw{width:100%;display:flex;align-items:center;gap:8px;margin-top:20px}
 .ch-bw .ch-wide{flex:1;width:auto;margin-top:0}
 

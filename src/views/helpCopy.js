@@ -1,4 +1,4 @@
-// Challenge help copy (tasks H1b, H1d), approved in docs/superpowers/plans/help-copy-draft.md and help-terms-draft.md.
+// Challenge help copy (tasks H1b, H1d, H1f), approved in docs/superpowers/plans/help-copy-draft.md, help-terms-draft.md and help-gap-draft.md.
 // Plain text only: ui/controls.js puts it in the action sheet as a text node. name = the entry's heading, used in the "?" aria-label.
 export const HELP = {
   topWin: { name: 'Top G win', text: 'The Top G is the version of you that keeps his word. Write today\'s win in your own words; it does not change the result.' },
@@ -19,4 +19,18 @@ export const HELP = {
   gating: { name: 'Check-in gating', text: 'A day counts only if both Morning and Night are filed; Afternoon is optional and costs nothing. Without a Morning check-in the day cannot be Passed.' },
   begin: { name: 'Begin Day 1', text: 'To begin, write all four oath entries and add at least one protocol and one red line. The line under the button shows what is still missing.' },
   graduation: { name: 'Graduation', text: 'The challenge ends when Day 30 is closed, whatever its result. This version cannot start a new one.' },
+  addProtocols: { name: 'Protocols', text: 'Protocols are the daily commitments you mark Held or Missed each night. Add at least one before you can begin Day 1.' },
+  addRedLines: { name: 'Red lines', text: 'Red lines are things you will not do; crossing one makes the day a Reset, and MED or a declared Redo never covers it. Add at least one before Day 1.' },
+  nightProtocols: { name: 'Night protocols', text: 'Mark each protocol Held or Missed. One you declared as MED this morning shows as MED and cannot be changed tonight.' },
+  nightRedLines: { name: 'Night red lines', text: 'Mark each red line held or crossed, and be exact. One crossed line makes the day a Reset by itself, and it cannot be overridden.' },
+  tasks: { name: 'Settle your tasks', text: 'Every task still open must be marked Done, Failed or Stalled before you can close the day. Stalled counts for nothing and against nothing.' },
+  result: { name: 'Suggested result', text: 'The app suggests Passed, Redo or Reset from your answers and lists the reasons. You can override it with a written reason saved on the day; a crossed red line cannot be overridden.' },
+  declaredRedo: { name: 'Declared Redo', text: 'You get one declared Redo per challenge, for today only and before the day closes. It makes today a Redo, which ends your streak and makes tomorrow a forced full pass; a red line is never covered.' },
+  mission: { name: 'Mission', text: 'Each day has one mission from the pack you imported in Settings. The button opens your War Log entry for that day.' },
+  target: { name: 'Today\'s #1 target', text: 'Write the one target that matters most today. It is required to start the day.' },
+  afternoon: { name: 'Afternoon check-in', text: 'Afternoon is optional and costs nothing if you skip it. Tasks shown here stay provisional until you close the day tonight.' },
+  recoveryProtocol: { name: 'Recovery Protocol', text: 'The Recovery Protocol is the autopsy you file after a Reset: how it happened, and one change that breaks the chain. It has five short questions.' },
+  change: { name: 'Concrete change', text: 'A specific change that breaks the chain: something you will block, delete or move. A vague answer gets a warning.' },
+  warLog: { name: 'War Log', text: 'The War Log holds your four oath entries, your autopsies and one entry per mission day. You can edit oath and Day entries; autopsies are read-only.' },
+  strip: { name: '30-day strip', text: 'Each square is one day of the 30: marked Passed, Redo or Reset once closed, with today outlined and later days dim. A bronze ring on today means a declared Redo.' },
 };

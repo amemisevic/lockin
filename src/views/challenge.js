@@ -66,7 +66,7 @@ export const legendItem = (kind, label, count) => h('span', { class: 'lg' },
   h('i', { class: CELL[kind], 'aria-hidden': 'true' }, GLYPH[kind]()), `${label} ${count}`);
 
 function hero(state, n, cells, counts, dr) {
-  return h('div', { class: 'plate rim ch-hero' }, dayMark(n, state.challenge.length),
+  return h('div', { class: 'plate rim ch-hero ch-hr' }, dayMark(n, state.challenge.length), helpButton('strip'),
     h('div', { class: 'ch-strip' }, cells.map(c => cell(c, dr))),
     h('div', { class: 'ch-lgs' },
       legendItem('passed', 'Passed', counts.passed), legendItem('redo', 'Redo', counts.redo),
@@ -88,7 +88,7 @@ function missionPlate(app, m, hasPack) {
     // A pack without this day's mission (or n = 0 before the start) shows only the War Log button.
     body = [!hasPack && h('p', { class: 't2 ch-mb' }, 'Import a pack in Settings'), h('div', { class: 'ch-acts' }, warLog)];
   }
-  return h('section', null, secHead('Today\'s mission', m.n >= 1 && `Day ${m.n}`), h('div', { class: 'plate ch-mp' }, body));
+  return h('section', null, secHead(['Today\'s mission', 'mission'], m.n >= 1 && `Day ${m.n}`), h('div', { class: 'plate ch-mp' }, body));
 }
 
 // R11: today is captured when the sheet opens; confirm re-checks it against Date.now().
@@ -108,7 +108,7 @@ function redoPlate(app, st) {
     : [h('span', { class: 't2' }, '1 left of 1'),
       h('button', { type: 'button', id: 'ch-redo', class: 'btn ch-rd-btn', disabled: st.kind === 'closed',
         onClick: () => openRedo(app) }, 'Declare')];
-  return h('div', { class: 'plate ch-rd' }, eyebrow('Declared Redo'), h('div', { class: 'ch-rdr' }, row));
+  return h('div', { class: 'plate ch-rd' }, h('div', { class: 'hlp-row' }, eyebrow('Declared Redo'), helpButton('declaredRedo')), h('div', { class: 'ch-rdr' }, row));
 }
 
 const slots = (title, right, names) => h('section', null, secHead(title, right),
@@ -134,6 +134,6 @@ export function renderChallenge(app) {
     missionPlate(app, missionInfo(state, today), !!state.pack),
     redoPlate(app, redoStatus(state, today)),
     slots(['Protocols', 'protocol'], null, state.challenge.protocols.map(p => p.title)),
-    slots('Red lines', 'crossing one = Reset', state.challenge.redLines.map(r => r.name)),
+    slots(['Red lines', 'addRedLines'], 'crossing one = Reset', state.challenge.redLines.map(r => r.name)),
   ];
 }
