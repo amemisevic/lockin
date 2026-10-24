@@ -1245,3 +1245,18 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`; results in STATUS.md.
 - Ambiguity and choice: none.
 - Next: owner iPhone check (close and reopen the Home Screen app twice), then Task 21 step 5.
+
+## T21-5a: Task 21 step 4b-1, accessibility group, branch `help`
+
+- Commits (not pushed, no VERSION bump, no `src/core` change, no frozen test edited): `fix(T10-1)`, `fix(T10-2)`, `fix(T10-5)`, `fix(T16-1)`, `fix(T9-1)`, `fix(T11-1)`, `test(S3c)`, then `docs(T21-5a)`; hashes in `git log`.
+- Precheck: HEAD `82d854c`, `npm test` 1289 tests, 1288 pass, 0 fail, 1 skipped (exit 0). After: 1312 tests (23 new, in 8 new `tests/a11y-*.test.js` files), 1311 pass, 0 fail, 1 skipped (exit 0). Each fix had its test red first (the S3c proof was green at once: no code change needed).
+- T10-1: `shieldToggle` takes an `id`; open / failed / stalled get a hidden span `${id}-st` named by `aria-describedby`. Done keeps `aria-pressed=true` only.
+- T10-2 (+ T11 m5): the existing mechanism is app.js `render()` restoring focus by id. Added ids: shield `sh-<task id>`, ⋯ `mo-<task id>`, chip / segmented buttons `${id}-${n}` (Night, Recovery, Afternoon, Analytics range), help "?" `help-<key>`. No new restore code.
+- T10-5: `chips` / `segmented` take `label` (group aria-label); a source-scan test fails if a call site in `src/views` has none (Gym and the task sheet name theirs with setAttribute).
+- T16-1: `sectionHeading(text, help, id)`; the Top G win and Slipped textareas use `aria-labelledby` the heading and `aria-describedby` their helper label (`for=` kept).
+- T9-1: `src/focus.js` (added to sw.js ASSETS). A `hashchange` with a new `location.hash` focuses the screen's h1 (`tabindex=-1`, ring hidden by one rule in styles.css); the same hash (re-render request) does not. It is a separate listener, not inside `render()`: the frozen `tests/app-render-guard.test.js` cuts `render()` out and runs it with a fixed set of stubs, so a new identifier there breaks it.
+- T11-1: `src/ui/live.js` (in sw.js ASSETS): one `role=alert` region in `<body>`, `.live` visually hidden in styles.css. Morning uses it; its drawn error has no role. SKIPPED Night and Recovery: frozen `tests/checkin-night-flow.test.js:198` and `tests/recovery-view.test.js:205` find a `role=alert` node in the render. Not changed.
+- S3c: `tests/a11y-sheet-focus.test.js` proves refocus for the action sheet (Cancel, item, Close) and bottom sheet (Cancel, action), also when a re-render replaced the opener.
+- Browser pane (http://localhost:5190, static server, then stopped): route change, Back and 10 routes put focus on the h1 (no outline); a seeded task showed the shield description "Open", focus back on the shield after a tap and on ⋯ after the sheet closed. Seed cleared. `gym/workout` with no workout has no h1 (focus stays on body). Not run: iPhone, VoiceOver.
+- Ambiguities and choices: heading-focus lives outside `render()` (above). The live-region helper tolerates a DOM with no `body` or `replaceChildren` (older view test fakes), as `motion.js` does for clone. Help ids assume one "?" per key per screen.
+- Next: owner rulings on Night / Recovery (T11-1), VoiceOver checks, then Task 21 step 4b-2 (CSS / markup group).
