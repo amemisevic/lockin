@@ -42,8 +42,11 @@ const EXPECTED = {
   strip: ['30-day strip', 'Each square is one day of the 30: marked Passed, Redo or Reset once closed, with today outlined and later days dim. A bronze ring on today means a declared Redo.'],
 };
 
-test('HELP holds exactly the 32 approved entries (H1b/H1d 18, H1f gaps G1 to G14)', () => {
-  assert.deepEqual(Object.keys(HELP).sort(), Object.keys(EXPECTED).sort());
+// H1b-S: the 9 Settings entries are checked against their draft in help-settings.test.js; only the key set is counted here.
+const SETTINGS_KEYS = ['zeroDay', 'medPerWeek', 'startDate', 'packImport', 'medVersion', 'deleteItem', 'gymTarget', 'exportBackup', 'importBackup'];
+
+test('HELP holds exactly the 41 approved entries (H1b/H1d 18, H1f gaps 14, H1b-S Settings 9)', () => {
+  assert.deepEqual(Object.keys(HELP).sort(), [...Object.keys(EXPECTED), ...SETTINGS_KEYS].sort());
   for (const [key, [name, text]] of Object.entries(EXPECTED)) assert.deepEqual(HELP[key], { name, text }, key);
 });
 

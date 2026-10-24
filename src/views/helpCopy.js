@@ -1,4 +1,4 @@
-// Challenge help copy (tasks H1b, H1d, H1f), approved in docs/superpowers/plans/help-copy-draft.md, help-terms-draft.md and help-gap-draft.md.
+// Help copy (tasks H1b, H1d, H1f, H1b-S), approved in docs/superpowers/plans/help-copy-draft.md, help-terms-draft.md, help-gap-draft.md and help-copy-settings-draft.md.
 // Plain text only: ui/controls.js puts it in the action sheet as a text node. name = the entry's heading, used in the "?" aria-label.
 export const HELP = {
   topWin: { name: 'Top G win', text: 'The Top G is the version of you that keeps his word. Write today\'s win in your own words; it does not change the result.' },
@@ -33,4 +33,14 @@ export const HELP = {
   change: { name: 'Concrete change', text: 'A specific change that breaks the chain: something you will block, delete or move. A vague answer gets a warning.' },
   warLog: { name: 'War Log', text: 'The War Log holds your four oath entries, your autopsies and one entry per mission day. You can edit oath and Day entries; autopsies are read-only.' },
   strip: { name: '30-day strip', text: 'Each square is one day of the 30: marked Passed, Redo or Reset once closed, with today outlined and later days dim. A bronze ring on today means a declared Redo.' },
+  // H1b-S: Settings, approved in docs/superpowers/plans/help-copy-settings-draft.md (entries 1 to 9).
+  zeroDay: { name: 'Zero Day threshold', text: 'Missing this many protocols in one day makes it a Reset. Choose 2 to 5 (default 3); days you already closed do not change.' },
+  medPerWeek: { name: 'MED per week', text: 'MED is Minimum Effective Dose: a shorter fallback version of a protocol for a bad day. Each protocol you declare uses one slot in a Monday to Sunday week; choose 0 to 3 slots (default 2).' },
+  startDate: { name: 'Day 1 date', text: 'The day your 30 days count from. You can change it only until the first day is closed.' },
+  packImport: { name: 'Challenge pack', text: 'A pack is a file with your daily missions for Day 1 to 30 and, optionally, Bottom G tactics. It is the only way they get into the app, and importing replaces the current pack.' },
+  medVersion: { name: 'MED version', text: 'A shorter version of this protocol that you may declare in the morning, using one of your weekly MED slots. A protocol with no MED version cannot be declared.' },
+  deleteItem: { name: 'Delete', text: 'Delete removes it from your list. Days you already closed keep the name they were filed with.' },
+  gymTarget: { name: 'Weekly gym target', text: 'Your goal for gym visits each week, from 1 to 7 (default 4). The Gym tab compares each week with it, with no streak and no penalty; switched off, it shows nowhere.' },
+  exportBackup: { name: 'Export backup', text: 'Saves all your data, gym included, as one file through the share sheet, or downloads it if sharing is not available. Last backup updates only after the file is shared or downloaded.' },
+  importBackup: { name: 'Import backup', text: 'Choosing a backup file replaces the data in the app with the file\'s, after you confirm. A file that is not a Lock In v2 backup, or is damaged, is refused and nothing changes.' },
 };

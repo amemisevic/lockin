@@ -2,13 +2,17 @@
 // a plain form object, validation and writes from settingsLogic.js, dirty-cancel from sheet.js. Text nodes only.
 import { h } from '../dom.js';
 import { openSheet, openActionSheet } from '../sheet.js';
+import { helpButton } from '../ui/controls.js';
 import * as L from './settingsLogic.js';
 
 export const confirmSheet = (message, onYes, action) =>
   openActionSheet([{ label: action, destructive: true, onSelect: onYes }], { message });
 
-const field = (name, control, hint) => h('label', { class: 'fld' }, h('span', { class: 'fld-l' }, name), control,
-  hint && h('span', { class: 'footnote' }, hint));
+// With a help key the name is a <label for> beside the "?" (a button inside the <label> would take the input's place).
+const field = (name, control, hint, help) => help
+  ? h('div', { class: 'fld' }, h('div', { class: 'hlp-row' }, h('label', { class: 'fld-l', for: control.id }, name), helpButton(help)), control,
+    hint && h('span', { class: 'footnote' }, hint))
+  : h('label', { class: 'fld' }, h('span', { class: 'fld-l' }, name), control, hint && h('span', { class: 'footnote' }, hint));
 
 // One sheet for both lists. spec: { title, fields: [{key, label, hint?, required}], save(state, form, id), drop(state, id), noun }.
 function openListSheet(app, item, spec) {
@@ -17,8 +21,8 @@ function openListSheet(app, item, spec) {
   const start = JSON.stringify(f);
   const error = h('p', { class: 'form-error', role: 'status' });
   let sheet = null;
-  const inputs = spec.fields.map(x => field(x.label, h('input', { class: 'in', type: 'text', value: f[x.key], autocomplete: 'off',
-    enterkeyhint: 'done', onInput: e => { f[x.key] = e.target.value; update(); } }), x.hint));
+  const inputs = spec.fields.map(x => field(x.label, h('input', { id: x.help && `sheet-${x.key}`, class: 'in', type: 'text', value: f[x.key], autocomplete: 'off',
+    enterkeyhint: 'done', onInput: e => { f[x.key] = e.target.value; update(); } }), x.hint, x.help));
   const problem = () => { const r = spec.save(app.state, f, item?.id ?? null); return r.ok ? null : r.error; };
   function update() {
     const err = problem();
@@ -36,7 +40,7 @@ function openListSheet(app, item, spec) {
     { message: app.state.challenge ? 'Finished days keep the name they were filed with.' : `Delete this ${spec.noun}?` }) }, `Delete ${spec.noun}`);
   sheet = openSheet({
     title: edit ? spec.edit : spec.add, action: edit ? 'Done' : 'Add',
-    content: h('div', { class: 'form' }, inputs, edit && del, error),
+    content: h('div', { class: 'form' }, inputs, edit && h('div', { class: 'hlp-row set-dr' }, del, helpButton('deleteItem')), error),
     isDirty: () => JSON.stringify(f) !== start,
     onAction: () => {
       const r = spec.save(app.state, f, item?.id ?? null);
@@ -50,7 +54,7 @@ function openListSheet(app, item, spec) {
 export const openProtocolSheet = (app, protocol) => openListSheet(app, protocol, {
   add: 'New Protocol', edit: 'Edit Protocol', noun: 'protocol',
   fields: [{ key: 'title', label: 'Title' },
-    { key: 'med', label: 'MED version (optional)', hint: 'A shorter version you may declare once in the morning. Leave empty for none.' }],
+    { key: 'med', label: 'MED version (optional)', help: 'medVersion', hint: 'A shorter version you may declare once in the morning. Leave empty for none.' }],
   save: (s, f, id) => L.saveProtocol(s, f, id), drop: L.deleteProtocol,
 });
 

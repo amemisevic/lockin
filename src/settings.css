@@ -19,5 +19,6 @@
 .set-sec>.plate.warn{margin-top:12px;padding:14px 16px}
 .set-foot{margin:12px 8px 0;font-size:13px;line-height:18px}
 .set-del{margin-top:4px;color:var(--crimson-lt)}
+.set-dr>.set-del{flex:1;margin-top:0}
 .set-steps{margin:0;padding-left:20px;color:var(--text-2);display:grid;gap:6px}
 .set-rem-text{margin:2px 0 0;color:var(--text-2);font-size:13px;line-height:17px;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
