@@ -1,7 +1,7 @@
 // Challenge tab (plan Task 13 steps 2-3, rulings R6-R13): active screen and graduation. Layout = static/Challenge.html.
 // Date.now() and app.today() are read only in renderChallenge and when the Redo sheet opens / confirms.
 import { h } from '../dom.js';
-import { icon } from '../icons.js';
+import { icon, torch } from '../icons.js';
 import { openActionSheet } from '../sheet.js';
 import { dayNo } from '../core/challenge.js';
 import { currentStreak } from '../core/scoring.js';
@@ -26,21 +26,10 @@ function redoGlyph() {
 }
 const GLYPH = { passed: () => icon('check'), reset: () => icon('xmark'), redo: redoGlyph };
 
-// Torch (board streak pill): flame + stand, styled by Today's .td-torch rules (no new colours).
-function torch() {
-  const svg = icon('plus');
-  for (const [k, v] of [['viewBox', '0 0 10 16'], ['width', 9], ['height', 15], ['class', 'td-torch']]) svg.setAttribute(k, v);
-  const p = svg.querySelector('path'), stand = p.cloneNode();
-  p.setAttribute('d', 'M5 0l2 9H3z');
-  stand.setAttribute('d', 'M1 9.5h8M5 9.5V15');
-  svg.append(stand);
-  return svg;
-}
-
 function header(streak) {
   return h('div', { class: 'ch-hd' },
     h('div', null, eyebrow('PM Challenge'), screenTitle('Challenge')),
-    streak >= 1 && h('div', { class: 'hlp-row' }, h('div', { class: 'ch-pill' }, torch(), h('span', null, `${streak}-day streak`)), helpButton('streak')));
+    streak >= 1 && h('div', { class: 'hlp-row' }, h('div', { class: 'ch-pill' }, torch(true), h('span', null, `${streak}-day streak`)), helpButton('streak')));
 }
 
 function laurel() {

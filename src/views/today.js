@@ -2,7 +2,7 @@
 // Layout = static/Main.html; cards come from todayLogic.js. Uses Date.now() and app.today() only, never the
 // Tasks tab's view date (m7). No timer of its own: app.js re-renders on state change and on its 30 s tick.
 import { h } from '../dom.js';
-import { icon } from '../icons.js';
+import { icon, redraw, torch } from '../icons.js';
 import { tasksOn } from '../core/tasks.js';
 import { NIGHT_FROM, dayNo, phase } from '../core/challenge.js';
 import { NIGHT_TEXT, currentStreak } from '../core/scoring.js';
@@ -16,19 +16,7 @@ import { todayCards, timeLeft, nightLineVisible, medLine } from './todayLogic.js
 // Afternoon "Not now" (ruling R6): in memory only, for one date, never saved.
 let dismissedOn = null;
 
-// An icon redrawn as one of the board's inline SVGs (stroke style from screens.css). Extra paths are clones.
-function redraw(name, cls, [vw, vh, w, ht], ...ds) {
-  const svg = icon(name);
-  for (const [k, v] of [['viewBox', `0 0 ${vw} ${vh}`], ['width', w], ['height', ht]]) svg.setAttribute(k, v);
-  svg.setAttribute('class', cls);
-  const p = svg.querySelector('path');
-  ds.slice(1).forEach(() => svg.append(p.cloneNode()));
-  svg.querySelectorAll('path').forEach((x, i) => x.setAttribute('d', ds[i]));
-  return svg;
-}
 const chevron = () => redraw('chevronRight', 'td-chev', [9, 16, 9, 16], 'M1.5 1.5 7.5 8l-6 6.5');
-// Torch (static/Main.html): flame + stand; lit = filled gold flame, unlit = outline (shape, not colour only).
-const torch = lit => redraw('plus', lit ? 'td-torch' : 'td-torch off', [10, 16, 9, 15], 'M5 0l2 9H3z', 'M1 9.5h8M5 9.5V15');
 
 // Board hero watermark: the shield, 150 px at 7 %.
 function watermark() {

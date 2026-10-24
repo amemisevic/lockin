@@ -58,3 +58,16 @@ export function icon(name) {
   }
   return el;
 }
+
+// An icon redrawn as one of the board's inline SVGs (stroke style from screens.css). Extra paths are clones.
+export function redraw(name, cls, [vw, vh, w, ht], ...ds) {
+  const svg = icon(name);
+  for (const [k, v] of [['viewBox', `0 0 ${vw} ${vh}`], ['width', w], ['height', ht]]) svg.setAttribute(k, v);
+  svg.setAttribute('class', cls);
+  const p = svg.querySelector('path');
+  ds.slice(1).forEach(() => svg.append(p.cloneNode()));
+  svg.querySelectorAll('path').forEach((x, i) => x.setAttribute('d', ds[i]));
+  return svg;
+}
+// Torch (static/Main.html): flame + stand; lit = filled gold flame, unlit = outline (shape, not colour only).
+export const torch = lit => redraw('plus', lit ? 'td-torch' : 'td-torch off', [10, 16, 9, 15], 'M5 0l2 9H3z', 'M1 9.5h8M5 9.5V15');
