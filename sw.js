@@ -1,5 +1,5 @@
 // Offline cache (plan Task 20). Any change to a shipped file bumps VERSION here and in src/version.js.
-const VERSION = '2.4.1';
+const VERSION = '2.5.0';
 const CACHE = `lockin-${VERSION}`;
 const ASSETS = [
   './',

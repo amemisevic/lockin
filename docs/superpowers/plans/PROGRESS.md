@@ -1189,3 +1189,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Tests: new `tests/help-settings.test.js` (7: text parsed from the draft file, Settings page set, row placements, no button-in-button, both sheets, tap opens text + Close). Two existing help tests had to change because they assert an exact set that this task enlarges: `help-copy.test.js` (exactly 32 entries, now 41) and `help-buttons.test.js` (Settings labels, now 9). No assertion weakened.
 - Browser pane, 375 and 440 wide, no challenge and a started challenge (Day 1 date editable): 9 buttons, all 44 x 44, none past the right edge, `scrollWidth` equals the viewport. Protocol edit sheet: MED version and Delete buttons open their text and Close, the edit sheet stays open. Row heights grow (Zero Day threshold 113 px at 375 as its label wraps). Not run: iPhone, Reduce Motion, red line sheet in the browser (node test only).
 - Next: owner iPhone check of Settings, then the release task.
+
+## H1c-S: release v2.5.0 (Settings help buttons), branch `help`
+
+- Commit: `release: v2.5.0 settings help` (hash in `git log`). VERSION 2.4.1 to 2.5.0 in `sw.js` and `src/version.js` only; ROADMAP.md Live line is v2.5.0. No other changes.
+- Precheck: HEAD `e469419`, origin/main is an ancestor (fast-forward), `npm test` 1257 pass, 0 fail (exit 0). After the bump: 1257 pass, 0 fail.
+- Already logged above, unchanged: DR3 (`tests/day-review-sim.test.js`, simulated data) and the dead `.td-med` CSS in `screens.css`, kept because frozen `tests/contrast-today.test.js` asserts those rules.
+- Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`.
+- Next: owner closes and reopens the Home Screen app twice, then checks the Settings help buttons on the iPhone.
