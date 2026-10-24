@@ -18,7 +18,7 @@ Review pass: entries reworded to the Challenge tone and length. Owner rulings ap
 ## 3. Day 1 date
 - "?": Settings, Challenge section, row `Day 1` (`The day the 30 days count from`).
 - name: `Day 1 date`
-- text: "The day your 30 days count from. You can change it only until the first day is closed."
+- text: "The day your 30 days count from."
 - Source: PLAN Task 19 step 1 ("editable only while no day is closed, otherwise read-only"); PLAN Calls ("Day 1 date locked after the first closed day"). Code also refuses a future date and a move that leaves a filed day outside the 30 days; PLAN does not say so, so the text does not.
 
 ## 4. Challenge pack (import)

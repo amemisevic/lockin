@@ -11,7 +11,7 @@ import { exportJson } from '../src/core/store.js';
 // - h2.sec headings in order Protocols, Red lines, Challenge, Gym (G13), Reminders, Data.
 // - protocol / red line rows are buttons (id set-protocol-<id> / set-redline-<id>); 'Add protocol' / 'Add red line' buttons.
 // - steppers (ui/controls.js) with group aria-label 'Zero Day threshold' and 'MED per week'.
-// - Day 1: an <input type=date id=set-start> while editable, plain text (no input) once a day is closed.
+// - Day 1: a plain text row (no input) before and after the start (T21-4, owner ruling 2026-10-24).
 // - a refusal shows its exact sentence in a .plate.warn with role=alert; nothing else changes and app.set is never called.
 const TODAY = '2026-10-14';
 const P = { id: 'p1', title: 'Protocol A', med: null };
@@ -50,29 +50,10 @@ test('steppers change the settings through app.set within the core bounds', () =
   assert.ok(more.getAttribute('disabled') !== null && fewer.getAttribute('disabled') !== null);
 });
 
-test('Day 1 date is an input while no day is closed and plain text afterwards', () => {
+test('Day 1 is a plain text row, no input, once started', () => {
   const out = renderSettings(mkApp(live()));
-  const input = all(out).find(n => n.id === 'set-start');
-  assert.equal(input.getAttribute('type'), 'date');
-  assert.equal(input.getAttribute('value'), '2026-10-12');
-  const s = live();
-  const closed = { ...s, days: { '2026-10-12': { morning: null, afternoon: null, declaredRedo: false, slipNote: '', incompleteMorning: false,
-    auto: null, night: null, result: 'redo', closedAt: 5 } } };
-  const out2 = renderSettings(mkApp(closed));
-  assert.equal(all(out2).some(n => n.id === 'set-start'), false);
-  assert.ok(texts(out2).some(t => t.includes('12 Oct')));
-});
-
-test('changing Day 1 into an orphaning date shows the refusal and keeps the state', () => {
-  const s = live();
-  const filed = { ...s, days: { '2026-10-12': { morning: { at: 1, target: 't', risk: '', med: [] }, afternoon: null, declaredRedo: false,
-    slipNote: '', incompleteMorning: false, auto: null, night: null, result: null, closedAt: null } } };
-  const app = mkApp(filed);
-  const input = all(renderSettings(app)).find(n => n.id === 'set-start');
-  fire(input, 'change', { target: { value: '2026-10-13' } });
-  assert.equal(app.state, filed);
-  const out = renderSettings(app);
-  assert.deepEqual(alerts(out), ['Day 1 cannot move there: a day you already filed would fall outside the 30 days.']);
+  assert.equal(all(out).some(n => n.id === 'set-start' || n.tagName === 'INPUT' && n.getAttribute('type') === 'date'), false);
+  assert.ok(texts(out).some(t => t.includes('12 Oct')));
 });
 
 test('import backup: every refusal shows the exact sentence, never opens the confirm, never calls app.set', async () => {
@@ -193,19 +174,6 @@ test('only the latest refusal is on screen, whichever list it came from', async 
   assert.deepEqual(alerts(renderSettings(app)), ['The file is empty.']);
   await importPackFile(app, file(JSON.stringify({ v: 1, missions: [], tactics: [] })), () => {});
   assert.deepEqual(alerts(renderSettings(app)), []);
-});
-
-test('changing Day 1 back to a day that already ended is refused with the sentence, state untouched', () => {
-  const app = mkApp(live());
-  fire(all(renderSettings(app)).find(n => n.id === 'set-start'), 'change', { target: { value: '2026-09-01' } });
-  assert.equal(app.sets.length, 0);
-  assert.deepEqual(alerts(renderSettings(app)), ['Day 1 cannot move back to a day that has already ended.']);
-});
-
-test('the Day 1 input has a lower bound of yesterday and an upper bound of today', () => {
-  const input = all(renderSettings(mkApp(live()))).find(n => n.id === 'set-start');
-  assert.equal(input.getAttribute('min'), '2026-10-13');
-  assert.equal(input.getAttribute('max'), TODAY);
 });
 
 test('a refusal is announced once: later renders keep the text but not role=alert', async () => {

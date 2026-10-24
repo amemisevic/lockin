@@ -36,7 +36,7 @@ export const HELP = {
   // H1b-S: Settings, approved in docs/superpowers/plans/help-copy-settings-draft.md (entries 1 to 9).
   zeroDay: { name: 'Zero Day threshold', text: 'Missing this many protocols in one day makes it a Reset. Choose 2 to 5 (default 3); days you already closed do not change.' },
   medPerWeek: { name: 'MED per week', text: 'MED is Minimum Effective Dose: a shorter fallback version of a protocol for a bad day. Each protocol you declare uses one slot in a Monday to Sunday week; choose 0 to 3 slots (default 2).' },
-  startDate: { name: 'Day 1 date', text: 'The day your 30 days count from. You can change it only until the first day is closed.' },
+  startDate: { name: 'Day 1 date', text: 'The day your 30 days count from.' },
   packImport: { name: 'Challenge pack', text: 'A pack is a file with your daily missions for Day 1 to 30 and, optionally, Bottom G tactics. It is the only way they get into the app, and importing replaces the current pack.' },
   medVersion: { name: 'MED version', text: 'A shorter version of this protocol that you may declare in the morning, using one of your weekly MED slots. A protocol with no MED version cannot be declared.' },
   deleteItem: { name: 'Delete', text: 'Delete removes it from your list. Days you already closed keep the name they were filed with.' },

@@ -36,6 +36,7 @@ function put(state, key, item, id, label) {
 // Delete only edits the live list: finished days keep their night.protocols / night.redLines snapshots.
 function drop(state, key, id, label) {
   const list = lists(state)[key];
+  if (!list.some(x => x.id === id)) return yes(state); // unknown id: same state, so app.set does not save
   if (state.challenge && list.length === 1 && list[0].id === id) return no(`A challenge needs at least one ${label}.`);
   return yes(write(state, { [key]: list.filter(x => x.id !== id) }));
 }

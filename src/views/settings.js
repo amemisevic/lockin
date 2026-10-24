@@ -1,6 +1,6 @@
 // Settings tab (plan Task 19). Layout = static/Settings.html; state changes = settingsLogic.js; sheets = settingsSheets.js.
 // The board's per-protocol pause switch is not built: the data model has no paused flag (owner ruling pending).
-// The latest refusal (date, pack or backup) is module memory shown in an alert plate while the state is the one it was made on
+// The latest refusal (pack or backup) is module memory shown in an alert plate while the state is the one it was made on
 // (any change to it, or the next attempt, removes the plate); never saved.
 import { h } from '../dom.js';
 import { icon } from '../icons.js';
@@ -9,12 +9,11 @@ import { stepper, switchControl, helpButton } from '../ui/controls.js';
 import { validateImport, markBackup } from '../core/store.js';
 import { WEEKLY_TARGET, weeklyTarget, setWeeklyTarget, setWeeklyTargetOn } from '../core/gym.js';
 import { validatePack, importPack } from '../core/pack.js';
-import { addDays } from '../logic.js';
 import { dayLabel } from './tasksLogic.js';
 import * as L from './settingsLogic.js';
 import { openProtocolSheet, openRedLineSheet, openRemindersSheet, confirmSheet } from './settingsSheets.js';
 
-let refusal = null; // { key: 'start' | 'pack' | 'backup', text, state, announced }
+let refusal = null; // { key: 'pack' | 'backup', text, state, announced }
 // Leaving Settings drops the refusal (registered before app.js's own listener, so it runs before the re-render).
 window.addEventListener('hashchange', () => { if (location.hash !== '#settings') refusal = null; });
 const fail = (app, key, text) => { refusal = { key, text, state: app.state, announced: false }; rerender(); };
@@ -85,20 +84,9 @@ function pickFile(id, onFile) {
 }
 
 function startRow(app) {
-  const { state } = app;
-  const sub = 'The day the 30 days count from';
-  if (!state.challenge) return row(label('Day 1', sub), helpButton('startDate'), h('span', { class: 't2' }, 'Starts when you begin'));
-  const date = state.challenge.startDate;
-  if (!L.startEditable(state)) return row(label('Day 1', sub), helpButton('startDate'), h('span', { class: 't2' }, dayLabel(date)));
-  const input = h('input', { type: 'date', id: 'set-start', class: 'in set-date', value: date, min: addDays(app.today(), -1), max: app.today(), 'aria-label': 'Day 1 date',
-    onChange: e => {
-      const r = L.setStartDate(app.state, app.today(), e.target.value, Date.now());
-      if (!r.ok) return fail(app, 'start', r.error);
-      refusal = null;
-      app.set(() => r.state);
-      rerender(); // the same state does not re-render by itself; this also clears a shown refusal
-    } });
-  return row(label('Day 1', sub), helpButton('startDate'), input);
+  const { challenge } = app.state;
+  return row(label('Day 1', 'The day the 30 days count from'), helpButton('startDate'),
+    h('span', { class: 't2' }, challenge ? dayLabel(challenge.startDate) : 'Starts when you begin'));
 }
 
 const stepRow = (app, key, title, sub) => { // key doubles as the help key
@@ -151,7 +139,7 @@ export function renderSettings(app) {
       stepRow(app, 'medPerWeek', 'MED per week', 'Declared in the morning only'),
       row(label('Challenge pack', L.packSummary(state)), helpButton('packImport'),
         h('button', { type: 'button', id: 'set-pack', class: 'set-link gt', 'aria-label': state.pack ? 'Re-import pack' : 'Import pack',
-          onClick: () => pickFile('set-pack-file', f => importPackFile(app, f)) }, state.pack ? 'Re-import' : 'Import pack'))), alertPlate(app, 'start'), alertPlate(app, 'pack')),
+          onClick: () => pickFile('set-pack-file', f => importPackFile(app, f)) }, state.pack ? 'Re-import' : 'Import pack'))), alertPlate(app, 'pack')),
     gymSection(app),
     h('section', { class: 'set-sec' }, sectionHeading('Reminders'), h('div', { class: 'plate list' },
       navRow('set-reminders', 'Set up reminders', 'Morning, afternoon and night, through Shortcuts', openRemindersSheet))),

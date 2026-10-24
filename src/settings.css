@@ -13,7 +13,6 @@
 .set-btn.gt svg{flex:none;width:16px;height:16px}
 .set-chev{flex:none;width:18px;height:18px;color:var(--text-3)}
 .set-link{flex:none;min-width:44px;min-height:44px;padding:0 4px;font-size:16px}
-.set-date{flex:none;width:auto;max-width:11.5rem;height:44px;font-size:16px;padding:0 10px}
 .set-overdue{color:var(--crimson-lt)!important;font-weight:600}
 .set-err{margin:0;color:var(--crimson-lt);font-weight:700;overflow-wrap:anywhere}
 .set-sec>.plate.warn{margin-top:12px;padding:14px 16px}

@@ -1223,3 +1223,17 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Commit: `docs(T21-3): review rulings` (hash in `git log`). Docs only, not pushed; no `src/`, test or VERSION change, so no test run (last precheck 1289 tests, 1288 pass, 0 fail, 1 skipped, exit 0).
 - Rulings from Armin (2026-10-24), recorded beside the rows in `docs/backlog.md`: S1-01 keep as is (archived tasks stay never due; known limit, a fix needs an `archivedOn` field, core + frozen test, not planned): CLOSED. S1-08 Day review owner-approved (read-only, option A): CLOSED. S1-03 stays open in ROADMAP.
 - Next: Task 21 step 4 (Day 1 read-only text row).
+
+## T21-4: Task 21 step 4a, Day 1 read-only row, branch `help`
+
+- Commit: `feat(T21-4): day 1 read-only row` (hash in `git log`). Not pushed. No VERSION bump, no `src/core` change.
+- Precheck: HEAD `951c7b2`, `npm test` 1289 tests, 1288 pass, 0 fail, 1 skipped (exit 0). After: 1289 tests (3 new, 3 deleted), 1288 pass, 0 fail, 1 skipped (exit 0).
+- Stop first, then ruling: removing the input broke 4 frozen tests in `tests/settings-view.test.js`. Armin ruled 2026-10-24: delete the three input/refusal tests (orphan refusal, ended-day refusal, min/max), rewrite the fourth as "Day 1 is a plain text row, no input, once started", update the header comment. No other frozen test edited. The "Settings is the only place to set Day 1" stop did not apply: before Begin Day 1 the row already read "Starts when you begin".
+- Settings: `startRow` is now one read-only `.sr` row (label, "?", text: long date, or "Starts when you begin"). No chevron, no tap. Removed the input, `onChange`, min/max, the `'start'` refusal key and its alert plate, the `addDays` import and the `.set-date` CSS rule.
+- `setStartDate` and `startEditable` (settingsLogic.js): `tests/settingsLogic.test.js` imports both, so they stay as dead code in `src/` (not called by any view now).
+- Help entry 3: text is now "The day your 30 days count from." in `help-copy-settings-draft.md` and `helpCopy.js`. The help tests read the draft file, so no help test needed an edit.
+- T19-3: failing-first `tests/settings-delete-unknown.test.js` (2 red, 1 green), then `drop` in `settingsLogic.js` returns the same state for an unknown id, so `app.set` skips the save.
+- Backlog: T19-1, T19-3, T19-4 closed in `docs/backlog.md`.
+- Browser pane 440x956, seeded started challenge: row reads "Saturday 24 October" on one line, 0 inputs or buttons besides "?" (44 x 44), `scrollWidth` 440. Not run: iPhone, 375 width. Seed cleared afterwards.
+- Side effect (ruled): after Begin Day 1 the date cannot be moved back one day.
+- Next: Task 21 step 5 per the plan.
