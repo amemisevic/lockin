@@ -14,19 +14,21 @@ const QUOTE = 'A man who resets and recovers properly is more dangerous than one
 const Q = { state: 'What state were you in?', time: 'What time was it?', place: 'Where were you?',
   decision: 'The first small decision that opened the door', change: 'One concrete change that breaks the chain' };
 const opts = values => values.map(v => ({ value: v, label: v }));
-const heading = t => Object.assign(sectionHeading(t), { className: 'sec rc-sec' });
+// Adds a class to a shared element, keeping the ones it has (T17-3).
+const addClass = (el, c) => { el.className += ` ${c}`; return el; };
+const heading = t => addClass(sectionHeading(t), 'rc-sec');
 // Board header: the shared pushed header with the title in crimson.
 function header() {
   const el = pushedHeader({ title: 'Recovery Protocol', onBack: () => history.back(), help: 'recoveryProtocol' });
-  el.querySelector('.eyebrow').className = 'eyebrow rc-ttl';
+  addClass(el.querySelector('.eyebrow'), 'rc-ttl');
   return el;
 }
 
 function resetPlate(state, date) {
-  return Object.assign(plate.warn(
+  return addClass(plate.warn(
     h('div', { class: 'rc-hd' }, icon('resetShield'), h('h2', { class: 'rc-day' }, `DAY ${dayNo(state, date)}: RESET`)),
     h('p', { class: 'rc-quote' }, QUOTE),
-    h('div', { class: 'rc-fx' }, effects(state, date).map(t => h('span', null, t)))), { className: 'plate warn rc-top' });
+    h('div', { class: 'rc-fx' }, effects(state, date).map(t => h('span', null, t)))), 'rc-top');
 }
 
 function countdownPlate(state, date) {
