@@ -1286,3 +1286,14 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Not run: browser pane, iPhone.
 - Next: owner phone check, then Task 21 step 4b-3 / step 5 per the plan.
 - Ruling (Armin, 2026-10-24): T18-4 keep the Partly size for the "Not due" legend dot. No code change.
+
+## T21-6: Task 21 step 5a, visual pass, branch `help`
+
+- Commits (not pushed, no VERSION bump, no `src/core` change, no frozen test edited): `fix(T21-6)` Settings title, `fix(T21-6)` Recovery fields, then `docs(T21-6)`; hashes in `git log`.
+- Precheck: HEAD `8eb06db`, `npm test` 1329 tests, 1328 pass, 0 fail, 1 skipped (exit 0). After: 1332 tests (3 new), 1331 pass, 0 fail, 1 skipped (exit 0).
+- Method: browser pane, static server on :5173, seeded Day 9 state (invented data, cleared afterwards). The PNGs are tall boards, not 844 high, so I measured the same classes in `static/*.html` (the PNGs' source) at 390 and in the app at 390 and 440, and looked at screenshots of Today, Challenge, Day 0, Recovery. 13 routes at both widths: no horizontal overflow, no clipped text.
+- Fixed: Settings had an extra "Lock In" eyebrow, title at y 78, board 60 (new test `visual-settings-header`). Recovery time field was 350 wide, board 140; long answers min 84 high, board 84, was 76 (CSS in `recovery.css`; `visual-recovery-fields` reads the CSS, written after the fix, not red first).
+- Logged V-01 to V-12 in `docs/backlog.md` (T21-6 section). Biggest: Challenge @390 plate 56 px lower (pill and "?" wrap), Recovery countdown plate 52 px taller, Analytics geometry (padding 22 vs 18, tiles 3 across), Day 0 hero, 30-day buttons 29 wide.
+- Needs ruling: V-01 (move "?" or pill at 390), V-07 (day button width under 44).
+- Not run: iPhone; Day 0 and Recovery compared on structure only; Today "Up next" hero, Morning, Afternoon, War Log, Mission, Night "Stalled / crossed" colours, entry editor placeholder, Analytics Reset hatch were not measured against a board (no board exists for War Log, Mission, hatch, editor; Night and Today colours seen only in code, not on screen).
+- Next: owner phone check, then Task 21 step 5b.

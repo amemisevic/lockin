@@ -62,3 +62,21 @@ Two axes (standards, spec). 0 Critical, 0 High. Medium and Low below, nothing fi
 ## 14-day trial friction notes (plan Checkpoint D)
 Write one line per friction, dated. Build nothing from this list until day 14.
 - 2026-10-24: T10-4 stalled shield outline ~2.83:1 with glow (estimate); look at it on the iPhone, then rule on CSS.
+
+## T21-6 visual pass (2026-10-24, browser pane 440x956 and 390x844, boards = `docs/design/lockin-v2/static/*.html`, seeded Day 9 state)
+Method: same class set measured in the app and in the static board at 390 (scrollbar hidden); 440 checked for overflow, tap size and the fixed items. No horizontal overflow, no clipped text on 13 routes at 390 and 440. Gaps at or under 4 px are not listed. Fixed in this task: Settings title (18 px), Recovery time field (210 px), Recovery long answers (8 px). Content that differs by design (Day 0 hero text and Begin button, Today strip without the 30 pips, Settings order, Today "Up next" hero) is listed once, not measured.
+
+| ID | Screen | Deviation (app vs board) | Status |
+|---|---|---|---|
+| V-01 | Challenge @390 | Streak pill and "?" wrap under the title: plate starts at y 192, board 136 (56 px). At 440 it fits: 136. | logged: a fix moves a ruled "?" (H1b) or the pill; needs ruling |
+| V-02 | Recovery (form) | Countdown plate 126 px high, board 74 (52 px at 390): the "?" row is 44 high and the time wraps under the label. All later blocks sit 52 px lower. | logged: help-button cost |
+| V-03 | Night | First heading at y 139, board 126 (13 px): 4 px pushed header (60 vs 56), 2 px margin (28 vs 26), 7 px from the 44 px "?" row. | logged: help-button cost |
+| V-04 | Night | First two task questions 160 / 159 px, board 155 / 158 (5 px, "?" row). Chips 44 vs 40 and Analytics range 54 vs 48 are HIG 44 pt minimum. | logged |
+| V-05 | Analytics | Range switch 54 high, board 48 (6 px): buttons are 44 (HIG), board buttons are 42. Everything below sits 6 px lower. | logged: HIG wins |
+| V-06 | Analytics | Plate padding 22 vs 18: bars and tracks 304 wide, board 312 (8 px); headings start at x 20, board 24 (4 px). Tiles are 95 x 88 (3 across), board 155 x 128 / 151 x 94 (2 across); columns 38 wide, board 41. Related to T18-3. | logged |
+| V-07 | Challenge day strip | 30-day buttons 29 wide (tile 36), under 44 pt: 10 columns do not fit at 44. Height is 44. | logged: Day review ruled, width never ruled; needs ruling |
+| V-08 | Day 0 | "Begin Day 1" is 260 wide beside the "?" , board button 312 x 52 (52 px narrower, 4 high). Hero has no headline or paragraph. | logged |
+| V-09 | Today | Challenge strip 110 px, board 133: no 30-pip row; "Morning pending" in place of "Morning done / Night opens". Task rows 93 / 75 with 7 dots, board rows 80 without. | logged: Plan has no pip row |
+| V-10 | Tasks / Today rows | `.more` 44 x 44, board 40 x 40 (HIG). | logged |
+| V-11 | Settings | Board puts a "Lock In / Version" plate first; app lists sections first and the version last. | logged |
+| V-12 | Recovery header | Reset plate 124 / 264, board 120 / 268 (4 px each, header 60 vs 56). | logged, under the limit |
