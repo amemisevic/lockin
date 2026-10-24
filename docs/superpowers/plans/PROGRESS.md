@@ -1306,3 +1306,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Unchecked on the iPhone: Recovery fields (time field 140 wide, long answers min 84 high), Analytics Reset hatch, Night stalled shield / crossed colours, VoiceOver items (Settings title, h1/h2 change on Mission, icon labels).
 - Ambiguities: ROADMAP has no per-step checklist for Task 21; I marked steps 1 to 3 in the existing "Later" line.
 - Next: owner updates the Home Screen app (close and reopen twice), phone check, Task 21 step 4 trial.
+
+## T21-R3: release v2.5.3, failed/missed selected colour, branch `help`
+
+- Commit `release: v2.5.3 failed/missed colour` (hash in `git log`) on top of fix `c55e375`. VERSION 2.5.2 to 2.5.3 in `sw.js` and `src/version.js` (match). ROADMAP "Live" line is v2.5.3. No `src/core` change, no test edited. Untracked `HANDOFF-TEMPLATE.md` left unstaged (owner ruling).
+- Precheck: `npm test` 1332 tests, 1331 pass, 0 fail, 1 skipped (exit 0), run after the bump.
+- Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`; results in STATUS.md.
+- Unchecked: iPhone.
+- Next: owner updates the Home Screen app (close and reopen twice), phone check of the failed/missed selected colour.

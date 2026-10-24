@@ -1,5 +1,5 @@
 # Lock In roadmap (updated 2026-10-24)
-Live: v2.5.2 (Task 21 fixes; v2.5.1 Day 1 read-only row; v2.5.0 Settings help buttons) on GitHub Pages (amemisevic.github.io/lockin). Includes v2.4.1 today counter removed, v2.3.0 help buttons and v2.2.0 motion polish.
+Live: v2.5.3 (failed/missed selected colour; v2.5.2 Task 21 fixes; v2.5.1 Day 1 read-only row; v2.5.0 Settings help buttons) on GitHub Pages (amemisevic.github.io/lockin). Includes v2.4.1 today counter removed, v2.3.0 help buttons and v2.2.0 motion polish.
 Not started: help scope for the other tabs (Settings, Today, Tasks, Gym, Analytics).
 
 ## Now
