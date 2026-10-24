@@ -1077,3 +1077,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Choices / deviations: (1) Entry 5 had no stated "?" spot; I used the `Day 1, your oath` heading on Day 0, the heading over the four entries. (2) Forced full pass: one "?" per screen (first `No MED today.` line), not one per protocol row. (3) Entry 9 is on both the Night header and the Today card, as the draft says; the Today card is outside the Challenge tab. (4) The button inside a header, heading or question row is a sibling of the h2 / label, never inside it. (5) Begin Day 1 narrowed by 52 px to fit the "?" beside it.
 - Checked in the browser pane at 440 x 956 (Day 0): both Day 0 buttons 44 x 44, no horizontal overflow, sheet opens with the text and Close. Not run: the other screens in the pane (covered by the fake-DOM tests only), iPhone, Reduce Motion.
 - Next: ⛔ owner iPhone check, ruling on the choices above, then the next help scope.
+
+## H1b: owner ruling, branch `help`
+
+- Commit: `docs(H1b): owner ruling` (this entry; hash in `git log`). Not pushed. Docs only: `src`, tests, styles and VERSION untouched, tests not re-run (1231 pass, 0 fail at H1b).
+- Owner ruling: H1b deviations 1 to 4 stand. (1) Oath "?" sits on the `Day 1, your oath` heading (Day 0). (2) One forced-full-pass "?" per screen (first `No MED today.` line). (3) Entry 9 (04:00 auto-Redo) also sits on Today's Close yesterday card. (4) Begin Day 1 is 52 px narrower beside its "?", pending the phone check.
+- Still open: ⛔ owner iPhone check of H1b (not run), including the Begin Day 1 width.
+- Next: owner picks the next help scope (Today, Tasks, Analytics, Settings or Gym, from `help-inventory.md`); then its copy draft.
