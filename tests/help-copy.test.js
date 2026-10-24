@@ -7,11 +7,14 @@ import { icons } from '../src/icons.js';
 // Task H1b: the approved Challenge help copy (docs/superpowers/plans/help-copy-draft.md, entries 2-16; entry 1 has no text).
 // Entry 5 and 16 carry the owner's rewrites. Names are the draft's headings and become the "Help: <name>" aria-labels.
 const EXPECTED = {
-  topWin: ['Top G win', 'Write today\'s win in your own words. It does not change the day\'s result.'],
-  bottomMove: ['Bottom G\'s move', 'Pick an archetype, then a tactic, or choose Something else and write your own. Tactics come from the pack you imported in Settings.'],
-  med: ['MED', 'Declare MED in the morning only, one protocol at a time; each uses one slot of your weekly limit (the week runs Monday to Sunday). It is not available the day after a Reset or a declared Redo, and never for red lines.'],
-  oath: ['Contract, Funeral, Code, Week 1 red lines', 'Four entries you write once before Day 1: Contract, Funeral, Code and your Week 1 red lines. They are kept in your War Log.'],
-  protocol: ['Protocol', 'At night you mark each protocol Held or Missed. How many you miss decides whether the day is a Redo or a Reset.'],
+  topWin: ['Top G win', 'The Top G is the version of you that keeps his word. Write today\'s win in your own words; it does not change the result.'],
+  bottomMove: ['Bottom G\'s move', 'The Bottom G is the part of you that negotiates and makes excuses. Pick an archetype, then a tactic, or choose Something else and write your own.'],
+  med: ['MED', 'MED is Minimum Effective Dose: a shorter fallback version of a protocol for a bad day. Declare it in the morning only; it counts as held and uses one weekly slot.'],
+  contract: ['Contract', 'Your written commitment to the 30 days: promise to show up every day and tell the truth in your check-ins, then sign and date it.'],
+  funeral: ['Funeral', 'A funeral speech for the weak man you become if you never change: the same excuses and habits for 10, 20, 30 years. Be honest and specific.'],
+  code: ['Code', 'Your personal code: five to seven clear laws you will live by in this challenge. Write standards, not vague words like success.'],
+  redLines1: ['Week 1 red lines', 'The things you will not do for the next 7 days, written as a short list.'],
+  protocol: ['Protocol', 'A protocol is a standing daily commitment that you mark Held or Missed each night. How many you miss decides whether the day is a Redo or a Reset.'],
   risk: ['Red line at risk today?', 'An optional note about a red line you think may be at risk today. It is saved with the day and does not change the result.'],
   redoBand: ['Redo band', 'Redo: at least 1 protocol missed but fewer than your Zero Day threshold (default 3, so 1 or 2). Reset: any red line crossed, or missed protocols reach the threshold.'],
   autoRedo: ['04:00 auto-Redo', 'You can close yesterday until 04:00 the next morning. After that the day closes itself as a Redo and cannot be filed late.'],
@@ -24,13 +27,18 @@ const EXPECTED = {
   graduation: ['Graduation', 'The challenge ends when Day 30 is closed, whatever its result. This version cannot start a new one.'],
 };
 
-test('HELP holds exactly the 15 approved entries (entry 1, the Top G / Bottom G terms, has none)', () => {
+test('HELP holds exactly the 18 approved entries (H1b 15, with the oath entry split into Contract, Funeral, Code, Week 1 red lines)', () => {
   assert.deepEqual(Object.keys(HELP).sort(), Object.keys(EXPECTED).sort());
   for (const [key, [name, text]] of Object.entries(EXPECTED)) assert.deepEqual(HELP[key], { name, text }, key);
 });
 
-test('entry 5 and entry 16 use the owner\'s rewritten text', () => {
-  assert.equal(HELP.oath.text, 'Four entries you write once before Day 1: Contract, Funeral, Code and your Week 1 red lines. They are kept in your War Log.');
+test('H1d: the four oath entries have their own text; there is no combined oath entry', () => {
+  assert.equal('oath' in HELP, false);
+  assert.equal(HELP.funeral.text, 'A funeral speech for the weak man you become if you never change: the same excuses and habits for 10, 20, 30 years. Be honest and specific.');
+  assert.equal(HELP.redLines1.text, 'The things you will not do for the next 7 days, written as a short list.');
+});
+
+test('entry 16 keeps the owner\'s rewritten text', () => {
   assert.equal(HELP.graduation.text, 'The challenge ends when Day 30 is closed, whatever its result. This version cannot start a new one.');
 });
 

@@ -52,9 +52,16 @@ const want = (...keys) => keys.map(k => `Help: ${HELP[k].name}`).sort();
 const btn = (nodes, key) => helps(nodes).find(n => n.getAttribute('aria-label') === `Help: ${HELP[key].name}`);
 const sheets = () => document.body.children.filter(n => n.tagName === 'DIALOG' && !hasClass(n, 'ghost')); // a closing sheet leaves an exit ghost
 
-test('Day 0: oath entries heading and Begin Day 1', () => {
+test('Day 0: one "?" per oath row (none on the heading) and Begin Day 1', () => {
   const out = renderDay0(fakeApp(defaultState(), D1));
-  assert.deepEqual(labels(out), want('oath', 'begin'));
+  assert.deepEqual(labels(out), want('contract', 'funeral', 'code', 'redLines1', 'begin'));
+  for (const [help, oath] of [['contract', 'contract'], ['funeral', 'funeral'], ['code', 'code'], ['redLines1', 'redlines-w1']]) {
+    const row = all(out).find(n => n.id === `ch-oath-${oath}`);
+    assert.equal(row.tagName, 'A');
+    assert.ok(btn(out, help).parent.children.includes(row), `${help} sits beside its row`);
+    assert.equal(helps([row]).length, 0, 'never a button inside the link');
+  }
+  assert.equal(all(out).some(n => n.tagName === 'H2' && n.parent.children.some(c => hasClass(c, 'help'))), false, 'no "?" on the oath heading');
   const begin = all(out).find(n => n.id === 'ch-begin');
   assert.ok(begin.parent.children.includes(btn(out, 'begin')), '? sits beside the Begin Day 1 button');
 });
