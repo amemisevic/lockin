@@ -8,6 +8,7 @@ import { VERSION } from './version.js';
 import { icon } from './icons.js';
 import { h } from './dom.js';
 import { swapRows } from './motion.js';
+import { headingOnRouteChange } from './focus.js';
 import { renderTasks } from './views/tasks.js';
 import { renderToday } from './views/today.js';
 import { renderChallenge } from './views/challenge.js';
@@ -181,6 +182,7 @@ function tick() {
 for (const t of tabs) t.prepend(icon(t.hash.slice(1)));
 app.subscribe(render);
 window.addEventListener('hashchange', render);
+headingOnRouteChange(view); // after render: the heading of the new screen takes focus (T9-1)
 document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 window.addEventListener('focus', tick);
 setInterval(tick, 30_000); // "today" rolls over at midnight while the app is open

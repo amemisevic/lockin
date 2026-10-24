@@ -48,6 +48,7 @@ const ASSETS = [
   'src/icons.js',
   'src/logic.js',
   'src/motion.js',
+  'src/focus.js',
   'src/router.js',
   'src/sheet.js',
   'src/ui/chrome.js',
