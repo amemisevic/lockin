@@ -1,11 +1,14 @@
-// Challenge help copy (task H1b), approved in docs/superpowers/plans/help-copy-draft.md. Plain text only: ui/controls.js
-// puts it in the action sheet as a text node. name = the entry's heading, used in the "?" aria-label.
+// Challenge help copy (tasks H1b, H1d), approved in docs/superpowers/plans/help-copy-draft.md and help-terms-draft.md.
+// Plain text only: ui/controls.js puts it in the action sheet as a text node. name = the entry's heading, used in the "?" aria-label.
 export const HELP = {
-  topWin: { name: 'Top G win', text: 'Write today\'s win in your own words. It does not change the day\'s result.' },
-  bottomMove: { name: 'Bottom G\'s move', text: 'Pick an archetype, then a tactic, or choose Something else and write your own. Tactics come from the pack you imported in Settings.' },
-  med: { name: 'MED', text: 'Declare MED in the morning only, one protocol at a time; each uses one slot of your weekly limit (the week runs Monday to Sunday). It is not available the day after a Reset or a declared Redo, and never for red lines.' },
-  oath: { name: 'Contract, Funeral, Code, Week 1 red lines', text: 'Four entries you write once before Day 1: Contract, Funeral, Code and your Week 1 red lines. They are kept in your War Log.' },
-  protocol: { name: 'Protocol', text: 'At night you mark each protocol Held or Missed. How many you miss decides whether the day is a Redo or a Reset.' },
+  topWin: { name: 'Top G win', text: 'The Top G is the version of you that keeps his word. Write today\'s win in your own words; it does not change the result.' },
+  bottomMove: { name: 'Bottom G\'s move', text: 'The Bottom G is the part of you that negotiates and makes excuses. Pick an archetype, then a tactic, or choose Something else and write your own.' },
+  med: { name: 'MED', text: 'MED is Minimum Effective Dose: a shorter fallback version of a protocol for a bad day. Declare it in the morning only; it counts as held and uses one weekly slot.' },
+  contract: { name: 'Contract', text: 'Your written commitment to the 30 days: promise to show up every day and tell the truth in your check-ins, then sign and date it.' },
+  funeral: { name: 'Funeral', text: 'A funeral speech for the weak man you become if you never change: the same excuses and habits for 10, 20, 30 years. Be honest and specific.' },
+  code: { name: 'Code', text: 'Your personal code: five to seven clear laws you will live by in this challenge. Write standards, not vague words like success.' },
+  redLines1: { name: 'Week 1 red lines', text: 'The things you will not do for the next 7 days, written as a short list.' },
+  protocol: { name: 'Protocol', text: 'A protocol is a standing daily commitment that you mark Held or Missed each night. How many you miss decides whether the day is a Redo or a Reset.' },
   risk: { name: 'Red line at risk today?', text: 'An optional note about a red line you think may be at risk today. It is saved with the day and does not change the result.' },
   redoBand: { name: 'Redo band', text: 'Redo: at least 1 protocol missed but fewer than your Zero Day threshold (default 3, so 1 or 2). Reset: any red line crossed, or missed protocols reach the threshold.' },
   autoRedo: { name: '04:00 auto-Redo', text: 'You can close yesterday until 04:00 the next morning. After that the day closes itself as a Redo and cannot be filed late.' },

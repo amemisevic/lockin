@@ -19,8 +19,12 @@ function outlineLaurel() {
 const oathGlyph = done => h('div', { class: done ? 'ch-sh on' : 'ch-sh', 'aria-hidden': 'true' },
   shieldSvg([22, 25], done ? ['b', 'hl', 'lam'] : ['b']));
 
-const oathRow = r => h('a', { href: r.href, id: `ch-oath-${r.key}`, class: 'st ch-row' }, oathGlyph(r.done),
-  h('div', null, h('b', null, r.title), h('span', null, r.done ? 'Written' : 'Not written yet')));
+// H1d: one "?" per row, beside the link (a button inside an <a> is invalid).
+const OATH_HELP = { contract: 'contract', funeral: 'funeral', code: 'code', 'redlines-w1': 'redLines1' };
+const oathRow = r => h('div', { class: 'ch-or' },
+  h('a', { href: r.href, id: `ch-oath-${r.key}`, class: 'st ch-row' }, oathGlyph(r.done),
+    h('div', null, h('b', null, r.title), h('span', null, r.done ? 'Written' : 'Not written yet'))),
+  helpButton(OATH_HELP[r.key]));
 
 const listRow = (id, title, items) => h('a', { href: '#settings', id, class: 'st ch-row' },
   h('div', null, h('b', null, title), h('span', null, items.length ? `${items.length} added` : 'None yet')));
@@ -50,7 +54,7 @@ export function renderDay0(app) {
       h('div', { class: 'ch-bw' }, btn, helpButton('begin')),
       h('p', { class: 't2 ch-why', id: 'ch-why', 'aria-live': 'polite' }, status.reason ?? '')),
     h('section', null,
-      h('div', { class: 'tk-sh' }, sectionHeading('Day 1, your oath', 'oath')),
+      h('div', { class: 'tk-sh' }, sectionHeading('Day 1, your oath')),
       h('div', { class: 'plate list' }, oathRows(state).map(oathRow))),
     h('div', { class: 'plate list ch-setup' },
       listRow('ch-protocols', 'Protocols', lists.protocols),

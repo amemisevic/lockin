@@ -177,6 +177,10 @@ button:disabled { opacity: .4; cursor: default; }
 .hlp-row{display:flex;align-items:center;justify-content:space-between;gap:4px}
 .hlp-row>:first-child{min-width:0}
 .hlp-c{justify-content:center}
+.ch-or{display:flex;align-items:center;border-top:1px solid var(--line-soft)}
+.ch-or:first-child{border-top:0}
+.ch-or .st{flex:1;min-width:0;width:auto;border-top:0}
+.ch-or .help{margin-right:6px}
 .ch-bw{width:100%;display:flex;align-items:center;gap:8px;margin-top:20px}
 .ch-bw .ch-wide{flex:1;width:auto;margin-top:0}
 
