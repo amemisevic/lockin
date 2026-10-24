@@ -68,7 +68,7 @@ Method: same class set measured in the app and in the static board at 390 (scrol
 
 | ID | Screen | Deviation (app vs board) | Status |
 |---|---|---|---|
-| V-01 | Challenge @390 | Streak pill and "?" wrap under the title: plate starts at y 192, board 136 (56 px). At 440 it fits: 136. | logged: a fix moves a ruled "?" (H1b) or the pill; needs ruling |
+| V-01 | Challenge @390 | Streak pill and "?" wrap under the title: plate starts at y 192, board 136 (56 px). At 440 it fits: 136. | CLOSED, ruled by Armin 2026-10-24: leave the wrap at 390. |
 | V-02 | Recovery (form) | Countdown plate 126 px high, board 74 (52 px at 390): the "?" row is 44 high and the time wraps under the label. All later blocks sit 52 px lower. | logged: help-button cost |
 | V-03 | Night | First heading at y 139, board 126 (13 px): 4 px pushed header (60 vs 56), 2 px margin (28 vs 26), 7 px from the 44 px "?" row. | logged: help-button cost |
 | V-04 | Night | First two task questions 160 / 159 px, board 155 / 158 (5 px, "?" row). Chips 44 vs 40 and Analytics range 54 vs 48 are HIG 44 pt minimum. | logged |
