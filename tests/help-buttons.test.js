@@ -159,7 +159,7 @@ test('Mission detail: eyebrow, only when a mission is loaded', () => {
 
 test('Settings: Protocols and Red lines headings (the 7 row buttons are in help-settings.test.js)', () => {
   const out = renderSettings({ state: defaultState(), today: () => D1, version: '2.2.0', set() {} });
-  assert.deepEqual(labels(out), want('addProtocols', 'addRedLines', 'zeroDay', 'medPerWeek', 'startDate', 'packImport', 'gymTarget', 'exportBackup', 'importBackup'));
+  assert.deepEqual(labels(out), want('addProtocols', 'addRedLines', 'zeroDay', 'medPerWeek', 'startDate', 'packImport', 'gymTarget', 'exportBackup', 'importBackup', 'eraseAll'));
   for (const [key, title] of [['addProtocols', 'Protocols'], ['addRedLines', 'Red lines']]) {
     assert.ok(btn(out, key).parent.children.some(n => n.tagName === 'H2' && n.textContent === title), key);
   }

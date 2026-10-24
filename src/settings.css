@@ -11,6 +11,7 @@
 .gt{color:var(--accent);font-weight:600}
 .set-btn.gt{font-size:16px}
 .set-btn.gt svg{flex:none;width:16px;height:16px}
+.set-btn.dg{color:var(--crimson-lt);font-size:16px;font-weight:600}
 .set-chev{flex:none;width:18px;height:18px;color:var(--text-3)}
 .set-link{flex:none;min-width:44px;min-height:44px;padding:0 4px;font-size:16px}
 .set-overdue{color:var(--crimson-lt)!important;font-weight:600}

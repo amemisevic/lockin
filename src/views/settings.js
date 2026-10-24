@@ -66,6 +66,15 @@ function alertPlate(app, key) {
   refusal.announced = true;
   return plate.warn(h('p', { class: 'set-err', role }, refusal.text));
 }
+// Erase all data (owner ruling 2026-10-24): one confirm sheet, then every app key is removed and the app restarts empty.
+// A failed removal keeps the app as it is and shows the Data plate.
+export function eraseAllData(app, ask = confirmSheet, reload = () => location.reload()) {
+  ask('Everything in Lock In on this phone is deleted. This cannot be undone. Export a backup first.', () => {
+    if (L.eraseAll(app.storage)) reload();
+    else fail(app, 'backup', 'Some data could not be erased.');
+  }, 'Erase all data');
+}
+
 const row = (...children) => h('div', { class: 'sr' }, children);
 const label = (title, sub) => h('div', { class: 'a' }, h('b', null, title), sub != null && h('span', null, sub));
 const chevron = () => { const c = icon('chevronRight'); c.setAttribute('class', 'set-chev'); return c; };
@@ -115,7 +124,8 @@ function dataSection(app) {
       row(h('div', { class: 'a' }, h('b', null, 'Last backup'), h('span', null, line.text),
         line.overdue && h('span', { class: 'set-overdue' }, 'Overdue. Export a backup now.'))),
       withHelp('exportBackup', actionRow('set-export', 'Export backup', () => exportBackup(app))),
-      withHelp('importBackup', actionRow('set-import', 'Import backup', () => pickFile('set-backup-file', f => importBackupFile(app, f))))), alertPlate(app, 'backup')),
+      withHelp('importBackup', actionRow('set-import', 'Import backup', () => pickFile('set-backup-file', f => importBackupFile(app, f)))),
+      withHelp('eraseAll', h('button', { type: 'button', id: 'set-erase', class: 'sr set-btn dg', onClick: () => eraseAllData(app) }, 'Erase all data'))), alertPlate(app, 'backup')),
     h('p', { class: 't3 set-foot' }, 'Deleting the Home Screen icon deletes all data. Export is the only backup.'),
     h('p', { class: 't3 set-foot' }, `Version ${app.version}`),
   ];

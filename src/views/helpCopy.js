@@ -42,5 +42,6 @@ export const HELP = {
   deleteItem: { name: 'Delete', text: 'Delete removes it from your list. Days you already closed keep the name they were filed with.' },
   gymTarget: { name: 'Weekly gym target', text: 'Your goal for gym visits each week, from 1 to 7 (default 4). The Gym tab compares each week with it, with no streak and no penalty; switched off, it shows nowhere.' },
   exportBackup: { name: 'Export backup', text: 'Saves all your data, gym included, as one file through the share sheet, or downloads it if sharing is not available. Last backup updates only after the file is shared or downloaded.' },
+  eraseAll: { name: 'Erase all data', text: 'Deletes everything Lock In stored on this phone and restarts the app empty. Export a backup first.' }, // owner-approved 2026-10-24 (STATUS.md draft)
   importBackup: { name: 'Import backup', text: 'Choosing a backup file replaces the data in the app with the file\'s, after you confirm. A file that is not a Lock In v2 backup, or is damaged, is refused and nothing changes.' },
 };

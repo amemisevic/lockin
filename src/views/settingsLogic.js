@@ -2,9 +2,9 @@
 // Before Day 1 the lists live in state.setup (via setupLists); once the challenge runs they live in state.challenge.
 import { uid, addDays, dateKey, keyToDate } from '../logic.js';
 import { defaultState, validateState } from '../core/model.js';
-import { exportJson, markBackup, backupStatus } from '../core/store.js';
+import { exportJson, markBackup, backupStatus, KEY, CORRUPT } from '../core/store.js';
 import { settleMissed } from '../core/scoring.js';
-import { GYM_KEY } from '../core/gym.js';
+import { GYM_KEY, GYM_CORRUPT } from '../core/gym.js';
 import { setupLists } from './challengeLogic.js';
 
 const no = error => ({ ok: false, error });
@@ -121,6 +121,14 @@ export async function runExport(state, today, io, gym) {
     try { io.download(file); } catch { return { outcome: 'cancelled' }; }
   }
   return { outcome, state: marked };
+}
+
+// Erase all data (owner ruling 2026-10-24): removes every key the app writes, the saved copies of unreadable data included.
+// Each removal is tried even if another throws; false when any did (storage blocked), so the caller must not restart.
+export function eraseAll(storage) {
+  let ok = true;
+  for (const k of [KEY, CORRUPT, GYM_KEY, GYM_CORRUPT]) { try { storage.removeItem(k); } catch { ok = false; } }
+  return ok;
 }
 
 // Import write (owner ruling 17). Gym first: a failed gym write aborts with nothing changed. If the v2 write then fails, the

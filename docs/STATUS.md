@@ -1,12 +1,13 @@
 # STATUS
-- Task: S1-02 separate save-failure flags. Branch `help`. No release bump, not pushed.
-- Result: DONE. `app.js`: `failedC` + `failedG`; `saveFailed` is a getter (either); `set` and `setGym` each write only their own flag and show the banner from the getter.
-- HEAD: help (commit "fix: separate save-failure flags (S1-02)"; hash = this commit).
-- Tests: npm test 1333 pass, 0 fail, 1 skipped (exit 0). New test red on old app.js (0 pass, 2 fail), green after (2 pass).
-- Changed files: src/app.js, tests/save-failure-flags.test.js (new), docs/STATUS.md. HANDOFF-TEMPLATE.md untracked. No src/core, no frozen test touched.
-- Test method: cuts the real `app` object out of app.js and runs it with stubs (as app-render-guard does), so no fake mirrors app.js. gym-import-wiring fake unchanged.
-- settingsLogic.js:142 (applyImport): reads `app.saveFailed` after `setGym(r.gym)` then `set(r.state)`. A successful setGym clears failedG and set(r.state) (new object) rewrites failedC, so a stale failure cannot block or undo an import. Only gap: if set() hit its "unchanged" early return, a stale failedC would survive; r.state is always a fresh parse, so unreachable. Not changed.
-- Deviations: none.
-- Needs ruling: none.
-- Phone check: none needed (banner logic only). Optional: block storage, fail one key, save the other, banner stays.
-- Next: next backlog item.
+- Task: E1 Erase all data (owner ruling 2026-10-24: not-built ruling lifted, one confirm sheet, STATUS drafts). Branch `help`. Not pushed.
+- Result: DONE. Red WIP `2de2bb8` (9 fail), then `feat(E1): erase all data`. PROGRESS.md entry E1 and backlog.md line updated.
+- HEAD: see `git log` (feat commit on top of 2de2bb8).
+- Tests: red run exit 1 (9 fail). After: 1342 tests, 1341 pass, 0 fail, 1 skipped (exit 0). src/core, sw.js, VERSION untouched.
+- Changed files: settings.js, settingsLogic.js (`eraseAll`), helpCopy.js (`eraseAll`), settings.css (`.set-btn.dg`), 5 test files, PROGRESS.md, backlog.md.
+- Behaviour: Data > last row "Erase all data" (crimson) + "?". One sheet: "Everything in Lock In on this phone is deleted. This cannot be undone. Export a backup first." Yes removes `lockin.v2`, `lockin.v2.gym`, both `.corrupt` keys, then reloads on `#settings`. A removal that throws: no reload, plate "Some data could not be erased."
+- Test edits (help tests only): help-copy.test.js (41 to 42 keys), help-settings.test.js and help-buttons.test.js (+eraseAll in the "?" lists, + text test). New: settingsLogic 4, settings-view 4.
+- Browser check (375 wide, throwaway keys): row 60 high, "?" 44 x 44, no overflow, Erase cleared all keys and restarted. Cancel only unit-tested.
+- Deviations: none. Help and sheet text are your drafts, not from a source doc.
+- Needs ruling: none. Not done: Bottom G "?" (still needs rulings c, d), VERSION bump.
+- Phone check (after the release bump): Settings > Data shows Erase all data last, "?" opens text + Close; Cancel keeps data; Erase empties the app (Day 0, no pack, gym empty, "No backup yet"); export a backup first.
+- Next: release task (bump sw.js + src/version.js), then owner iPhone check; Bottom G "?" after rulings.

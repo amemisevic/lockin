@@ -1328,3 +1328,15 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`; results in STATUS.md.
 - Unchecked: iPhone.
 - Next: owner updates the Home Screen app (close and reopen twice), phone check of the stalled shield.
+
+## E1: Erase all data, branch `help`
+
+- Owner ruling (Armin, 2026-10-24): the "not built" ruling (Task 19 R2, backlog.md) is lifted for Erase all data; one confirm sheet; copy as drafted in STATUS.md. Not in the plan or DESIGN-SPEC; the board (`static/Settings.html`) shows the row.
+- Commits: `2de2bb8` test WIP (red: 9 fail, settings-view file failed to import `eraseAllData`); then `feat(E1): erase all data` (hash in `git log`).
+- Built: Settings > Data last row `Erase all data` (`#set-erase`, class `dg`, crimson-lt on the plate) with a "?" (`eraseAll` help key). `eraseAllData(app, ask, reload)` in settings.js: `confirmSheet` message `Everything in Lock In on this phone is deleted. This cannot be undone. Export a backup first.`, action `Erase all data`; on yes `L.eraseAll(app.storage)` then `location.reload()`; on failure the Data alert plate `Some data could not be erased.` and no reload. `eraseAll(storage)` in settingsLogic.js removes `lockin.v2`, `lockin.v2.corrupt`, `lockin.v2.gym`, `lockin.v2.gym.corrupt` (each in try; false if any threw). Service worker, cache and VERSION untouched. No `src/core` change (the four constants were already exported).
+- Test edits (help tests only, no frozen test): help-copy.test.js (SETTINGS_KEYS +eraseAll, 41 to 42); help-settings.test.js (+ text test, + eraseAll in the label list and the row list); help-buttons.test.js (Settings label list +eraseAll). New: settingsLogic 4, settings-view 4.
+- Commands: `npm test` before: not run (tests added red first); red run exit 1 (9 fail); after: 1342 tests, 1341 pass, 0 fail, 1 skipped (exit 0). `grep -rnE "toISOString|getUTC|Date\.parse" src` no hits.
+- Browser (localhost:5173, 375 wide, throwaway keys): row 60 high, "?" 44 x 44, no horizontal overflow; sheet text exact; Erase removed all keys, reloaded on `#settings`. Cancel path covered by unit test only (browser check cut off by the reload).
+- Ambiguities: help text and sheet text as drafted, not from a source doc. Reload keeps the `#settings` hash.
+- Not done: VERSION bump (release task), iPhone check.
+- Next: release task bump (sw.js + src/version.js), then owner iPhone check.

@@ -10,7 +10,7 @@ Stale-checked against HEAD on 2026-10-24 (T21-1): 13 rows dropped because their 
 | Low | smells | Duplicated: backup text (`settings.js`/`progress.js`), weight parse, progress-bar builder, tag lookup, segmented control, en-GB formatters, form-row helper; `finishTimer` repeats `logTime`'s add rule; `occId.slice(-10)` bypasses `occDate`; measured-entry `typeof` check in 3 files; `whole` defined twice; views import helpers from other views; lines > 200 chars. |
 
 ## v2 build: deferred Minors (Tasks 2 to 19), owner Armin, Task 21
-Source of truth: `docs/superpowers/plans/PROGRESS.md` (one entry per task). Build nothing from this list without the owner's go-ahead; Task 21 audits it. Items already fixed or closed are not listed (Task 10 m3 thumb slide: moot, no pause switch is built; Task 17 m6 and Task 18 "All": fixed in `4f5d7fd`). Owner-ruled as not built: pause switch, Erase all data.
+Source of truth: `docs/superpowers/plans/PROGRESS.md` (one entry per task). Build nothing from this list without the owner's go-ahead; Task 21 audits it. Items already fixed or closed are not listed (Task 10 m3 thumb slide: moot, no pause switch is built; Task 17 m6 and Task 18 "All": fixed in `4f5d7fd`). Owner-ruled as not built: pause switch. Erase all data: built in E1 (owner ruling 2026-10-24 lifted the not-built ruling).
 Owner rulings 2026-10-24 (T21-1) are in the last column. LEAVE and DROPPED rows are closed. S2 visual pass width: 440 (owner phone); 390 must not break.
 
 
