@@ -1282,6 +1282,6 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - T18-3: no change. None of bar 8, column 96, tile 32, 88 px, 16 px has an exact token (tokens: `--r-plate` 24, `--r-pill`, `--gutter` 20).
 - T18-4: the legend "Not due" dot uses the Partly radius (0.24, was 0.08); the grid keeps 0.08 (pinned by `tests/analytics-view.test.js`).
 - T10-3: verified, no shipped icon uses href, clip-path, mask, filter, `<use>` or url(#) in style; `tests/icons-id-refs.test.js` guards it.
-- Ambiguities and choices: T18-4 "same size as the other legend marks" (they differ): chose the Partly radius, needs a ruling. T14-3 editor prompt copy "Start writing." is mine. `screens.css` is 323 lines (was 318, over the 300 target before this task).
+- Ambiguities and choices: T18-4 "same size as the other legend marks" (they differ): chose the Partly radius, needs a ruling. T14-3 editor prompt copy "Start writing." is mine. `screens.css` is 321 lines (was 318, over the 300 target before this task).
 - Not run: browser pane, iPhone.
 - Next: owner phone check, then Task 21 step 4b-3 / step 5 per the plan.
