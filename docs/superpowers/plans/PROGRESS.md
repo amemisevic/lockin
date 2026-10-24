@@ -1340,3 +1340,10 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Ambiguities: help text and sheet text as drafted, not from a source doc. Reload keeps the `#settings` hash.
 - Not done: VERSION bump (release task), iPhone check.
 - Next: release task bump (sw.js + src/version.js), then owner iPhone check.
+
+## E1-R: release v2.5.5, Erase all data, branch `help`
+
+- Commit `release: v2.5.5 erase all data` (hash in `git log`) on top of `6026dae`. VERSION 2.5.4 to 2.5.5 in `sw.js` and `src/version.js` (match). ROADMAP "Live" line is v2.5.5. No `src/core` change, no test edited.
+- `npm test` after the bump: 1342 tests, 1341 pass, 0 fail, 1 skipped (exit 0).
+- Not pushed. Unchecked: iPhone.
+- Next: owner updates the Home Screen app (close and reopen twice), phone check of Erase all data (export a backup first).

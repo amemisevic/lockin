@@ -1,13 +1,9 @@
 # STATUS
-- Task: E1 Erase all data (owner ruling 2026-10-24: not-built ruling lifted, one confirm sheet, STATUS drafts). Branch `help`. Not pushed.
-- Result: DONE. Red WIP `2de2bb8` (9 fail), then `feat(E1): erase all data`. PROGRESS.md entry E1 and backlog.md line updated.
-- HEAD: see `git log` (feat commit on top of 2de2bb8).
-- Tests: red run exit 1 (9 fail). After: 1342 tests, 1341 pass, 0 fail, 1 skipped (exit 0). src/core, sw.js, VERSION untouched.
-- Changed files: settings.js, settingsLogic.js (`eraseAll`), helpCopy.js (`eraseAll`), settings.css (`.set-btn.dg`), 5 test files, PROGRESS.md, backlog.md.
-- Behaviour: Data > last row "Erase all data" (crimson) + "?". One sheet: "Everything in Lock In on this phone is deleted. This cannot be undone. Export a backup first." Yes removes `lockin.v2`, `lockin.v2.gym`, both `.corrupt` keys, then reloads on `#settings`. A removal that throws: no reload, plate "Some data could not be erased."
-- Test edits (help tests only): help-copy.test.js (41 to 42 keys), help-settings.test.js and help-buttons.test.js (+eraseAll in the "?" lists, + text test). New: settingsLogic 4, settings-view 4.
-- Browser check (375 wide, throwaway keys): row 60 high, "?" 44 x 44, no overflow, Erase cleared all keys and restarted. Cancel only unit-tested.
-- Deviations: none. Help and sheet text are your drafts, not from a source doc.
-- Needs ruling: none. Not done: Bottom G "?" (still needs rulings c, d), VERSION bump.
-- Phone check (after the release bump): Settings > Data shows Erase all data last, "?" opens text + Close; Cancel keeps data; Erase empties the app (Day 0, no pack, gym empty, "No backup yet"); export a backup first.
-- Next: release task (bump sw.js + src/version.js), then owner iPhone check; Bottom G "?" after rulings.
+- Task: E1-R release v2.5.5 (Erase all data). Branch `help`. Not pushed.
+- Result: DONE. VERSION 2.5.4 to 2.5.5 in `sw.js` and `src/version.js` (match). ROADMAP Live line is v2.5.5. PROGRESS.md entry E1-R added.
+- HEAD: help, `release: v2.5.5 erase all data` on top of 6026dae (hash in `git log`).
+- Tests: `npm test` after the bump 1342 tests, 1341 pass, 0 fail, 1 skipped (exit 0). src/core untouched, no test edited.
+- Changed files: sw.js, src/version.js, ROADMAP.md, PROGRESS.md, STATUS.md.
+- Deviations: none. Needs ruling: none.
+- Phone check: update the Home Screen app (close and reopen twice). Settings > Data: Erase all data last, "?" opens text + Close; Cancel keeps data; Erase empties the app. Export a backup first.
+- Next: owner iPhone check; push when you say so; Bottom G "?" after rulings (c) Escapist/Authority definitions, (d) Night 9th "?".
