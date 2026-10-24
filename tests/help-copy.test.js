@@ -25,9 +25,24 @@ const EXPECTED = {
   gating: ['Check-in gating', 'A day counts only if both Morning and Night are filed; Afternoon is optional and costs nothing. Without a Morning check-in the day cannot be Passed.'],
   begin: ['Begin Day 1', 'To begin, write all four oath entries and add at least one protocol and one red line. The line under the button shows what is still missing.'],
   graduation: ['Graduation', 'The challenge ends when Day 30 is closed, whatever its result. This version cannot start a new one.'],
+  // H1f: gaps G1 to G14 of help-gap-draft.md (G5, G7, G9 with the owner's overrides).
+  addProtocols: ['Protocols', 'Protocols are the daily commitments you mark Held or Missed each night. Add at least one before you can begin Day 1.'],
+  addRedLines: ['Red lines', 'Red lines are things you will not do; crossing one makes the day a Reset, and MED or a declared Redo never covers it. Add at least one before Day 1.'],
+  nightProtocols: ['Night protocols', 'Mark each protocol Held or Missed. One you declared as MED this morning shows as MED and cannot be changed tonight.'],
+  nightRedLines: ['Night red lines', 'Mark each red line held or crossed, and be exact. One crossed line makes the day a Reset by itself, and it cannot be overridden.'],
+  tasks: ['Settle your tasks', 'Every task still open must be marked Done, Failed or Stalled before you can close the day. Stalled counts for nothing and against nothing.'],
+  result: ['Suggested result', 'The app suggests Passed, Redo or Reset from your answers and lists the reasons. You can override it with a written reason saved on the day; a crossed red line cannot be overridden.'],
+  declaredRedo: ['Declared Redo', 'You get one declared Redo per challenge, for today only and before the day closes. It makes today a Redo, which ends your streak and makes tomorrow a forced full pass; a red line is never covered.'],
+  mission: ['Mission', 'Each day has one mission from the pack you imported in Settings. The button opens your War Log entry for that day.'],
+  target: ['Today\'s #1 target', 'Write the one target that matters most today. It is required to start the day.'],
+  afternoon: ['Afternoon check-in', 'Afternoon is optional and costs nothing if you skip it. Tasks shown here stay provisional until you close the day tonight.'],
+  recoveryProtocol: ['Recovery Protocol', 'The Recovery Protocol is the autopsy you file after a Reset: how it happened, and one change that breaks the chain. It has five short questions.'],
+  change: ['Concrete change', 'A specific change that breaks the chain: something you will block, delete or move. A vague answer gets a warning.'],
+  warLog: ['War Log', 'The War Log holds your four oath entries, your autopsies and one entry per mission day. You can edit oath and Day entries; autopsies are read-only.'],
+  strip: ['30-day strip', 'Each square is one day of the 30: marked Passed, Redo or Reset once closed, with today outlined and later days dim. A bronze ring on today means a declared Redo.'],
 };
 
-test('HELP holds exactly the 18 approved entries (H1b 15, with the oath entry split into Contract, Funeral, Code, Week 1 red lines)', () => {
+test('HELP holds exactly the 32 approved entries (H1b/H1d 18, H1f gaps G1 to G14)', () => {
   assert.deepEqual(Object.keys(HELP).sort(), Object.keys(EXPECTED).sort());
   for (const [key, [name, text]] of Object.entries(EXPECTED)) assert.deepEqual(HELP[key], { name, text }, key);
 });
