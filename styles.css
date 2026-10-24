@@ -109,7 +109,7 @@ h1[tabindex="-1"]:focus { outline: none; } /* the heading focus() gives on a rou
 .shield.failed svg .b{stroke:var(--crimson)}
 .shield.failed svg .lam{opacity:1;stroke:var(--crimson)}
 .shield.stalled{opacity:.82}
-.shield.stalled svg .b{stroke-dasharray:3 2.5}
+.shield.stalled svg .b{stroke:#8a7e64;stroke-dasharray:3 2.5} /* T10-4: --outline lifted 5 per channel, 3.00 over the glow at opacity .82 */
 
 /* Switch: R3 60×44 button around the 60×34 track; .th transition from Settings.css, on in tokens.
    M1: the on track is a ::before layer that fades (a gradient can't transition); the thumb's colour fades with it. */

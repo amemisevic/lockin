@@ -1314,3 +1314,9 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Push: `git push origin help:main` (ff-only), then `git -C C:/Users/Armin/PM-App merge --ff-only origin/main`; results in STATUS.md.
 - Unchecked: iPhone.
 - Next: owner updates the Home Screen app (close and reopen twice), phone check of the failed/missed selected colour.
+
+## T10-4 + S1-03: stalled shield contrast, motion cap ruling, branch `help`
+
+- T10-4: stalled shield outline (`.shield svg .b` stroke `--outline` #85795f, `.shield.stalled` opacity .82, on `--plate-top` #1c1b20 and `--plate-bot` #141317, with the faint gold glow as modelled in `tests/contrast-shield-glow.test.js`). Scratchpad script, glow model: before 2.830 (top) / 3.060 (bot); plain 3.116 / 3.316. After `#8a7e64` (+5 per channel, the smallest step that clears 3.0): 3.003 / 3.247 glow, 3.306 / 3.518 plain. Added `stroke:#8a7e64` to `.shield.stalled svg .b` in `styles.css` (dash and labels unchanged). No frozen test pins #85795f: both contrast tests read the open shield's stroke, so they still pass; the glow test for stalled stays skipped (tests not edited) and still reads the open colour.
+- Ruling (Armin, 2026-10-24) S1-03: leave shield pop/rip duration. ROADMAP.md motion cap amended: 450 ms stays for everything except shield pop/rip; longest shield duration is `rip` 650 ms (`pop` 500 ms). No CSS change for this.
+- Next: owner phone check of the stalled shield.
