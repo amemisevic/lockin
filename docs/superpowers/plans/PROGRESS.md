@@ -1054,3 +1054,13 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Choices: "Check-ins" and "Recovery" sit under Challenge (the Today tab only links to them). Where the plan is silent the row says "unclear" instead of describing behaviour.
 - Needs ruling: (1) Night time 18:00 (PLAN) vs 20:00 (SPEC §8, code). (2) Top G / Bottom G undefined in Rules. (3) MED expansion, oath entry content, "Protocol", `risk`. (4) Analytics range scope, heatmap levels. (5) Owner wording for rules the UI never shows.
 - Next: owner picks the help scope from the inventory.
+
+## H1a: Challenge help copy draft (text only), branch `help`
+
+- Commit: `docs(H1a): challenge help copy draft` (this entry and `docs/superpowers/plans/help-copy-draft.md`; hash in `git log`). Not pushed. No code, no tests.
+- Precheck: HEAD `b5cc9b4`, tracked tree clean. Tests not run (docs only; 1212 pass at H0).
+- Sources read: the Forge BUILD-PLAN §5-6 (outside the repo, cited by section only, nothing copied), PLAN Rules and Tasks 4, 5, 13-17, DESIGN-SPEC, `help-inventory.md`.
+- Result: 16 entries (where the "?" sits, text of at most 2 short sentences, source). Entries 1 (Top G / Bottom G terms) and 5 (oath contents) are UNCLEAR with no text; MED and Protocol give function text only, not a definition.
+- Choices: Top G win and Bottom G's move are split from the term entry so the fields get text. No personal or course content in the draft; archetype names left out (they come from the pack).
+- Needs ruling: (1) MED limit: BP "2 MED days per week, TOTAL" vs PLAN "each declaration uses one of `settings.medPerWeek` slots" (◆); draft follows PLAN. (2) Onboarding: BP says Day 1 mission creates protocol rows, PLAN requires them first; draft follows PLAN. (3) "Does not change the result" for Top G win and risk note is read from `suggestResult` inputs, not a Rules sentence. (4) UNCLEAR: Top G / Bottom G terms, oath contents, what MED stands for, what a protocol is.
+- Next: owner rules on the list; then H1b (build the "?" buttons, Challenge only).
