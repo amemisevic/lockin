@@ -43,9 +43,9 @@ const EXPECTED = {
 };
 
 // H1b-S: the 9 Settings entries are checked against their draft in help-settings.test.js; only the key set is counted here.
-const SETTINGS_KEYS = ['zeroDay', 'medPerWeek', 'startDate', 'packImport', 'medVersion', 'deleteItem', 'gymTarget', 'exportBackup', 'importBackup'];
+const SETTINGS_KEYS = ['zeroDay', 'medPerWeek', 'startDate', 'packImport', 'medVersion', 'deleteItem', 'gymTarget', 'exportBackup', 'importBackup', 'eraseAll'];
 
-test('HELP holds exactly the 41 approved entries (H1b/H1d 18, H1f gaps 14, H1b-S Settings 9)', () => {
+test('HELP holds exactly the 42 approved entries (H1b/H1d 18, H1f gaps 14, H1b-S Settings 9, Erase all data 1)', () => {
   assert.deepEqual(Object.keys(HELP).sort(), [...Object.keys(EXPECTED), ...SETTINGS_KEYS].sort());
   for (const [key, [name, text]] of Object.entries(EXPECTED)) assert.deepEqual(HELP[key], { name, text }, key);
 });

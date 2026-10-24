@@ -195,3 +195,44 @@ test('leaving Settings clears the refusal', async () => {
   assert.deepEqual(alerts(renderSettings(app)), []);
   assert.equal(texts(renderSettings(app)).includes('The file is empty.'), false);
 });
+
+// Erase all data (owner ruling 2026-10-24): last row of Data, one confirm sheet, then clear and restart.
+import { eraseAllData } from '../src/views/settings.js';
+const eraseApp = (failOn = []) => {
+  const data = { 'lockin.v2': 'a', 'lockin.v2.gym': 'b' };
+  const app = mkApp(live());
+  app.storage = { removeItem(k) { if (failOn.includes(k)) throw new Error('blocked'); delete data[k]; } };
+  return { app, data };
+};
+
+test('Data section: Erase all data is the last action row, in the danger style, after Import backup', () => {
+  const out = renderSettings(mkApp(live()));
+  const data = all(out).filter(n => n.tagName === 'SECTION').at(-1);
+  const rows = all([data]).filter(n => n.tagName === 'BUTTON' && hasClass(n, 'set-btn'));
+  assert.deepEqual(rows.map(n => n.textContent), ['Export backup', 'Import backup', 'Erase all data']);
+  assert.equal(rows.at(-1).id, 'set-erase');
+  assert.ok(hasClass(rows.at(-1), 'dg'));
+});
+
+test('erase: one confirm with the exact words, nothing erased and no reload until yes', () => {
+  const { app, data } = eraseApp();
+  let asked = null, reloads = 0;
+  eraseAllData(app, (message, onYes, action) => { asked = { message, onYes, action }; }, () => { reloads++; });
+  assert.equal(asked.message, 'Everything in Lock In on this phone is deleted. This cannot be undone. Export a backup first.');
+  assert.equal(asked.action, 'Erase all data');
+  assert.equal(Object.keys(data).length, 2);
+  assert.equal(reloads, 0);
+  asked.onYes();
+  assert.deepEqual(data, {});
+  assert.equal(reloads, 1);
+  assert.equal(app.sets.length, 0);
+});
+
+test('erase: a failed removal shows the plate, does not reload, and the next attempt clears it', () => {
+  const { app } = eraseApp(['lockin.v2.gym']);
+  let reloads = 0, asked = null;
+  eraseAllData(app, (m, onYes) => { asked = onYes; }, () => { reloads++; });
+  asked();
+  assert.equal(reloads, 0);
+  assert.deepEqual(alerts(renderSettings(app)), ['Some data could not be erased.']);
+});

@@ -35,20 +35,24 @@ const btn = (nodes, key) => helps(nodes).find(n => n.getAttribute('aria-label') 
 const sheets = () => document.body.children.filter(n => n.tagName === 'DIALOG' && !hasClass(n, 'ghost') && hasClass(n, 'action-sheet'));
 const sameRow = (b, title) => all([b.parent]).some(n => n.tagName === 'B' && n.textContent === title);
 
+test('Erase all data entry: owner-approved text (STATUS.md draft, 2026-10-24)', () => {
+  assert.deepEqual(HELP.eraseAll, { name: 'Erase all data', text: 'Deletes everything Lock In stored on this phone and restarts the app empty. Export a backup first.' });
+});
+
 test('the nine Settings entries match the draft word for word', () => {
   for (const [n, key] of Object.entries(KEYS)) assert.deepEqual(HELP[key], entry(n), key);
 });
 
 test('Settings page: one "?" per draft row, none for the rows the draft leaves out', () => {
   const out = renderSettings(app(defaultState()));
-  assert.deepEqual(labels(out), want('addProtocols', 'addRedLines', 'zeroDay', 'medPerWeek', 'startDate', 'packImport', 'gymTarget', 'exportBackup', 'importBackup'));
+  assert.deepEqual(labels(out), want('addProtocols', 'addRedLines', 'zeroDay', 'medPerWeek', 'startDate', 'packImport', 'gymTarget', 'exportBackup', 'importBackup', 'eraseAll'));
 });
 
 test('each "?" sits in the row the draft names', () => {
   const out = renderSettings(app(defaultState()));
   for (const [key, title] of [['zeroDay', 'Zero Day threshold'], ['medPerWeek', 'MED per week'], ['startDate', 'Day 1'],
     ['packImport', 'Challenge pack'], ['gymTarget', 'Weekly gym target']]) assert.ok(sameRow(btn(out, key), title), key);
-  for (const [key, title] of [['exportBackup', 'Export backup'], ['importBackup', 'Import backup']]) {
+  for (const [key, title] of [['exportBackup', 'Export backup'], ['importBackup', 'Import backup'], ['eraseAll', 'Erase all data']]) {
     assert.ok(btn(out, key).parent.children.some(n => n.tagName === 'BUTTON' && n.textContent === title), key);
   }
 });

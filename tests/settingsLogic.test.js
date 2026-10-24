@@ -251,3 +251,29 @@ test('runExport: the exported file is the marked state', async () => {
   assert.equal(JSON.parse(text).settings.lastBackup, WED);
   assert.equal(text, exportJson({ ...defaultState(), settings: { ...defaultState().settings, lastBackup: WED } }));
 });
+
+// Erase all data (owner ruling 2026-10-24): every key the app writes goes, nothing else.
+const fakeStorage = (data, failOn = []) => ({
+  data,
+  removeItem(k) { if (failOn.includes(k)) throw new Error('blocked'); delete this.data[k]; },
+});
+
+test('eraseAll removes the four app keys and nothing else', () => {
+  const s = fakeStorage({ 'lockin.v2': 'a', 'lockin.v2.gym': 'b', 'lockin.v2.corrupt': 'c', 'lockin.v2.gym.corrupt': 'd', other: 'e' });
+  assert.equal(L.eraseAll(s), true);
+  assert.deepEqual(s.data, { other: 'e' });
+});
+
+test('eraseAll on empty storage is fine', () => {
+  assert.equal(L.eraseAll(fakeStorage({})), true);
+});
+
+test('eraseAll tries every key even when one removal throws, and then returns false', () => {
+  const s = fakeStorage({ 'lockin.v2': 'a', 'lockin.v2.gym': 'b', 'lockin.v2.corrupt': 'c' }, ['lockin.v2']);
+  assert.equal(L.eraseAll(s), false);
+  assert.deepEqual(s.data, { 'lockin.v2': 'a' });
+});
+
+test('eraseAll returns false when the storage has no removeItem (blocked-storage stand-in)', () => {
+  assert.equal(L.eraseAll({ getItem: () => null, setItem() { throw new Error('Storage blocked'); } }), false);
+});
