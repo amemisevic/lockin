@@ -28,7 +28,7 @@ const tasks = t => tiles(t.label, [['Done', t.done], ['Failed', t.failed], ['Sta
 
 // Range control: each button carries a stable id so the toggle replay in app.js finds it again after the rebuild.
 function range() {
-  const seg = segmented({ options: RANGES, value: n, onPick: v => { if (v === n) return; n = v; play = true; rerender(); }, id: 'an-range' });
+  const seg = segmented({ options: RANGES, value: n, onPick: v => { if (v === n) return; n = v; play = true; rerender(); }, id: 'an-range', label: 'Range' });
   [...seg.children].forEach((b, i) => b.setAttribute('data-tg', `range/${RANGES[i].label}`));
   return h('div', { class: 'an-range' }, seg);
 }
