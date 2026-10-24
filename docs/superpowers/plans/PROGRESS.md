@@ -1094,3 +1094,13 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Choices: Reminders and the Last backup line are left out (inventory: already explained on screen). The Home Screen storage and "Export is the only backup" facts sit on the `Data` heading, not repeated on Export. Code-only behaviour (future-date refusal, "changes only after the file is shared") is marked as code in the draft.
 - Needs ruling: (1) MED per week: BP "2 MED days per week, TOTAL" vs PLAN slots; draft follows PLAN. (2) The protocol sheet hint says "once" and omits the weekly slot. (3) Entry 6 repeats a sentence the delete confirm sheet already shows. (4) UNCLEAR: what a protocol or red line contains, what MED stands for.
 - Next: owner rules on the list; then H1b-S (build the Settings "?" buttons).
+
+## H1c: terms copy draft (text only), branch `help`
+
+- Commit: `docs(H1c): terms help copy draft` (this entry and `docs/superpowers/plans/help-terms-draft.md`; hash in `git log`). Not pushed. No code, no tests.
+- Precheck: branch `help`, HEAD `0f272ef`, tracked tree clean (untracked `HANDOFF-TEMPLATE.md` and `docs/STATUS.md` left alone), `npm test` 1231 pass, 0 fail (exit 0). After: not re-run (docs only).
+- Sources read (The Forge is outside the repo, cited by file and section; nothing copied beyond short paraphrase): `supabase/migrations/20260908000000_seed_default_missions.sql` (Day 1 mission Steps 1 to 5, MED version lines of Days 5, 6, 8, 12), `20260907000000_seed_bottom_g_tactics.sql` header, `CLAUDE.md` (Important decisions, Postgres RPC functions), `BUILD-PLAN.md` §1, §4, §5, §9, §11, the v2 plan Rules and Tasks 5, 16.
+- Not found: `src/data/missions.json` and `src/data/tactics.json` do not exist in the repo (by rule the pack is imported at runtime, never committed). The only pack files on disk are git-ignored placeholder fixtures in `scratch/`.
+- Result: 8 entries (Contract, Funeral, Code, Week 1 red lines: one plain sentence each; MED; Protocol; Top G; Bottom G), each with where it appears, paraphrased text (max 2 short sentences) and file + section source. MED expands to Minimum Effective Dose (The Forge only). No entry is UNCLEAR, but Protocol has no stated definition, only usage.
+- Needs ruling: (1) Protocol: keep the usage paraphrase, reword or drop it. (2) The four oath entries are written by hand in the source mission; the app's are typed. (3) The source Day 1 also has a Legacy speech the app has no entry for. (4) Placement: one H1b sheet with four short lines, or one "?" per oath row. (5) MED entry overlaps Challenge entry 4. (6) Entries 7 and 8 paraphrase program content: confirm it is fine for the public repo.
+- Next: owner rules on the list; then H1d (build the term "?" buttons, text and placement as ruled).
