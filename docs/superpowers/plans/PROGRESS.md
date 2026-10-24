@@ -1044,3 +1044,13 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Release: VERSION 2.2.0 in `sw.js` and `src/version.js` (sw test passes). ASSETS: the only new shipped file since v2.1.0 is `src/motion.js`, already listed; the sw test checks ASSETS equals every shipped file. ROADMAP: v2.2.0 ready on `motion`, M5 done, open rulings listed.
 - Not run: iPhone, Reduce Motion on device. Users must fully close and reopen the Home Screen app twice to get 2.2.0.
 - Next: ⛔ owner iPhone check of 2.2.0, then push `motion`, merge to main, GitHub Pages.
+
+## H0: Help button inventory (read-only), branch `help`
+
+- Commit: `docs(H0): help button inventory` (this entry and `docs/superpowers/plans/help-inventory.md`; hash in `git log`). Not pushed. `src`, tests, styles untouched.
+- Precheck: branch `help` created from `main` (6956506, same commit as `motion`). Tracked tree clean (untracked `HANDOFF-TEMPLATE.md` and `docs/STATUS.md` left alone). `npm test` 1212 pass, 0 fail (exit 0). After: not re-run (docs only; `src`, tests and styles unchanged).
+- Method: read PLAN Rules and Tasks 3-5, 7, 11-19, DESIGN-SPEC §5/§8, `v2.1-gym-plan.md` Rules, `PROGRESS-GYM.md` Decisions; grepped `src/views` and `src/core` for the on-screen copy of each item.
+- Result: 6 tabs, 43 rows, each with the quoted rule (file + section) and yes/partly/no for on-screen explanation; 77 lines.
+- Choices: "Check-ins" and "Recovery" sit under Challenge (the Today tab only links to them). Where the plan is silent the row says "unclear" instead of describing behaviour.
+- Needs ruling: (1) Night time 18:00 (PLAN) vs 20:00 (SPEC §8, code). (2) Top G / Bottom G undefined in Rules. (3) MED expansion, oath entry content, "Protocol", `risk`. (4) Analytics range scope, heatmap levels. (5) Owner wording for rules the UI never shows.
+- Next: owner picks the help scope from the inventory.
