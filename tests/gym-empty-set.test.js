@@ -2,13 +2,13 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { El, all, fire, byText, byLabel } from './fakedom.js';
-import { emptyGym } from '../src/core/gym.js';
+import { emptyGym, loadGym, saveGym } from '../src/core/gym.js';
 import { openWorkout, addExercise } from '../src/core/workouts.js';
-import { begin, markBlank, dropBlankSet, dropBlankItem } from '../src/views/gymWorkoutLogic.js';
-import { renderWorkout, resetWorkoutView, pickExercise } from '../src/views/gymWorkout.js';
+import { begin } from '../src/views/gymWorkoutLogic.js';
+import { renderWorkout, resetWorkoutView, pickExercise, BLANK_SETS } from '../src/views/gymWorkout.js';
 
-// Gym set entry, ruling C (owner, 2026-10-27), view-only: a new set shows empty fields with a grey placeholder and its
-// Done check stays disabled until reps and weight are typed. Stored values (reps 1, weight 0) are unchanged.
+// Gym set entry, true empty sets (owner, 2026-10-27): a new set stores reps and weight as null, so it shows empty fields with a
+// grey placeholder after a repaint or a reload, and its Done check stays disabled until reps and weight are typed.
 El.prototype.replaceChildren = function replaceChildren(...cs) { this.children = []; this.append(...cs); };
 
 const T = new Date(2026, 9, 12, 10, 0, 0).getTime();
@@ -36,17 +36,6 @@ const val = (out, label) => byLabel(out, label).getAttribute('value');
 const fresh = () => { resetWorkoutView(); document.activeElement = null; };
 const withNewSet = () => { const app = mkApp(openGym()); click(byText(screen(app), 'button', 'Add set')); return app; };
 
-// ---- logic ----
-test('markBlank / dropBlankSet / dropBlankItem keep the keys following the rows', () => {
-  let b = markBlank(markBlank(new Set(), 0, 2), 1, 0);
-  assert.deepEqual([...b].sort(), ['0/2/reps', '0/2/weight', '1/0/reps', '1/0/weight']);
-  b = dropBlankSet(b, 0, 0);
-  assert.deepEqual([...b].sort(), ['0/1/reps', '0/1/weight', '1/0/reps', '1/0/weight']);
-  b = dropBlankSet(b, 0, 1);
-  assert.deepEqual([...b].sort(), ['1/0/reps', '1/0/weight']);
-  assert.deepEqual([...dropBlankItem(b, 0)].sort(), ['0/0/reps', '0/0/weight']);
-});
-
 // ---- view ----
 test('a new set starts with empty fields and a placeholder; the stored set is unchanged', () => {
   fresh();
@@ -55,7 +44,7 @@ test('a new set starts with empty fields and a placeholder; the stored set is un
   assert.equal(val(out, 'Set 3 reps'), '');
   assert.equal(val(out, 'Set 3 weight (kg)'), '');
   assert.equal(byLabel(out, 'Set 3 reps').getAttribute('placeholder'), '1');
-  assert.deepEqual(cur(app).items[0].sets[2], { reps: 1, weight: 0, warmup: false, done: false });
+  assert.deepEqual(cur(app).items[0].sets[2], { reps: null, weight: null, warmup: false, done: false });
 });
 
 test('prefilled sets keep their values and an enabled Done', () => {
@@ -91,7 +80,49 @@ test('typing a number in both fields enables Done and logs the set', () => {
   assert.equal(cur(app).items[0].sets[2].done, true);
 });
 
-test('the empty state survives a repaint and follows its row when an earlier set is removed', () => {
+test('typing one field keeps Done disabled and stores the other as null', () => {
+  fresh();
+  const app = withNewSet();
+  const out = screen(app);
+  type(byLabel(out, 'Set 3 weight (kg)'), '60');
+  assert.notEqual(byLabel(out, 'Set 3 done').getAttribute('disabled'), null);
+  assert.deepEqual(cur(app).items[0].sets[2], { reps: null, weight: 60, warmup: false, done: false });
+  assert.equal(val(screen(app), 'Set 3 reps'), '');
+});
+
+test('the empty state survives a reload', () => {
+  fresh();
+  const st = new Map();
+  const storage = { getItem: k => st.get(k) ?? null, setItem: (k, v) => st.set(k, String(v)) };
+  assert.equal(saveGym(storage, withNewSet().gym).ok, true);
+  const app = mkApp(loadGym(storage).state);
+  fresh();
+  const out = screen(app);
+  assert.equal(val(out, 'Set 3 reps'), '');
+  assert.equal(byLabel(out, 'Set 3 reps').getAttribute('placeholder'), '1');
+  assert.notEqual(byLabel(out, 'Set 3 done').getAttribute('disabled'), null);
+});
+
+test('a step on an empty field enters its placeholder value', () => {
+  fresh();
+  const app = withNewSet();
+  click(byLabel(screen(app), 'Set 3 reps up'));
+  assert.deepEqual(cur(app).items[0].sets[2], { reps: 1, weight: null, warmup: false, done: false });
+  assert.equal(val(screen(app), 'Set 3 reps'), '1');
+});
+
+test('Finish is blocked with a message while a set is blank, and the workout stays open', () => {
+  fresh();
+  const app = withNewSet();
+  app.nav = to => { app.went = to; };
+  const out = screen(app);
+  click(byText(out, 'button', 'Finish'));
+  assert.ok(all(out).some(n => n.textContent === BLANK_SETS), 'message shown');
+  assert.equal(app.went, undefined);
+  assert.notEqual(cur(app), null);
+});
+
+test('the empty state follows its row when an earlier set is removed', () => {
   fresh();
   const app = withNewSet();
   screen(app);
@@ -109,6 +140,7 @@ test('an exercise with no history starts empty; one with history keeps its prefi
   const out = screen(app);
   assert.equal(val(out, 'Set 1 reps'), '8');
   assert.equal(val(out, 'Set 1 weight (kg)'), '80');
+  assert.deepEqual(cur(app).items[1].sets, [{ reps: null, weight: null, warmup: false, done: false }]);
   const rowSet = all(out).filter(n => n.getAttribute('aria-label') === 'Set 1 reps');
   assert.equal(rowSet.length, 2);
   assert.equal(rowSet[1].getAttribute('value'), '');

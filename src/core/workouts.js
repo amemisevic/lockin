@@ -24,7 +24,7 @@ function change(gym, id, fn) {
   return v.ok ? { ok: true, state } : v;
 }
 
-const changeItem = (gym, id, ii, fn) => change(gym, id, w => (inRange(w.items, ii) ? { ...w, items: replaceAt(w.items, ii, fn(w.items[ii])) } : 'bad-index'));
+const changeItem = (gym, id, ii, fn) => change(gym, id, w => (inRange(w.items, ii) ? { ...w, items: replaceAt(w.items, ii, fn(w.items[ii], w)) } : 'bad-index'));
 // fn gets the item's sets and returns the new sets, or a refusal string.
 const changeSet = (gym, id, ii, si, fn) => change(gym, id, w => {
   if (!inRange(w.items, ii) || !inRange(w.items[ii].sets, si)) return 'bad-index';
@@ -66,7 +66,8 @@ export const addExercise = (gym, id, exerciseId) =>
 // Open workout: any exercise. Finished workout: validateGym refuses it with no-sets if no done working set is left.
 export const removeExercise = (gym, id, ii) => change(gym, id, w => (inRange(w.items, ii) ? { ...w, items: w.items.filter((_, j) => j !== ii) } : 'bad-index'));
 
-export const addSet = (gym, id, ii) => changeItem(gym, id, ii, it => ({ ...it, sets: [...it.sets, newSet(1, 0)] }));
+// An open workout gets a true empty set (reps and weight null, filled in on the screen); a finished one needs numbers, so 1 / 0.
+export const addSet = (gym, id, ii) => changeItem(gym, id, ii, (it, w) => ({ ...it, sets: [...it.sets, w.finishedAt === null ? newSet(null, null) : newSet(1, 0)] }));
 
 // Open workout: any set. Finished workout: validateGym refuses the last done working set with no-sets.
 export const removeSet = (gym, id, ii, si) => changeSet(gym, id, ii, si, sets => sets.filter((_, j) => j !== si));

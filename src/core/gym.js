@@ -20,20 +20,22 @@ const realDate = d => isStr(d) && /^\d{4}-\d{2}-\d{2}$/.test(d) && dateKey(keyTo
 const first = (list, fn) => { for (const x of list) { const p = fn(x); if (p) return p; } return null; };
 
 // Workout sets carry warmup and done; routine template sets are { reps, weight } only.
-function setProblem(s, workout) {
+// A set of an OPEN workout that is not done may have null reps and/or weight (a true empty set, not entered yet).
+function setProblem(s, workout, open) {
   if (!isObj(s)) return 'shape';
-  if (!Number.isInteger(s.reps) || s.reps < 1 || s.reps > 999) return 'reps';
-  if (!isNum(s.weight) || s.weight < 0 || s.weight > 1000) return 'weight';
+  const blankOk = open && s.done !== true;
+  if (!(blankOk && s.reps === null) && (!Number.isInteger(s.reps) || s.reps < 1 || s.reps > 999)) return 'reps';
+  if (!(blankOk && s.weight === null) && (!isNum(s.weight) || s.weight < 0 || s.weight > 1000)) return 'weight';
   if (workout && (typeof s.warmup !== 'boolean' || typeof s.done !== 'boolean')) return 'shape';
   return null;
 }
 
 // An exercise id the bundled list no longer has is fine; only its type is checked.
-function itemProblem(it, workout) {
+function itemProblem(it, workout, open = false) {
   if (!isObj(it)) return 'shape';
   if (!isId(it.exerciseId)) return 'id';
   if (!Array.isArray(it.sets)) return 'shape';
-  return first(it.sets, s => setProblem(s, workout));
+  return first(it.sets, s => setProblem(s, workout, open));
 }
 
 const customProblem = c => (!isObj(c) ? 'shape' : !isId(c.id) ? 'id' : !isStr(c.name) || !isStr(c.muscle) || !isStr(c.equipment) ? 'shape' : null);
@@ -53,7 +55,7 @@ function workoutProblem(w) {
   if (!isNum(w.startedAt)) return 'shape';
   if (w.finishedAt !== null && !(isNum(w.finishedAt) && w.finishedAt >= w.startedAt)) return 'finish-time';
   if (!Array.isArray(w.items)) return 'shape';
-  const p = first(w.items, it => itemProblem(it, true));
+  const p = first(w.items, it => itemProblem(it, true, w.finishedAt === null));
   if (p) return p;
   if (w.finishedAt !== null && !w.items.some(it => it.sets.some(s => s.done && !s.warmup))) return 'no-sets';
   return null;

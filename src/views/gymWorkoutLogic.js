@@ -1,7 +1,7 @@
 // Workout screen logic (gym plan G9, G9c): start or repeat on a chosen day, typed and stepped values, name and length, last time.
 // Pure, DOM-free. No clocks: the app has no live timers.
 import { dateKey } from '../logic.js';
-import { startWorkout, editWorkout } from '../core/workouts.js';
+import { startWorkout, editWorkout, editSet } from '../core/workouts.js';
 import { repeatLastWorkout } from '../core/routines.js';
 
 export const DEFAULT_MINUTES = 60;
@@ -63,10 +63,12 @@ export function lastTimeText(gym, exerciseId, excludeId = null) {
   return last ? last.sets.map(s => `${s.weight} × ${s.reps}`).join(' · ') : '';
 }
 
-// Blank fields (ruling C, view only, not saved): a set added by Add set, or an exercise with no history, shows empty
-// fields until the owner types. A Set of 'ii/si/key' strings; the stored set keeps reps 1, weight 0.
-export const markBlank = (blank, ii, si) => new Set([...blank, `${ii}/${si}/reps`, `${ii}/${si}/weight`]);
-const remap = (blank, fn) => new Set([...blank].map(k => fn(...k.split('/'))).filter(Boolean));
-// Removing set si of item ii (or the whole item) moves the keys after it up one place.
-export const dropBlankSet = (blank, ii, si) => remap(blank, (i, s, key) => (+i !== ii || +s < si ? `${i}/${s}/${key}` : +s === si ? null : `${i}/${s - 1}/${key}`));
-export const dropBlankItem = (blank, ii) => remap(blank, (i, s, key) => (+i < ii ? `${i}/${s}/${key}` : +i === ii ? null : `${i - 1}/${s}/${key}`));
+// True empty sets (owner, 2026-10-27): a set not filled in yet stores reps and weight as null. The grey placeholder shows
+// these values, and a step on an empty field enters them.
+export const PLACEHOLDER = { reps: 1, weight: 0 };
+
+// An exercise with no history comes in with the fixed default set (1 / 0): make its sets true empty sets.
+export function blankItem(gym, id, ii) {
+  const sets = gym.workouts.find(w => w.id === id)?.items[ii]?.sets ?? [];
+  return sets.reduce((g, _, si) => { const r = editSet(g, id, ii, si, { reps: null, weight: null }); return r.ok ? r.state : g; }, gym);
+}

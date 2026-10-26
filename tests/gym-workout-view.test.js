@@ -223,12 +223,12 @@ test('a tap on any button first blurs a focused input (iOS keeps focus, and the 
 });
 
 // ---- sets and exercises ----
-test('Add set appends a row (reps 1, weight 0, ruling 10); Remove set drops one', () => {
+test('Add set appends a blank row (reps and weight null, owner 2026-10-27); Remove set drops one', () => {
   fresh();
   const app = mkApp(openGym());
   click(byText(screen(app), 'button', 'Add set'));
   assert.equal(cur(app).items[0].sets.length, 4);
-  assert.deepEqual(setOf(app, 0, 3), { reps: 1, weight: 0, warmup: false, done: false });
+  assert.deepEqual(setOf(app, 0, 3), { reps: null, weight: null, warmup: false, done: false });
   click(byLabel(screen(app), 'Remove set 1'));
   assert.equal(cur(app).items[0].sets.length, 3);
 });

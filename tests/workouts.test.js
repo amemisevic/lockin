@@ -156,9 +156,9 @@ test('addExercise on a finished workout works and does not prefill from that wor
 });
 
 // ---------- addSet, removeSet ----------
-test('addSet appends a set with reps 1, weight 0, not warm-up, not done (ruling 10)', () => {
+test('addSet appends a blank set (reps and weight null), not warm-up, not done (true empty sets, owner 2026-10-27)', () => {
   const s = good(W.addSet(gym(open({ items: [bench(set({ done: false }))] })), 'w9', 0));
-  assert.deepEqual(s.workouts[0].items[0].sets, [set({ done: false }), { reps: 1, weight: 0, warmup: false, done: false }]);
+  assert.deepEqual(s.workouts[0].items[0].sets, [set({ done: false }), { reps: null, weight: null, warmup: false, done: false }]);
 });
 
 test('addSet works on a finished workout and keeps it valid', () => {
@@ -228,8 +228,8 @@ test('editSet ignores keys other than reps and weight', () => {
 
 test('editSet refuses values the validate rules refuse, with their codes', () => {
   const g = gym(open({ items: [bench(set({ done: false }))] }));
-  for (const reps of [0, 1000, 1.5, -1, NaN, '5', null, undefined]) refuse(g, x => W.editSet(x, 'w9', 0, 0, { reps }), 'reps');
-  for (const weight of [-1, 1001, NaN, Infinity, '80', null, undefined]) refuse(g, x => W.editSet(x, 'w9', 0, 0, { weight }), 'weight');
+  for (const reps of [0, 1000, 1.5, -1, NaN, '5', undefined]) refuse(g, x => W.editSet(x, 'w9', 0, 0, { reps }), 'reps');
+  for (const weight of [-1, 1001, NaN, Infinity, '80', undefined]) refuse(g, x => W.editSet(x, 'w9', 0, 0, { weight }), 'weight');
   assert.equal(good(W.editSet(g, 'w9', 0, 0, { reps: 999, weight: 1000 })).workouts[0].items[0].sets[0].reps, 999);
   assert.equal(good(W.editSet(g, 'w9', 0, 0, { reps: 1, weight: 0 })).workouts[0].items[0].sets[0].weight, 0);
 });
