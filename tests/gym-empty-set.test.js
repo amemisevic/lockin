@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { El, all, fire, byText, byLabel } from './fakedom.js';
 import { emptyGym } from '../src/core/gym.js';
@@ -119,4 +120,10 @@ test('inputs stay numeric / decimal', () => {
   const out = screen(withNewSet());
   assert.equal(byLabel(out, 'Set 3 reps').getAttribute('inputmode'), 'numeric');
   assert.equal(byLabel(out, 'Set 3 weight (kg)').getAttribute('inputmode'), 'decimal');
+});
+
+// Ruling C, focus: a focused empty field shows nothing (the placeholder comes back on blur, because the attribute stays).
+test('the placeholder is hidden while a set field is focused', () => {
+  const css = readFileSync(new URL('../src/gym.css', import.meta.url), 'utf8');
+  assert.match(css, /\.gw-in:focus::placeholder\s*\{[^}]*color:\s*transparent/);
 });

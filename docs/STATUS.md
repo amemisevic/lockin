@@ -1,13 +1,11 @@
 # STATUS
-- Task: H1g Bottom G "?" help (archetypes). Branch `help`. Not pushed.
-- Result: DONE. New HELP key `archetypes` (5 lines, owner's exact text), provenance comment in helpCopy.js. Night helper line is now hlp-row + "?" (Night 8 buttons, 9 with an open task). `.action-message` has `white-space:pre-line` so the sheet keeps the line breaks.
-- HEAD: help, `feat: Bottom G help` (hash in `git log`), on top of 68a7897. Red first (exit 1, entry missing), then green.
-- Tests: `npm test` 1343 tests, 1342 pass, 0 fail, 1 skipped (exit 0). src/core, VERSION untouched; no frozen test edited.
-- Changed files: src/views/helpCopy.js, src/views/checkinNight.js, screens.css, tests/help-copy.test.js, tests/help-buttons.test.js, docs/superpowers/plans/PROGRESS.md, docs/STATUS.md.
-- Test edits (help tests only): EXPECTED +1, count 42 to 43; Night 7/8 to 8/9 with placement check; new test (5 lines + pre-line).
-- Deviations: the "every entry is at most 2 sentences" test now skips `archetypes` (the owner's text is five lines). Needed to keep the text exact.
-- Needs ruling: none. Chose the sheet heading name `Bottom G archetypes` (aria-label only); change if you want another.
-- Browser check (390 wide, seeded Night): no horizontal overflow, "?" 44 x 44 beside the helper line, sheet shows 5 lines. Sheet text stays centred.
-- Not run: iPhone, 375 and 440 wide.
-- Phone check: Night, Bottom G section: tap the "?" beside "Which tactic did your enemy use?"; five lines, then Close.
-- Next: owner iPhone check, then the next help scope or a release bump.
+- Task: Gym placeholder hidden on focus (ruling C). Branch `help`. No release bump. Not pushed.
+- Result: DONE. A focused empty reps or weight field shows nothing; the grey 1 or 0 returns on blur if still empty. Done stays disabled until both have a number.
+- Repro: value was already "" but the placeholder stayed visible (grey) on focus. The +/- buttons are icon-only, nothing else showed a number.
+- HEAD: see commit `fix: gym placeholder hidden on focus` on help (parent a313e09).
+- Tests: red first (new test failed), then npm test 1352 tests, 1351 pass, 0 fail, 1 skipped (as before), exit 0. Browser check at 390 wide: focused colour transparent, blur grey, Done disabled, no overflow.
+- Changed files: src/gym.css (1 rule), tests/gym-empty-set.test.js (1 test), docs/superpowers/plans/PROGRESS-GYM.md, docs/STATUS.md.
+- Deviations: none. src/core, frozen tests, VERSION untouched.
+- Needs ruling: none.
+- Phone check: Gym, Add exercise (no history), tap reps and weight: field is blank while focused, 1 / 0 back after tapping away.
+- Next: owner iPhone check, then the next task.

@@ -67,6 +67,7 @@
 .gw-step{min-width:44px;min-height:44px;border-radius:50%;border:1px solid var(--line-strong);background:none;display:grid;place-items:center;color:var(--accent)}
 .gw-step:disabled,.gw-done:disabled{opacity:.4}
 .gw-in{min-height:44px;width:52px;padding:0 4px;text-align:center;font-size:18px}
+.gw-in:focus::placeholder{color:transparent}
 .gw-add{width:100%;text-decoration:none}
 .gw-name,.gw-len{display:grid;gap:6px}
 .gw-end{display:grid;gap:12px;margin-top:6px}

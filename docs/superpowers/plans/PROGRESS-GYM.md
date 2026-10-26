@@ -255,3 +255,11 @@ Progress log for the Gym tab (v2.1). Plan: `v2.1-gym-plan.md`. Draft task breakd
 - Deviations: (1) `2be8872` fixed two fixtures in my own new tests (the 12-week start date; an empty-span check that hit the pushed header's spacer) and added the over-target test; no assertion weakened. (2) No reviewer subagent run (not asked).
 - Needs ruling: (non-blocking) MED per week and Zero Day threshold were treated as challenge rules, not targets, so they have no switch; a switch on a cap would change the Recovery and MED rules in the main plan. Say if either should get one.
 - Next: phone check (below in STATUS), then push `gym` and the merge decision.
+
+### Ruling C follow-up — placeholder hidden on focus (owner, 2026-10-27)
+- Commit: `fix: gym placeholder hidden on focus`, branch `help`. View/CSS only: one rule in `src/gym.css`, `.gw-in:focus::placeholder{color:transparent}`. No `src/core`, no frozen test, no release bump (VERSION unchanged).
+- Ruling: a focused empty set field (reps, weight) is truly empty: no grey 1 or 0 while typing; the placeholder is back on blur if the field is still empty (the attribute stays, only its colour changes). Done stays disabled until both fields have a number (unchanged).
+- Repro (Chromium, 390 wide, new workout, first exercise with no history): focused field had value "" but placeholder "1" / "0" still shown, grey rgb(117,117,117), opacity 1. The +/- buttons are icon-only (no digit); nothing else showed 1 or 0.
+- Fix check: real click on the field gives placeholder colour transparent, value "", Done disabled; after blur the colour is grey again, placeholder "1", Done disabled; no horizontal overflow. (A scripted `focus()` in a background pane does not match `:focus`; a real click was used.)
+- Test: `tests/gym-empty-set.test.js`, one new test reads `src/gym.css` and asserts the rule (red first, then green). `npm test`: 1352 tests, 1351 pass, 0 fail, 1 skipped (already skipped before).
+- Needs ruling: none. Not run: iPhone.
