@@ -2,7 +2,7 @@
 - Task: Gym placeholder hidden on focus (ruling C). Branch `help`. No release bump. Not pushed.
 - Result: DONE. A focused empty reps or weight field shows nothing; the grey 1 or 0 returns on blur if still empty. Done stays disabled until both have a number.
 - Repro: value was already "" but the placeholder stayed visible (grey) on focus. The +/- buttons are icon-only, nothing else showed a number.
-- HEAD: see commit `fix: gym placeholder hidden on focus` on help (parent a313e09).
+- HEAD: help 8420588 `fix: gym placeholder hidden on focus` (parent a313e09; this STATUS fix is one docs commit on top).
 - Tests: red first (new test failed), then npm test 1352 tests, 1351 pass, 0 fail, 1 skipped (as before), exit 0. Browser check at 390 wide: focused colour transparent, blur grey, Done disabled, no overflow.
 - Changed files: src/gym.css (1 rule), tests/gym-empty-set.test.js (1 test), docs/superpowers/plans/PROGRESS-GYM.md, docs/STATUS.md.
 - Deviations: none. src/core, frozen tests, VERSION untouched.
