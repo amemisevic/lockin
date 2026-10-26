@@ -1375,3 +1375,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Known limit: the empty state is lost on reload; those sets show 1 / 0.
 - Unchecked: iPhone.
 - Next: owner updates the Home Screen app (close and reopen twice), phone check of empty set fields.
+
+## G-R: release v2.5.8, gym true empty sets, branch `help`
+
+- Commit `release: v2.5.8 gym true empty sets` (hash in `git log`) on top of `190c9bb` (feat: gym true empty sets). VERSION 2.5.7 to 2.5.8 in `sw.js` and `src/version.js` (match). ROADMAP "Live" line is v2.5.8.
+- Data note: sets of an open workout may now store null reps/weight. An older app version would reject such data (validateGym), so update the Home Screen app before using it.
+- Commands: precheck `npm test` before bump: 1367 tests, 1366 pass, 0 fail, 1 skipped (exit 0).
+- Unchecked: iPhone.
+- Next: owner updates the Home Screen app (close and reopen twice), phone check: Add set, reopen, set still empty; Finish with an empty set shows the message.
