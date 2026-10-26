@@ -1367,3 +1367,11 @@ Plan: `docs/superpowers/plans/2026-10-12-lockin-v2-app.md`. One entry per task, 
 - Pushed `git push origin help:main` (ff-only), then ff-merge in C:/Users/Armin/PM-App.
 - Unchecked: iPhone.
 - Next: owner updates the Home Screen app (close and reopen twice), phone check of Night archetypes "?".
+
+## G-R: release v2.5.7, gym empty set fields, branch `help`
+
+- Commit `release: v2.5.7 gym empty fields` (hash in `git log`) on top of `de5c366` (includes `a313e09` gym empty set fields, `8420588` placeholder hidden on focus). VERSION 2.5.6 to 2.5.7 in `sw.js` and `src/version.js` (match). ROADMAP "Live" line is v2.5.7. No `src/core` change, no test edited.
+- Commands: precheck `npm test` before bump: 1352 tests, 1351 pass, 0 fail, 1 skipped (exit 0); after bump: 1352 tests, 1351 pass, 0 fail, 1 skipped (exit 0).
+- Known limit: the empty state is lost on reload; those sets show 1 / 0.
+- Unchecked: iPhone.
+- Next: owner updates the Home Screen app (close and reopen twice), phone check of empty set fields.
