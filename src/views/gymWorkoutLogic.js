@@ -62,3 +62,11 @@ export function lastTimeText(gym, exerciseId, excludeId = null) {
   }
   return last ? last.sets.map(s => `${s.weight} × ${s.reps}`).join(' · ') : '';
 }
+
+// Blank fields (ruling C, view only, not saved): a set added by Add set, or an exercise with no history, shows empty
+// fields until the owner types. A Set of 'ii/si/key' strings; the stored set keeps reps 1, weight 0.
+export const markBlank = (blank, ii, si) => new Set([...blank, `${ii}/${si}/reps`, `${ii}/${si}/weight`]);
+const remap = (blank, fn) => new Set([...blank].map(k => fn(...k.split('/'))).filter(Boolean));
+// Removing set si of item ii (or the whole item) moves the keys after it up one place.
+export const dropBlankSet = (blank, ii, si) => remap(blank, (i, s, key) => (+i !== ii || +s < si ? `${i}/${s}/${key}` : +s === si ? null : `${i}/${s - 1}/${key}`));
+export const dropBlankItem = (blank, ii) => remap(blank, (i, s, key) => (+i < ii ? `${i}/${s}/${key}` : +i === ii ? null : `${i - 1}/${s}/${key}`));
